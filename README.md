@@ -10,9 +10,11 @@
 
 根据服务端版本下载以下插件
 
-[geyserUtils](https://github.com/zimzaza4/GeyserUtils)
+[GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
 
 [GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
+
+[LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
 
 下载完后，将GeyserModelEngine放入插件文件夹
 
@@ -81,8 +83,8 @@
 
 # 当前限制
 
-aaaa
+用了就知道, 一堆
 
 # 常见问题
 
-aaaaaaaaaaaa
+同上
