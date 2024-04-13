@@ -41,18 +41,22 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private Cache<Player, Boolean> joinedPlayer;
+
+    @Getter
+    private int joinSendDelay;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
-        skinSendDelay = getConfig().getInt("skin-send-delay");
-        viewDistance = getConfig().getInt("skin-view-distance");
+        skinSendDelay = getConfig().getInt("skin-send-delay", 0);
+        viewDistance = getConfig().getInt("skin-view-distance", 60);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));
-        int joinedDelay = getConfig().getInt("join-send-delay");
-        if (joinedDelay > 0) {
+        joinSendDelay = getConfig().getInt("join-send-delay", 20);
+        if (joinSendDelay > 0) {
             joinedPlayer = CacheBuilder.newBuilder()
-                    .expireAfterWrite(joinedDelay * 50L, TimeUnit.MILLISECONDS).build();
+                    .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
         }
         instance = this;
         ProtocolLibrary.getProtocolManager().addPacketListener(new InteractPacketListener());

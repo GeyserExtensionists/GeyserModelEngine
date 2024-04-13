@@ -27,8 +27,16 @@ public class AddEntityPacketListener extends PacketAdapter {
         }
         ModelEntity model = ModelEntity.MODEL_ENTITIES.get(entity.getEntityId());
 
-        if (model != null && FloodgateApi.getInstance().isFloodgatePlayer(event.getPlayer().getUniqueId())) {
-            model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
+        if (model != null) {
+            if (FloodgateApi.getInstance().isFloodgatePlayer(event.getPlayer().getUniqueId())) {
+                if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(event.getPlayer()) != null) {
+                    model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getJoinSendDelay());
+                } else {
+                    model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
+                }
+            } else {
+                event.setCancelled(true);
+            }
         }
     }
 }

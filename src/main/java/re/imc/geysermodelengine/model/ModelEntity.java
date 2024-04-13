@@ -1,13 +1,17 @@
 package re.imc.geysermodelengine.model;
 
 import com.google.common.collect.Sets;
+import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
 import java.util.HashMap;
@@ -24,6 +28,7 @@ public class ModelEntity {
     public static Map<Integer, ModelEntity> MODEL_ENTITIES = new ConcurrentHashMap<>();
 
     private LivingEntity entity;
+    private BukkitEntity controllerEntity;
 
     private final Set<Player> viewers = Sets.newConcurrentHashSet();
 
@@ -42,14 +47,28 @@ public class ModelEntity {
     }
 
     public void teleportToModel() {
-        entity.teleportAsync(modeledEntity.getBase().getLocation());
+        Location location = modeledEntity.getBase().getLocation();
+        /*
+        location.setPitch(modeledEntity.getXHeadRot());
+        location.setYaw(modeledEntity.getYHeadRot());
+        for (Player viewer : viewers) {
+            viewer.sendActionBar("X:" + modeledEntity.getXHeadRot() + ", Y:" + modeledEntity.getYHeadRot());
+        }
+         */
+
+        entity.teleportAsync(location);
+        if (modeledEntity.getBase() instanceof BukkitEntity bukkitEntity && bukkitEntity.getOriginal() instanceof LivingEntity livingEntity) {
+            controllerEntity.getLookController().setHeadYaw(livingEntity.getEyeLocation().getYaw());
+            controllerEntity.getLookController().setPitch(livingEntity.getEyeLocation().getPitch());
+            controllerEntity.getLookController().setBodyYaw(livingEntity.getBodyYaw());
+        }
+
     }
     public static ModelEntity create(ModeledEntity entity, ActiveModel model) {
         ModelEntity modelEntity = new ModelEntity(entity, model);
         int id = entity.getBase().getEntityId();
         Map<ActiveModel, ModelEntity> map = ENTITIES.computeIfAbsent(id, k -> new HashMap<>());
         map.put(model, modelEntity);
-        ENTITIES.put(id, map);
 
         return modelEntity;
     }
@@ -60,6 +79,7 @@ public class ModelEntity {
         ModelEntity model = this;
         int id = entity.getEntityId();
         MODEL_ENTITIES.put(id, model);
+        controllerEntity = new BukkitEntity(entity);
         return entity;
     }
 

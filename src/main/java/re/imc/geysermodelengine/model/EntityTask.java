@@ -3,7 +3,6 @@ package re.imc.geysermodelengine.model;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
-import com.ticxo.modelengine.api.entity.Hitbox;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
@@ -19,7 +18,6 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +31,7 @@ public class EntityTask {
     ModelEntity model;
 
     int tick = 0;
+    int syncTick = 0;
 
     AtomicInteger animationCooldown = new AtomicInteger(0);
     AtomicInteger currentAnimationPriority = new AtomicInteger(0);
@@ -53,9 +52,23 @@ public class EntityTask {
     }
 
     public void runSync() {
+
+        syncTick ++;
+        if (syncTick > 400) {
+            syncTick = 0;
+        }
+
+        if (syncTick % 5 == 0) {
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
+                    onlinePlayer.hideEntity(GeyserModelEngine.getInstance(), model.getEntity());
+                }
+            }
+        }
         if (model.getEntity().isDead()) {
             model.spawnEntity();
         }
+
         model.getEntity().setVisualFire(false);
         model.teleportToModel();
     }
@@ -95,9 +108,8 @@ public class EntityTask {
         if (tick > 1 && tick % 5 == 0) {
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-                    onlinePlayer.hideEntity(GeyserModelEngine.getInstance(), entity);
-                } else {
+                if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
+
                     if (canSee(onlinePlayer, model.getEntity())) {
 
                         if (!viewers.contains(onlinePlayer)) {

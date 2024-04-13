@@ -8,14 +8,11 @@ import com.ticxo.modelengine.api.events.RemoveModelEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
@@ -34,6 +31,7 @@ public class ModelListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
+
         Bukkit.getScheduler().runTask(GeyserModelEngine.getInstance(), () -> {
             ModelEntity.create(event.getTarget(), event.getModel());
         });
@@ -64,7 +62,11 @@ public class ModelListener implements Listener {
 
     @EventHandler
     public void onAnimationPlay(AnimationPlayEvent event) {
-        ModelEntity model = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId()).get(event.getModel());
+        Map<ActiveModel, ModelEntity> map = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId());
+        if (map == null) {
+            return;
+        }
+        ModelEntity model = map.get(event.getModel());
 
         if (model != null) {
             EntityTask task = model.getTask();
