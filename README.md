@@ -16,7 +16,7 @@
 
 下载完后，将GeyserModelEngine放入插件文件夹
 
-把geyserutils-spigot/vc/bc放入插件文件夹
+把geyserutils-spigot/velocity/bungeecord放入插件文件夹
 
 将geyserutils-geyser放入geyser的扩展文件夹，这时就安装好了
 
@@ -38,9 +38,9 @@
 
 # 安装模型
 
-打开“plugins/Geyser-Spigot/extensions”文件夹创建一个文件夹名为“geyserutils”，接着再往里创建一个文件夹名为“skins”
+打开Geyser的`extensions`文件夹创建一个文件夹名为`geyserutils`，接着再往里创建一个文件夹名为`skins`
 
-这时我们再创建一个文件夹名为你模型的id。比如我使用的测试模型的id是"parry_knight"，就创建"parry_knight"文件夹
+这时我们再创建一个文件夹名为你模型的id。比如我使用的测试模型的id是`parry_knight`，就创建`parry_knight`文件夹
 
 最后将模型和纹理贴图放进去
 
