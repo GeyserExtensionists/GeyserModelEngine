@@ -1,19 +1,19 @@
 package re.imc.geysermodelengine.model;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.Sets;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -25,11 +25,11 @@ public class ModelEntity {
 
     private LivingEntity entity;
 
-    private Set<Player> viewers = Sets.newConcurrentHashSet();
+    private final Set<Player> viewers = Sets.newConcurrentHashSet();
 
-    private ModeledEntity modeledEntity;
+    private final ModeledEntity modeledEntity;
 
-    private ActiveModel activeModel;
+    private final ActiveModel activeModel;
 
     private EntityTask task;
 

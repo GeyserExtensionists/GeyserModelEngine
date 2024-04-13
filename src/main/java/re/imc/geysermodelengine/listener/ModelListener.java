@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
@@ -80,9 +82,9 @@ public class ModelListener implements Listener {
             }
             event.getEntity().removeMetadata("show_damage", GeyserModelEngine.getInstance());
 
-            if (model.getEntity() instanceof Damageable damageable) {
+            if (!model.getEntity().isDead()) {
                 event.setDamage(0);
-                damageable.setHealth(damageable.getMaxHealth());
+                model.getEntity().setHealth(model.getEntity().getMaxHealth());
             }
         }
     }
@@ -92,9 +94,9 @@ public class ModelListener implements Listener {
         Map<ActiveModel, ModelEntity> model = ModelEntity.ENTITIES.get(event.getEntity().getEntityId());
         if (model != null) {
             for (Map.Entry<ActiveModel, ModelEntity> entry : model.entrySet()) {
-                if (entry.getValue().getEntity() instanceof Damageable damageable) {
-                    damageable.setMetadata("show_damage", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
-                    damageable.damage(0);
+                if (!entry.getValue().getEntity().isDead()) {
+                    entry.getValue().getEntity().setMetadata("show_damage", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
+                    entry.getValue().getEntity().damage(0);
                 }
             }
 
@@ -124,11 +126,11 @@ public class ModelListener implements Listener {
         if (model != null) {
 
             event.setCancelled(true);
-            if (model.getEntity() instanceof Damageable damageable) {
-                damageable.setHealth(damageable.getMaxHealth());
-            }
+            model.getEntity().setHealth(model.getEntity().getMaxHealth());
+
         }
     }
+
 
     @EventHandler
     public void onAnimationEnd(AnimationEndEvent event) {
