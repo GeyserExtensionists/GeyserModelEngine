@@ -18,9 +18,9 @@
 
 [LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
 
-下载完后，将'GeyserModelEngine''LibsDisguises'放入插件文件夹
+下载完后，将`GeyserModelEngine``LibsDisguises`放入插件文件夹
 
-根据服务端版本把'geyserutils-spigot'/'velocity'/'bungeecord'放入插件文件夹
+根据服务端版本把`geyserutils-spigot`/`velocity`/`bungeecord`放入插件文件夹
 
 将`geyserutils-geyser`放入geyser的扩展文件夹，这时就安装好了
 
@@ -60,7 +60,7 @@
 
 将模型的动画导出json格式
 
-将动画文件名称修改为"animation.模型ID.json"
+将动画文件名称修改为`animation.模型ID.json`
 
 之后放入你的资源包
 
@@ -68,17 +68,17 @@
 
 现在我们打开动画文件开始修改动画文件里的动画id
 
-原本所有的动作id基本都是idle、walk这样的，现在你得给他加个前缀
+原本所有的`动作id`基本都是`idle`、`walk`这样的，现在你得给他加个前缀
 
-例如：idle
+例如：`idle`
 
-改为：animation.模型ID.idle
+改为：`animation.模型ID.idle`
 
-示例：animation.parry_knight.idle
+示例：`animation.parry_knight.idle`
 
 改完后修改资源包版本号或者uuid，打包资源包
 
-重载Geyser或者重启服务器
+最后一步，重载Geyser或者重启服务器
 
 # 完结
 
