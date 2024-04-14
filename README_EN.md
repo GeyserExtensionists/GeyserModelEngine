@@ -49,40 +49,27 @@ Your file path should look like this: `plugins/Geyser-Spigot/extensions/geyserut
 Finally put the model and texture map in
 
 <img src="docimg/example.jpg" width="500">
-mengyi
 
 now restart your server to generated MEG4 model , your BE player should be able to see the model normally.
 
-这时候重启服务器生成MEG4模型，你的BE玩家应该能正常看到模型了
+restart you server,summon model.We should be able to see the model normally
 
 after that , it's about model's animation's part :
 
-#model animation
+# model animation
 
-接下来就是有关模型动画的部分了
-# 模型动画
 
 let model's animation export to json format
 
-将模型的动画导出json格式
-
 named the animation file by 'animation.modelID.json'
 
-将动画文件名称修改为`animation.模型ID.json`
-
 then put it into your resource pack
-
-之后放入你的资源包
 
 <img src="docimg/example1.jpg" width="500">
 
 now let us open the animation file to starting change the animaiton ID
 
-现在我们打开动画文件开始修改动画文件里的动画id
-
 originally , all the 'action ID' were basic named like  'idle' , 'walk' , but now you should add a prefix
-
-原本所有的`动作id`基本都是`idle`、`walk`这样的，现在你得给他加个前缀
 
 such as :
 
