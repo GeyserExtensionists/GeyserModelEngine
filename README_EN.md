@@ -32,7 +32,7 @@ Open the newly converted model and delete the extra hitbox (if not, leave it alo
 
 <img src="docimg/hitbox.png" width="500">
 
-Otherwise BE players will see this hixbox ox
+Otherwise BE players will see this hixbox
 
 <img src="docimg/hitbox1.jpg" width="500">
 
