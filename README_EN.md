@@ -75,7 +75,7 @@ such as :
 
 'idle' to 'animation.modelID.idle'
 
-example : 'animation.parry knight.idle'
+example : 'animation.parry_knight.idle'
 
 after changed the resource pack 's version or uuid , pack the resource pack .
 
@@ -87,35 +87,12 @@ Congratulations ! now you exactly know how to use , if you still can't finish ye
 
 well , maybe that's my problem = D
 
-#restrictions
+# restrictions
 
 ,,,,,a lot
 
 # problems
 
-### why 
+### why I have generrated the model , but I got a steve ?
 
-
-例如：`idle`
-
-改为：`animation.模型ID.idle`
-
-示例：`animation.parry_knight.idle`
-
-改完后修改资源包版本号或者uuid，打包资源包
-
-最后一步，重载Geyser或者重启服务器
-
-# 完结
-
-恭喜你现在学会如何使用了，如果还不会V我五毛帮你解决
-
-# 当前限制
-
-用了就知道, 一堆
-
-# 常见问题
-
-### 为什么生成模型后会变成史蒂夫?
-
-你没好好读怎么安装模型
+I guess that you have not wholly read this file.. 
