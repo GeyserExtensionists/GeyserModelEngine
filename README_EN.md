@@ -10,7 +10,7 @@ it can let you Geyser server support MEG4
 
 # how to install
 
-根据服务端版本下载以下插件
+download this plugin
 
 [GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
 
@@ -18,10 +18,11 @@ it can let you Geyser server support MEG4
 
 [LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
 
-下载完后，将GeyserModelEngine放入插件文件夹
+After downloading, place GeyserModelEngine in the plugins folder
 
-把geyserutils-spigot/velocity/bungeecord放入插件文件夹
+The `geyserutils-spigot`/`velocity`/`bungeecord` into the plugins folder
 
-将geyserutils-geyser放入geyser的扩展文件夹，这时就安装好了
+Put `geyserutils-geyser` into geyser extensions folder, and the installation is complete
 
-当然，先别急着用，现在你还得接着读下去
+# convert model
+
