@@ -59,6 +59,7 @@ public class EntityTask {
         }
 
         if (syncTick % 5 == 0) {
+
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
                     onlinePlayer.hideEntity(GeyserModelEngine.getInstance(), model.getEntity());
@@ -78,16 +79,24 @@ public class EntityTask {
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
         if (modeledEntity.isDestroyed() || !modeledEntity.getBase().isAlive()) {
-            if (!modeledEntity.isDestroyed() && !modeledEntity.getBase().isAlive()) {
+            if (!modeledEntity.getBase().isAlive()) {
 
-                String animation = hasAnimation("death") ? "death" : "idle";
-                 new BukkitRunnable() {
-                     @Override
-                     public void run() {
-                         entity.remove();
-                     }
-                 }.runTaskLater(GeyserModelEngine.getInstance(), Math.max(playAnimation(animation, 99) - 1, 0));
-
+                if (!modeledEntity.isDestroyed()) {
+                    String animation = hasAnimation("death") ? "death" : "idle";
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            entity.remove();
+                        }
+                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99) - 1, 0), 200));
+                } else {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            entity.remove();
+                        }
+                    }.runTask(GeyserModelEngine.getInstance());
+                }
             }
             ENTITIES.remove(modeledEntity.getBase().getEntityId());
             MODEL_ENTITIES.remove(entity.getEntityId());
@@ -190,8 +199,11 @@ public class EntityTask {
     }
 
     public void sendEntityData(Player player, int delay) {
+        GeyserModelEngine.getInstance().getLogger()
+                        .info("SEND ENTITY");
+        PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
-            PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
+            // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
             playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping);
             sendHitBox(player);
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
@@ -363,6 +375,8 @@ public class EntityTask {
     }
 
     public void run(GeyserModelEngine instance, int i) {
+
+        sendHitBoxToAll();
         syncTask = new BukkitRunnable() {
             @Override
             public void run() {

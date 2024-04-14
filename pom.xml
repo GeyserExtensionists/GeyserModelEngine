@@ -112,7 +112,7 @@
         <dependency>
             <groupId>me.zimzaza4</groupId>
             <artifactId>geyserutils-spigot</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/geyserutils-spigot-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
