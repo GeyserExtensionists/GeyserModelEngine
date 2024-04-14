@@ -44,7 +44,9 @@ Open Geyser's extensions folder and create a folder called `geyserutils`, and th
 
 Now let's create a folder called the id of your model.  For example, if the id of the test model I use is `parry_knight`, I create a `parry_knight` folder
 
-Your file path should look like this: `plugins/Geyser-Spigot/extensions/geyserutils/skins/模型id/`
+Your file path should look like this: 
+
+`plugins/Geyser-Spigot/extensions/geyserutils/skins/modelid/`
 
 Finally put the model and texture map in
 
@@ -57,7 +59,6 @@ restart you server,summon model.We should be able to see the model normally
 after that , it's about model's animation's part :
 
 # model animation
-
 
 let model's animation export to json format
 
