@@ -2,6 +2,8 @@
 
 > GitHub仓库：https://github.com/zimzaza4/GeyserModelEngine
 
+[English](README_EN.md) | [简体中文](README.md)
+
 # 这是个什么玩意
 
 能让你Geyser服务器支持MEG4
@@ -10,13 +12,15 @@
 
 根据服务端版本下载以下插件
 
-[geyserUtils](https://github.com/zimzaza4/GeyserUtils)
+[GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
 
 [GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
 
+[LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
+
 下载完后，将GeyserModelEngine放入插件文件夹
 
-把geyserutils-spigot/vc/bc放入插件文件夹
+把geyserutils-spigot/velocity/bungeecord放入插件文件夹
 
 将geyserutils-geyser放入geyser的扩展文件夹，这时就安装好了
 
@@ -38,9 +42,9 @@
 
 # 安装模型
 
-打开“plugins/Geyser-Spigot/extensions”文件夹创建一个文件夹名为“geyserutils”，接着再往里创建一个文件夹名为“skins”
+打开Geyser的`extensions`文件夹创建一个文件夹名为`geyserutils`，接着再往里创建一个文件夹名为`skins`
 
-这时我们再创建一个文件夹名为你模型的id。比如我使用的测试模型的id是"parry_knight"，就创建"parry_knight"文件夹
+这时我们再创建一个文件夹名为你模型的id。比如我使用的测试模型的id是`parry_knight`，就创建`parry_knight`文件夹
 
 最后将模型和纹理贴图放进去
 
@@ -81,8 +85,8 @@
 
 # 当前限制
 
-aaaa
+用了就知道, 一堆
 
 # 常见问题
 
-aaaaaaaaaaaa
+同上
