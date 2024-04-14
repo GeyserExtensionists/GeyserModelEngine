@@ -61,7 +61,7 @@ after that , it's about model's animation's part :
 
 let model's animation export to json format
 
-named the animation file by 'animation.modelID.json'
+named the animation file by `animation.modelID.json`
 
 then put it into your resource pack
 
@@ -69,15 +69,15 @@ then put it into your resource pack
 
 now let us open the animation file to starting change the animaiton ID
 
-originally , all the 'action ID' were basic named like  'idle' , 'walk' , but now you should add a prefix
+originally , all the `animationID` were basic named like  `idle` , `walk` , but now you should add a prefix
 
 such as :
 
-'idle' to 'animation.modelID.idle'
+`idle` to `animation.modelID.idle`
 
-example : 'animation.parry_knight.idle'
+example : `animation.parry_knight.idle`
 
-after changed the resource pack 's version or uuid , pack the resource pack .
+after changed the resource pack 's version or uuid , pack the resource pack.
 
 finally , restart the Geyser or server
 
