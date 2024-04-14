@@ -46,9 +46,11 @@
 
 这时我们再创建一个文件夹名为你模型的id。比如我使用的测试模型的id是`parry_knight`，就创建`parry_knight`文件夹
 
+创建完后你的文件路径应该是这样 `plugins/Geyser-Spigot/extensions/geyserutils/skins/模型id/`
+
 最后将模型和纹理贴图放进去
 
-`plugins/Geyser-Spigot/extensions/geyserutils/skins/模型id/`
+tips: 每个模型都要有独立的模型文件夹
 
 <img src="docimg/example.jpg" width="500">
 
