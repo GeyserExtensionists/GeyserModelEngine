@@ -10,19 +10,21 @@
 
 # 如何安装
 
-Download the plugins to you server
+根据服务端版本下载以下插件
 
-[GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
+GeyserUtils
 
-[GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
+GeyserModelEngine
 
-[LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
+LibsDisguises
 
-place `GeyserModelEngine` in your plugins folder
+下载完后，将GeyserModelEngine放入插件文件夹
 
-According to the server version `geyserutils-spigot`/`velocity`/`bungeecord` into the plugins folder
+把geyserutils-spigot/velocity/bungeecord放入插件文件夹
 
 将geyserutils-geyser放入geyser的扩展文件夹，这时就安装好了
+
+当然，先别急着用，现在你还得接着读下去
 
 # 转换模型
 
