@@ -33,21 +33,30 @@ public class AddEntityPacketListener extends PacketAdapter {
         if (model != null) {
             if (FloodgateApi.getInstance().isFloodgatePlayer(event.getPlayer().getUniqueId())) {
                 if (packet.getMeta("delayed").isPresent()) {
+                    System.out.println("SENT");
                     return;
                 }
+
                 EntityTask task = model.getTask();
-                if (task == null) {
+                int delay = 1;
+                boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(event.getPlayer()) != null;
+                if (firstJoined) {
+                    delay = GeyserModelEngine.getInstance().getJoinSendDelay();
+                }
+                if (task == null || firstJoined) {
                     Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> {
                         model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
-                    }, 1);
+                    }, delay);
                 } else {
                     task.sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
                 }
+
                 event.setCancelled(true);
+
                 Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> {
                     packet.setMeta("delayed", 1);
                     ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet);
-                }, 2);
+                }, delay + 2);
             } else {
                 event.setCancelled(true);
             }

@@ -199,8 +199,7 @@ public class EntityTask {
     }
 
     public void sendEntityData(Player player, int delay) {
-        GeyserModelEngine.getInstance().getLogger()
-                        .info("SEND ENTITY");
+        System.out.println("SEND CUSTOM ENTITY");
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());

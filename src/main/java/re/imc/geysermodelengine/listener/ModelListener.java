@@ -62,6 +62,9 @@ public class ModelListener implements Listener {
 
     @EventHandler
     public void onAnimationPlay(AnimationPlayEvent event) {
+        if (event.getModel().getModeledEntity() == null) {
+            return;
+        }
         Map<ActiveModel, ModelEntity> map = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId());
         if (map == null) {
             return;
