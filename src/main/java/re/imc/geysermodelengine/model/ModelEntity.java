@@ -5,26 +5,14 @@ import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -82,22 +70,11 @@ public class ModelEntity {
 
     public LivingEntity spawnEntity() {
         ModelEntity model = this;
-        int lastEntityId = ReflectionManager.getNewEntityId();
+        // int lastEntityId = ReflectionManager.getNewEntityId();
         // System.out.println("RID:" + entityId);
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-                PlayerUtils.setCustomEntity(onlinePlayer, lastEntityId + 1, "modelengine:" + model.getActiveModel().getBlueprint().getName());
-
-            }
-        }
-
+        GeyserModelEngine.getInstance().setSpawningModelEntity(true);
+        GeyserModelEngine.getInstance().setCurrentModel(model);
         entity = (LivingEntity) modeledEntity.getBase().getLocation().getWorld().spawnEntity(modeledEntity.getBase().getLocation(), GeyserModelEngine.getInstance().getModelEntityType());
-
-        int id = entity.getEntityId();
-
-        MODEL_ENTITIES.put(id, model);
-        applyFeatures(entity, "model." + activeModel.getBlueprint().getName());
-
         controllerEntity = new BukkitEntity(entity);
         return entity;
     }
@@ -108,7 +85,7 @@ public class ModelEntity {
     }
 
 
-    private void applyFeatures(LivingEntity display, String name) {
+    public void applyFeatures(LivingEntity display, String name) {
         display.setGravity(false);
         display.setMaxHealth(2048);
         display.setHealth(2048);

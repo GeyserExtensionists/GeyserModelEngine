@@ -88,7 +88,7 @@ public class EntityTask {
                         public void run() {
                             entity.remove();
                         }
-                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99) - 1, 0), 200));
+                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99, 50f) - 1, 0), 200));
                 } else {
                     new BukkitRunnable() {
                         @Override
@@ -199,34 +199,32 @@ public class EntityTask {
     }
 
     public void sendEntityData(Player player, int delay) {
-        System.out.println("SEND CUSTOM ENTITY");
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
-            playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping);
+            playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping, 0f);
             sendHitBox(player);
+            sendScale(player);
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
                 sendHitBox(player);
             }, 8);
         }, delay);
     }
+
+    public void sendScale(Player player) {
+        // todo?
+    }
+
     public void sendHitBoxToAll() {
         for (Player viewer : model.getViewers()) {
-            if (model.getModeledEntity().getBase() instanceof BukkitEntity bukkitEntity) {
-                @NotNull BoundingBox box = bukkitEntity.getOriginal().getBoundingBox();
-                PlayerUtils.sendCustomHitBox(viewer, model.getEntity(), (float) box.getHeight(), (float) ((box.getWidthX() + box.getWidthZ()) / 2f));
-                // huh i dont know how to deal with width
-            }
+            PlayerUtils.sendCustomHitBox(viewer, model.getEntity(), 0.01f, 0.01f);
         }
 
     }
 
     public void sendHitBox(Player viewer) {
-        if (model.getModeledEntity().getBase() instanceof BukkitEntity bukkitEntity) {
-            @NotNull BoundingBox box = bukkitEntity.getOriginal().getBoundingBox();
-            PlayerUtils.sendCustomHitBox(viewer, model.getEntity(), (float) box.getHeight(), (float) ((box.getWidthX() + box.getWidthZ()) / 2f));
-            // huh i dont know how to deal with width
-        }
+        PlayerUtils.sendCustomHitBox(viewer, model.getEntity(), 0.01f, 0.01f);
+
     }
 
     public boolean hasAnimation(String animation) {
@@ -234,7 +232,11 @@ public class EntityTask {
         BlueprintAnimation animationProperty = activeModel.getBlueprint().getAnimations().get(animation);
         return !(animationProperty == null);
     }
+
     public int playAnimation(String animation, int p) {
+        return playAnimation(animation, p, 5f);
+    }
+    public int playAnimation(String animation, int p, float blendTime) {
 
         ActiveModel activeModel = model.getActiveModel();
 
@@ -282,9 +284,9 @@ public class EntityTask {
 
             animationCooldown.set((int) (animationProperty.getLength() * 20));
             if (delaySend) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () ->  playBedrockAnimation("animation." + activeModel.getBlueprint().getName() + "." + animationProperty.getName(), looping), 2);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () ->  playBedrockAnimation("animation." + activeModel.getBlueprint().getName() + "." + animationProperty.getName(), looping, blendTime), 2);
             } else {
-                playBedrockAnimation(id, looping);
+                playBedrockAnimation(id, looping, blendTime);
             }
         }
         return animationCooldown.get();
@@ -319,7 +321,7 @@ public class EntityTask {
 
 
     */
-    private void playBedrockAnimation(String animationId, boolean loop) {
+    private void playBedrockAnimation(String animationId, boolean loop, float blendTime) {
 
         // model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
 
@@ -328,7 +330,7 @@ public class EntityTask {
 
         Animation.AnimationBuilder animation = Animation.builder()
                 .animation(animationId)
-                .blendOutTime(0f)
+                .blendOutTime(blendTime)
                 .controller("controller.animation.armor_stand.wiggle");
 
         if (loop) {

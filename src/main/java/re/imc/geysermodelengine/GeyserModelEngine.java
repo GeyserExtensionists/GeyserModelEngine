@@ -7,6 +7,7 @@ import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -41,6 +42,16 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private Cache<Player, Boolean> joinedPlayer;
+
+    @Getter
+    @Setter
+    private boolean spawningModelEntity = false;
+
+
+    @Getter
+    @Setter
+    private ModelEntity currentModel = null;
+
 
     @Getter
     private int joinSendDelay;

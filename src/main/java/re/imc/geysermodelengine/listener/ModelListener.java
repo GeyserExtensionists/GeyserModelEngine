@@ -7,16 +7,21 @@ import com.ticxo.modelengine.api.events.AnimationPlayEvent;
 import com.ticxo.modelengine.api.events.RemoveModelEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.model.EntityTask;
 import re.imc.geysermodelengine.model.ModelEntity;
@@ -30,6 +35,7 @@ public class ModelListener implements Listener {
     public void onAddModel(AddModelEvent event) {
         if (event.isCancelled()) {
             return;
+
         }
 
         Bukkit.getScheduler().runTask(GeyserModelEngine.getInstance(), () -> {
@@ -37,10 +43,11 @@ public class ModelListener implements Listener {
         });
 
     }
+
     @EventHandler
     public void onRemoveModel(RemoveModelEvent event) {
         event.getTarget().getBase();
-
+        // todo?
     }
 
     @EventHandler
@@ -90,6 +97,28 @@ public class ModelListener implements Listener {
             if (!model.getEntity().isDead()) {
                 event.setDamage(0);
                 model.getEntity().setHealth(model.getEntity().getMaxHealth());
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onModelEntitySpawn(EntitySpawnEvent event) {
+        if (GeyserModelEngine.getInstance().isSpawningModelEntity() && event.getEntity() instanceof LivingEntity entity) {
+            if (event.isCancelled()) {
+                event.setCancelled(false);
+            }
+            ModelEntity model = GeyserModelEngine.getInstance().getCurrentModel();
+            int id = entity.getEntityId();
+            ActiveModel activeModel = model.getActiveModel();
+            ModelEntity.MODEL_ENTITIES.put(id, model);
+            model.applyFeatures(entity, "model." + activeModel.getBlueprint().getName());
+            GeyserModelEngine.getInstance().setCurrentModel(null);
+            GeyserModelEngine.getInstance().setSpawningModelEntity(false);
+
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
+                    PlayerUtils.setCustomEntity(onlinePlayer, entity.getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
+                }
             }
         }
     }
