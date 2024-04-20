@@ -66,9 +66,11 @@ public class EntityTask {
                 }
             }
         }
-        if (model.getEntity().isDead() && model.getModeledEntity().getBase().isAlive()) {
+
+        if (model.getEntity().isDead() && model.getModeledEntity().getBase().isAlive() && !model.getActiveModel().isRemoved()) {
             model.spawnEntity();
         }
+
 
         model.getEntity().setVisualFire(false);
         model.teleportToModel();
@@ -78,17 +80,17 @@ public class EntityTask {
         Set<Player> viewers = model.getViewers();
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
-        if (modeledEntity.isDestroyed() || !modeledEntity.getBase().isAlive()) {
+        if (activeModel.isRemoved() || !modeledEntity.getBase().isAlive()) {
             if (!modeledEntity.getBase().isAlive()) {
 
-                if (!modeledEntity.isDestroyed()) {
+                if (!activeModel.isRemoved()) {
                     String animation = hasAnimation("death") ? "death" : "idle";
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             entity.remove();
                         }
-                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99, 5f) - 1, 0), 200));
+                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 999, 0f) - 3, 0), 200));
                 } else {
                     new BukkitRunnable() {
                         @Override
@@ -199,7 +201,8 @@ public class EntityTask {
     }
 
     public void sendEntityData(Player player, int delay) {
-        PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
+        // System.out.println("TYPE: " + "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
+        PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
             playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping, 0f);
@@ -234,7 +237,7 @@ public class EntityTask {
     }
 
     public int playAnimation(String animation, int p) {
-        return playAnimation(animation, p, 0f);
+        return playAnimation(animation, p, 0);
     }
     public int playAnimation(String animation, int p, float blendTime) {
 
@@ -284,7 +287,7 @@ public class EntityTask {
 
             animationCooldown.set((int) (animationProperty.getLength() * 20));
             if (delaySend) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () ->  playBedrockAnimation("animation." + activeModel.getBlueprint().getName() + "." + animationProperty.getName(), looping, blendTime), 2);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () ->  playBedrockAnimation("animation." + activeModel.getBlueprint().getName() + "." + animationProperty.getName(), looping, blendTime), 0);
             } else {
                 playBedrockAnimation(id, looping, blendTime);
             }

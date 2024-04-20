@@ -36,8 +36,12 @@ public class AddEntityPacketListener extends PacketAdapter {
         StructureModifier<Entity> modifier = packet.getEntityModifier(event);
         Entity entity = modifier.readSafely(0);
 
+        if (entity == null) {
+            return;
+        }
         boolean isBedrock = FloodgateApi.getInstance().isFloodgatePlayer(event.getPlayer().getUniqueId());
         ModelEntity model = ModelEntity.MODEL_ENTITIES.get(entity.getEntityId());
+
 
         if (model != null) {
             if (isBedrock) {

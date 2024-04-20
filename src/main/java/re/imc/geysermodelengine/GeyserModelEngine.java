@@ -15,7 +15,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import re.imc.geysermodelengine.listener.AddEntityPacketListener;
-import re.imc.geysermodelengine.listener.InteractPacketListener;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.model.ModelEntity;
 
@@ -70,7 +69,6 @@ public final class GeyserModelEngine extends JavaPlugin {
                     .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
         }
         instance = this;
-        ProtocolLibrary.getProtocolManager().addPacketListener(new InteractPacketListener());
         ProtocolLibrary.getProtocolManager().addPacketListener(new AddEntityPacketListener());
 
         Bukkit.getPluginManager().registerEvents(new ModelListener(), this);

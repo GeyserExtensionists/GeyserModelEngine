@@ -35,7 +35,10 @@ public class ModelListener implements Listener {
     public void onAddModel(AddModelEvent event) {
         if (event.isCancelled()) {
             return;
+        }
 
+        if (event.getTarget().getModel(event.getModel().getBlueprint().getName()).isPresent()) {
+            return;
         }
 
         Bukkit.getScheduler().runTask(GeyserModelEngine.getInstance(), () -> {
@@ -117,7 +120,7 @@ public class ModelListener implements Listener {
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-                    PlayerUtils.setCustomEntity(onlinePlayer, entity.getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName());
+                    PlayerUtils.setCustomEntity(onlinePlayer, entity.getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
                 }
             }
         }
