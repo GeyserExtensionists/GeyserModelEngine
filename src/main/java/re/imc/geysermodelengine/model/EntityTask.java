@@ -66,7 +66,7 @@ public class EntityTask {
                 }
             }
         }
-        if (model.getEntity().isDead()) {
+        if (model.getEntity().isDead() && model.getModeledEntity().getBase().isAlive()) {
             model.spawnEntity();
         }
 
@@ -88,7 +88,7 @@ public class EntityTask {
                         public void run() {
                             entity.remove();
                         }
-                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99, 50f) - 1, 0), 200));
+                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 99, 5f) - 1, 0), 200));
                 } else {
                     new BukkitRunnable() {
                         @Override
@@ -234,7 +234,7 @@ public class EntityTask {
     }
 
     public int playAnimation(String animation, int p) {
-        return playAnimation(animation, p, 5f);
+        return playAnimation(animation, p, 0f);
     }
     public int playAnimation(String animation, int p, float blendTime) {
 
