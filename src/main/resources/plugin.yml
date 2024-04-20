@@ -4,5 +4,4 @@ main: re.imc.geysermodelengine.GeyserModelEngine
 api-version: '1.19'
 depend:
   - ModelEngine
-  - LibsDisguises
   - floodgate
