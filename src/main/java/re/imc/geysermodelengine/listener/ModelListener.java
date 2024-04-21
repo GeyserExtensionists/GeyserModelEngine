@@ -5,16 +5,19 @@ import com.ticxo.modelengine.api.events.AddModelEvent;
 import com.ticxo.modelengine.api.events.AnimationEndEvent;
 import com.ticxo.modelengine.api.events.AnimationPlayEvent;
 import com.ticxo.modelengine.api.events.RemoveModelEvent;
+import com.ticxo.modelengine.api.generator.blueprint.ModelBlueprint;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -28,6 +31,8 @@ import re.imc.geysermodelengine.model.ModelEntity;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ModelListener implements Listener {
 
@@ -37,9 +42,9 @@ public class ModelListener implements Listener {
             return;
         }
 
-        if (event.getTarget().getModel(event.getModel().getBlueprint().getName()).isPresent()) {
-            return;
-        }
+
+        UUID entityId = event.getTarget().getBase().getUUID();
+        ModelBlueprint blueprint = event.getModel().getBlueprint();
 
         Bukkit.getScheduler().runTask(GeyserModelEngine.getInstance(), () -> {
             ModelEntity.create(event.getTarget(), event.getModel());
@@ -47,10 +52,9 @@ public class ModelListener implements Listener {
 
     }
 
+
     @EventHandler
     public void onRemoveModel(RemoveModelEvent event) {
-        event.getTarget().getBase();
-        // todo?
     }
 
     @EventHandler

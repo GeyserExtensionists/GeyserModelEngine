@@ -17,6 +17,7 @@ import org.bukkit.util.BoundingBox;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.listener.ModelListener;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,14 +84,13 @@ public class EntityTask {
         if (activeModel.isRemoved() || !modeledEntity.getBase().isAlive()) {
             if (!modeledEntity.getBase().isAlive()) {
 
-                if (!activeModel.isRemoved()) {
-                    String animation = hasAnimation("death") ? "death" : "idle";
+                if (!activeModel.isRemoved() && hasAnimation("death")) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             entity.remove();
                         }
-                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation(animation, 999, 0f) - 3, 0), 200));
+                    }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation("death", 999, 5f, true) - 3, 0), 200));
                 } else {
                     new BukkitRunnable() {
                         @Override
@@ -154,6 +154,7 @@ public class EntityTask {
                     playAnimation("idle", 0);
                 }
             }
+
             if (tick % 40 == 0) {
 
                 for (Player viewer : Set.copyOf(viewers)) {
@@ -205,7 +206,9 @@ public class EntityTask {
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
-            playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping, 0f);
+            if (looping) {
+                playBedrockAnimation("animation." + model.getActiveModel().getBlueprint().getName() + "." + lastAnimation, looping, 0f);
+            }
             sendHitBox(player);
             sendScale(player);
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
@@ -237,9 +240,9 @@ public class EntityTask {
     }
 
     public int playAnimation(String animation, int p) {
-        return playAnimation(animation, p, 0);
+        return playAnimation(animation, p, 0, false);
     }
-    public int playAnimation(String animation, int p, float blendTime) {
+    public int playAnimation(String animation, int p, float blendTime, boolean forceLoop) {
 
         ActiveModel activeModel = model.getActiveModel();
 
@@ -264,7 +267,7 @@ public class EntityTask {
             firstAnimation = false;
         }
         boolean lastLoopState = looping;
-        looping = animationProperty.getLoopMode() == BlueprintAnimation.LoopMode.LOOP;;
+        looping = forceLoop || animationProperty.getLoopMode() == BlueprintAnimation.LoopMode.LOOP;;
 
         if (lastAnimation.equals(animation)) {
             if (looping) {
@@ -272,6 +275,7 @@ public class EntityTask {
                 play = false;
             }
         }
+
 
 
         if (play) {
@@ -326,15 +330,14 @@ public class EntityTask {
     */
     private void playBedrockAnimation(String animationId, boolean loop, float blendTime) {
 
-        // model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
+        model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
 
         Entity entity = model.getEntity();
         Set<Player> viewers = model.getViewers();
 
         Animation.AnimationBuilder animation = Animation.builder()
                 .animation(animationId)
-                .blendOutTime(blendTime)
-                .controller("controller.animation.armor_stand.wiggle");
+                .blendOutTime(blendTime);
 
         if (loop) {
             animation.nextState(animationId);
