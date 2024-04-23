@@ -56,13 +56,13 @@
 
 <img src="docimg/example.jpg" width="500">
 
-tips: 每个模型都要有独立的模型文件夹
+> tips: 每个模型都要有独立的模型文件夹
 
 我们将模型、动画和纹理文件全部丢进这个文件夹
 
 <img src="docimg/example1.jpg" width="500">
 
-重启服务器，来到这个`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
+重启服务器，来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
 
 <img src="docimg/example2.jpg" width="500">
 
@@ -76,7 +76,7 @@ tips: 每个模型都要有独立的模型文件夹
 
 # 当前限制
 
-用了就知道, 一堆
+* 不支持多贴图
 
 # 常见问题
 
