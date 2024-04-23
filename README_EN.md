@@ -1,3 +1,7 @@
+### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
+### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
+### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
+
 # GeyserModelEngine
 
 > GitHub：https://github.com/zimzaza4/GeyserModelEngine
