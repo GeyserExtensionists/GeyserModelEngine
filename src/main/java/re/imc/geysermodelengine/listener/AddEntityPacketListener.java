@@ -46,6 +46,11 @@ public class AddEntityPacketListener extends PacketAdapter {
         if (model != null) {
             if (isBedrock) {
                 if (packet.getMeta("delayed").isPresent()) {
+                    if (model.getTask().isLooping()) {
+
+                        String lastAnimation = model.getTask().getLastAnimation();
+                        model.getTask().playBedrockAnimation(lastAnimation, Set.of(event.getPlayer()), true, 0f);
+                    }
                     return;
                 }
 
@@ -58,7 +63,7 @@ public class AddEntityPacketListener extends PacketAdapter {
                 if (task == null || firstJoined) {
                     Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> {
                         model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
-                    }, delay);
+                        }, delay);
                 } else {
                     task.sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
                 }
