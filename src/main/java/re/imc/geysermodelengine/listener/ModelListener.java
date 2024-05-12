@@ -7,6 +7,7 @@ import com.ticxo.modelengine.api.events.*;
 import com.ticxo.modelengine.api.generator.blueprint.ModelBlueprint;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.model.render.ModelRenderer;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -36,6 +37,10 @@ public class ModelListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAddModel(AddModelEvent event) {
         if (event.isCancelled()) {
+            return;
+        }
+
+        if (!GeyserModelEngine.getInstance().isInitialized()) {
             return;
         }
 
@@ -73,22 +78,6 @@ public class ModelListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onEntityLoad(EntitiesLoadEvent event) {
-        Bukkit.getScheduler()
-                .runTaskLater(GeyserModelEngine.getInstance(), () -> {
-                    for (Entity entity : event.getEntities()) {
-                        if (!ModelEntity.ENTITIES.containsKey(entity.getEntityId())) {
-                            ModeledEntity modeledEntity = ModelEngineAPI.getModeledEntity(entity);
-                            if (modeledEntity != null) {
-                                Optional<ActiveModel> model = modeledEntity.getModels().values().stream().findFirst();
-                                model.ifPresent(m -> ModelEntity.create(modeledEntity, m));
-                            }
-                        }
-                    }
-
-                }, 20);
-    }
 
     @EventHandler
     public void onAnimationPlay(AnimationPlayEvent event) {

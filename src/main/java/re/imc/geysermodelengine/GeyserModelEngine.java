@@ -4,7 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.wrappers.Pair;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Sets;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -22,10 +21,8 @@ import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.model.ModelEntity;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -68,6 +65,8 @@ public final class GeyserModelEngine extends JavaPlugin {
     @Getter
     private Map<Player, Pair<ActiveModel, Mount>> drivers = new ConcurrentHashMap<>();
 
+    @Getter
+    private boolean initialized = false;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -100,6 +99,7 @@ public final class GeyserModelEngine extends JavaPlugin {
                             }
                         }
                     }
+                    initialized = true;
 
                 }, 100);
     }

@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.bone.type.Mount;
 import org.geysermc.floodgate.api.FloodgateApi;
@@ -57,7 +58,7 @@ public class MountPacketListener extends PacketAdapter {
             if (seat != null) {
                 if (event.getPacket().getPlayerActions().read(0) == EnumWrappers.PlayerAction.START_SNEAKING) {
                     event.getPlayer().sendActionBar("leave");
-                    seat.getSecond().clearPassengers();
+                    ModelEngineAPI.getMountPairManager().tryDismount(event.getPlayer());
                 }
             }
         }

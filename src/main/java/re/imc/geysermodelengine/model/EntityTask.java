@@ -70,7 +70,7 @@ public class EntityTask {
         }
 
         if (!removed && model.getEntity().isDead() && model.getModeledEntity().getBase().isAlive() && !model.getActiveModel().isRemoved()) {
-            model.spawnEntity();
+            // model.spawnEntity();
         }
 
         model.getEntity().setVisualFire(false);

@@ -7,10 +7,10 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
 import java.util.HashMap;
@@ -54,7 +54,10 @@ public class ModelEntity {
         }
 
          */
+        Vector vector = modeledEntity.getBase().getMoveController().getVelocity();
         ModelEngineAPI.getEntityHandler().setPosition(entity, location.getX(), location.getY(), location.getZ());
+        // ModelEngineAPI.getEntityHandler().movePassenger(entity, location.getX(), location.getY(), location.getZ());
+        controllerEntity.getMoveController().setVelocity(vector.getX(), vector.getY(), vector.getZ());
         if (modeledEntity.getBase() instanceof BukkitEntity bukkitEntity && bukkitEntity.getOriginal() instanceof LivingEntity livingEntity) {
             controllerEntity.getLookController().setHeadYaw(livingEntity.getEyeLocation().getYaw());
             controllerEntity.getLookController().setPitch(livingEntity.getEyeLocation().getPitch());
@@ -66,6 +69,11 @@ public class ModelEntity {
         ModelEntity modelEntity = new ModelEntity(entity, model);
         int id = entity.getBase().getEntityId();
         Map<ActiveModel, ModelEntity> map = ENTITIES.computeIfAbsent(id, k -> new HashMap<>());
+        for (Map.Entry<ActiveModel, ModelEntity> entry : map.entrySet()) {
+            if (entry.getKey() !=  model && entry.getKey().getBlueprint().getName().equals(model.getBlueprint().getName())) {
+                return null;
+            }
+        }
         map.put(model, modelEntity);
 
         return modelEntity;
