@@ -1,6 +1,6 @@
 # GeyserModelEngine 自定义实体分支
 
-> GitHub仓库：https://github.com/zimzaza4/GeyserModelEngine
+> GitHub仓库：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
 [English (working)](README_EN.md) | [简体中文](README.md)
 
