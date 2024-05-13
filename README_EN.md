@@ -22,7 +22,7 @@ Download the following plugins according to the server core
 
 [GeyserModelEnginePackGenerator](https://github.com/zimzaza4/GeyserModelEnginePackGenerator)
 
-place `GeyserModelEngine` `Geyser自定义实体分支` in the plugins folder
+place `GeyserModelEngine` `GeyserCustomEntityFork` in the plugins folder
 
 and `geyserutils-spigot`/`velocity`/`bungeecord` 
 
