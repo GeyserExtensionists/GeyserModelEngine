@@ -8,7 +8,7 @@
 
 能让你Geyser服务器支持MEG4
 
-<img src="docimg/demo.jpg" width="500">
+<img src="docsimg/demo.jpg" width="500">
 
 # 如何安装
 
@@ -40,17 +40,17 @@
 
 在此目录创建一个文件夹名为模型的ID，比如我有个模型id为`parry_knight`，那就命名为`parry_knight`
 
-<img src="docimg/example.jpg" width="500">
+<img src="docsimg/example.jpg" width="500">
 
 > 每个模型都要有独立的模型文件夹
 
 我们将模型、动画和纹理全部原封不动丢进这个文件夹
 
-<img src="docimg/example1.jpg" width="500">
+<img src="docsimg/example1.jpg" width="500">
 
 重启服务器或者重载geyser，来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
 
-<img src="docimg/example2.jpg" width="500">
+<img src="docsimg/example2.jpg" width="500">
 
 将geysermodelenginepackgenerator生成的`generated_pack.zip`丢进Geyser-Spigot/packs目录就安装好了
 
