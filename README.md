@@ -1,14 +1,18 @@
-# GeyserModelEngine
+# GeyserModelEngine 自定义实体分支
 
 > GitHub仓库：https://github.com/zimzaza4/GeyserModelEngine
 
 [English (working)](README_EN.md) | [简体中文](README.md)
 
-# 这是个什么玩意
+这是个为[zimzaza4的Geyser自定义实体分支](https://github.com/zimzaza4/Geyser)做的版本，不支持原版的Geyser。
 
-能让你Geyser服务器支持MEG4
+跟主分支不同的是，这个是真正的自定义实体
 
-<img src="docsimg/demo.jpg" width="500">
+主分支是生成个steve发送4d皮肤给be玩家，支持原版Geyser。
+
+只需要往资源包里赛动画文件即可，可以有效防止你的模型被白嫖，但似乎限制也挺多
+
+总之两者各有各优势，根据各服务器情况选择
 
 # 如何安装
 
@@ -34,7 +38,7 @@
 
 # 转换模型
 
-`GeyserModelEnginePackGenerator`会自己转换模型打包资源包
+现在`GeyserModelEnginePackGenerator`长大了已经学会自己转换模型打包资源包了
 
 我们打开以下路径 `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator/input/`
 
@@ -48,13 +52,19 @@
 
 <img src="docsimg/example1.jpg" width="500">
 
-重启服务器或者重载geyser，来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
+重启服务器或者重载geyser让他开始生成资源包
+
+来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
 
 <img src="docsimg/example2.jpg" width="500">
 
-将geysermodelenginepackgenerator生成的`generated_pack.zip`丢进Geyser-Spigot/packs目录就安装好了
+将`geysermodelenginepackgenerator`生成的`generated_pack.zip`丢进`Geyser-Spigot/packs`目录就安装好了
 
 最后一步，重载Geyser或者重启服务器加载资源包
+
+注意! 他是检测模型的数量来打包的，如果数量没有变更不会执行。
+
+想重新打包建议先删掉`generated_pack.zip`然后改uuid或者版本号
 
 # 完结
 
@@ -67,7 +77,7 @@
 
 # 常见问题
 
-### 为什么生成模型后会变成史蒂夫?
+### 为什么召唤模型后会变成史蒂夫?
 
-可能你步骤错了，或者这个模型有问题无法转换?
+如果你确定你根据上面的教程一步一步做了，可能是这个模型的问题?
 
