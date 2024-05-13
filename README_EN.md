@@ -1,12 +1,16 @@
-# This page is being written
+# GeyserModelEngine CustomEntity Fork
 
-# GeyserModelEngine
+> GitHub：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
-> GitHub：https://github.com/zimzaza4/GeyserModelEngine
+[English (working)](README_EN.md) | [简体中文](README.md)
 
-[English](README_EN.md) | [简体中文](README.md)
+# About
 
-# how to insatll
+this is for [GeyserCustomEntityFork](https://github.com/zimzaza4/Geyser)'s version，no support vanilla Geyser
+
+Unlike the master, this one is truly a custom entity
+
+# how to install
 
 Download the following plugins according to the server core
 
@@ -20,55 +24,56 @@ Download the following plugins according to the server core
 
 place `GeyserModelEngine` `Geyser自定义实体分支` in the plugins folder
 
-根据服务端版本把`geyserutils-spigot`/`velocity`/`bungeecord`放入插件文件夹
+and `geyserutils-spigot`/`velocity`/`bungeecord` 
 
-`GeyserModelEnginePackGenerator` `geyserutils-geyser`放入geyser的扩展文件夹
+`GeyserModelEnginePackGenerator` `geyserutils-geyser` put into `plugins/geyser/extensions`
 
-先启动服务器生成相关配置文件，之后关闭服务器就安装好了
+Start the server to generate the relevant configuration files, and then shut down the server to install
 
-当然，先别急着用，现在你还得接着读下去
+# convert model
 
-# 转换模型
+`GeyserModelEnginePackGenerator` can generate resource packs himself
 
-现在`GeyserModelEnginePackGenerator`长大了已经学会会自己转换模型打包资源包了
+We came to `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator/input/`
 
-我们打开以下路径 `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator/input/`
+Create a folder in this directory called the ID of the model.
 
-在此目录创建一个文件夹名为模型的ID，比如我有个模型id为`parry_knight`，那就命名为`parry_knight`
+For example, if I have a model with the id `parry_knight`, name it `parry_knight`
 
 <img src="docsimg/example.jpg" width="500">
 
-> 每个模型都要有独立的模型文件夹
+> Each model should have a separate model folder
 
-我们将模型、动画和纹理全部原封不动丢进这个文件夹
+We drop the model, animations, and textures into this folder intact
 
 <img src="docsimg/example1.jpg" width="500">
 
-重启服务器或者重载geyser让他开始生成资源包
+Restart the server or reload geyser to start generating resource packs
 
-来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
+go to `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`
 
 <img src="docsimg/example2.jpg" width="500">
 
-将geysermodelenginepackgenerator生成的`generated_pack.zip`丢进Geyser-Spigot/packs目录就安装好了
+Will `geysermodelenginepackgenerator` generated `generated_pack.zip` put into the `GeyserSpigot/packs` directory is installed
 
-最后一步，重载Geyser或者重启服务器加载资源包
+As a final step, reload Geyser or restart the server to load the resource pack
 
-注意! 他是检测模型的数量来打包的，如果数量没有变更不会执行。
+Pay attention! It is packaged by detecting the number of models and will not execute if the number does not change.
 
-想重新打包建议先删掉`generated_pack.zip`然后改uuid或者版本号
+To repackage it is recommended to delete `generated_pack.zip` and change the uuid or version
 
-# 完结
+# The end
 
-恭喜你现在学会如何使用了，有BUG请发Issues
+Congratulations you now learn how to use, any bugs please send Issues
 
-# 当前限制
+# limit
 
-* 不支持多贴图
-* 待挖掘
+* Multi-textures are not supported
+* To be excavated
 
-# 常见问题
+# FAQ
 
-### 为什么生成模型后会变成史蒂夫?
+### Why does it turn into Steve after summoning a model?
 
-可能你步骤错了，或者这个模型有问题无法转换?
+If you're sure you did it step by step according to the tutorial above, there may be a problem with this model?
+
