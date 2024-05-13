@@ -2,7 +2,9 @@
 
 > GitHub仓库：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
-[English (working)](README_EN.md) | [简体中文](README.md)
+Language [English](README_EN.md) | [简体中文](README.md)
+
+# 这个跟主分支有什么区别
 
 这是个为[zimzaza4的Geyser自定义实体分支](https://github.com/zimzaza4/Geyser)做的版本，不支持原版的Geyser。
 
