@@ -1,6 +1,4 @@
-### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
-### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
-### This tutorial is out of date and is being rewritten.  If you are in a hurry, you can read the Chinese version first
+# This page is being written
 
 # GeyserModelEngine
 
@@ -8,96 +6,69 @@
 
 [English](README_EN.md) | [简体中文](README.md)
 
-# About
+# how to insatll
 
-it can let your Geyser server support  on MEG4
-
-# How to install？
-
-download this plugin
+Download the following plugins according to the server core
 
 [GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
 
 [GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
 
-[LibsDisguises](https://www.spigotmc.org/resources/libs-disguises-free.81/)
+[zimzaza4's GeyserCustomEntity Fork](https://github.com/zimzaza4/Geyser)
 
-After downloading, place GeyserModelEngine in the plugins folder
+[GeyserModelEnginePackGenerator](https://github.com/zimzaza4/GeyserModelEnginePackGenerator)
 
-The `geyserutils-spigot`/`velocity`/`bungeecord` into the plugins folder
+place `GeyserModelEngine` `Geyser自定义实体分支` in the plugins folder
 
-Put `geyserutils-geyser` into geyser extensions folder, and the installation is complete
+根据服务端版本把`geyserutils-spigot`/`velocity`/`bungeecord`放入插件文件夹
 
-# convert model
+`GeyserModelEnginePackGenerator` `geyserutils-geyser`放入geyser的扩展文件夹
 
-Open your bbmodel project file and convert the model to bedrock model
+先启动服务器生成相关配置文件，之后关闭服务器就安装好了
 
-Open the newly converted model and delete the extra hitbox (if not, leave it alone)
+当然，先别急着用，现在你还得接着读下去
 
-<img src="docimg/hitbox.png" width="500">
+# 转换模型
 
-Otherwise BE players will see this hixbox
+现在`GeyserModelEnginePackGenerator`长大了已经学会会自己转换模型打包资源包了
 
-<img src="docimg/hitbox1.jpg" width="500">
+我们打开以下路径 `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator/input/`
 
-Then save to export the texture of the model
+在此目录创建一个文件夹名为模型的ID，比如我有个模型id为`parry_knight`，那就命名为`parry_knight`
 
-# install model
+<img src="docsimg/example.jpg" width="500">
 
-Open Geyser's extensions folder and create a folder called `geyserutils`, and then create a folder inside called `skins`
+> 每个模型都要有独立的模型文件夹
 
-Now let's create a folder called the id of your model.  For example, if the id of the test model I use is `parry_knight`, I create a `parry_knight` folder
+我们将模型、动画和纹理全部原封不动丢进这个文件夹
 
-Your file path should look like this: 
+<img src="docsimg/example1.jpg" width="500">
 
-`plugins/Geyser-Spigot/extensions/geyserutils/skins/modelid/`
+重启服务器或者重载geyser让他开始生成资源包
 
-Finally put the model and texture map in
+来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
 
-<img src="docimg/example.jpg" width="500">
+<img src="docsimg/example2.jpg" width="500">
 
-now restart your server to generated MEG4 model , your BE player should be able to see the model normally.
+将geysermodelenginepackgenerator生成的`generated_pack.zip`丢进Geyser-Spigot/packs目录就安装好了
 
-restart you server,summon model.We should be able to see the model normally
+最后一步，重载Geyser或者重启服务器加载资源包
 
-after that , it's about model's animation's part :
+注意! 他是检测模型的数量来打包的，如果数量没有变更不会执行。
 
-# model animation
+想重新打包建议先删掉`generated_pack.zip`然后改uuid或者版本号
 
-let model's animation export to json format
+# 完结
 
-named the animation file by `animation.modelID.json`
+恭喜你现在学会如何使用了，有BUG请发Issues
 
-then put it into your resource pack
+# 当前限制
 
-<img src="docimg/example1.jpg" width="500">
+* 不支持多贴图
+* 待挖掘
 
-now let us open the animation file to starting change the animaiton ID
+# 常见问题
 
-originally , all the `animationID` were basic named like  `idle` , `walk` , but now you should add a prefix
+### 为什么生成模型后会变成史蒂夫?
 
-such as :
-
-`idle` to `animation.modelID.idle`
-
-example : `animation.parry_knight.idle`
-
-after changed the resource pack 's version or uuid , pack the resource pack.
-
-finally , restart the Geyser or server
-
-# END
-
-Congratulations ! now you exactly know how to use , if you still can't finish yet
-
-well , maybe that's my problem = D
-
-# restrictions
-
-,,,,,a lot
-
-# problems
-
-### why I have generrated the model , but I got a steve ?
-
-I guess that you have not wholly read this file.. 
+可能你步骤错了，或者这个模型有问题无法转换?
