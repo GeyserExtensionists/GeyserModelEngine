@@ -14,12 +14,12 @@ Unlike the master, this one is truly a custom entity
 
 Download the following plugins according to the server core
 
-| plugins                        | Link                                                       | effect                          |
-| :---                           | :----                                                      | :---                            |
-| GeyserUtils                    | https://github.com/zimzaza4/GeyserUtils                    | Get your Geyser to support calling some BE stuff  |
-| GeyserModelEngine              | https://github.com/zimzaza4/GeyserModelEngine              | Make your bedrock support MEG4                            |
-| GeyserCustomEntity Fork        | https://github.com/zimzaza4/Geyser                         | Make Geyser support custom entities            |
-| GeyserModelEnginePackGenerator | https://github.com/zimzaza4/GeyserModelEnginePackGenerator | Help you automatically transform the model to generate resource packs        |
+| plugins                        | Link                                                                 | effect                          |
+| :---                           | :----                                                                | :---                            |
+| GeyserUtils                    | [Github](https://github.com/zimzaza4/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
+| GeyserModelEngine              | [Github](https://github.com/zimzaza4/GeyserModelEngine)              | Make your bedrock support MEG4                            |
+| GeyserCustomEntity Fork        | [Github](https://github.com/zimzaza4/Geyser)                         | Make Geyser support custom entities            |
+| GeyserModelEnginePackGenerator | [Github](https://github.com/zimzaza4/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
 place `GeyserModelEngine` `GeyserCustomEntityFork` in the plugins folder
 
