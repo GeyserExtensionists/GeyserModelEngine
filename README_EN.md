@@ -2,7 +2,7 @@
 
 > GitHub：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
-[English (working)](README_EN.md) | [简体中文](README.md)
+🌏 [[English](README_EN.md)] [[简体中文](README.md)] [Welcome to contribute more languages]
 
 # About
 
