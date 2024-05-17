@@ -18,11 +18,13 @@ Download the following plugins according to the server core
 
 [GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
 
-[zimzaza4's GeyserCustomEntity Fork](https://github.com/zimzaza4/Geyser)
+[zimzaza4's Geyser Fork](https://github.com/zimzaza4/Geyser)
 
 [GeyserModelEnginePackGenerator](https://github.com/zimzaza4/GeyserModelEnginePackGenerator)
 
-place `GeyserModelEngine` `GeyserCustomEntityFork` in the plugins folder
+replace your Geyser with that Geyser fork
+
+put `GeyserModelEngine` in the plugins folder (only spigot)
 
 and `geyserutils-spigot`/`velocity`/`bungeecord` 
 
