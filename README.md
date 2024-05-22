@@ -2,7 +2,12 @@
 
 > GitHub仓库：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
-🌏 [[English](README_EN.md)] [[简体中文](README.md)] [欢迎贡献更多语言]
+---
+
+🌏 Language
+[[English](README_EN.md)] [[简体中文](README.md)] [欢迎贡献更多语言]
+
+---
 
 # 这个跟主分支有什么区别?
 
@@ -15,6 +20,8 @@
 只需要往资源包里塞动画文件即可，可以有效防止那些进服下个资源包就跑白嫖你模型的贼，但同时限制也挺多😥
 
 总之两者各有各优势，根据各服务器情况选择
+
+---
 
 # 如何安装
 
@@ -36,6 +43,8 @@
 先启动服务器生成相关配置文件，之后关闭服务器就安装好了
 
 当然，先别急着用，现在你还得接着读下去
+
+---
 
 # 转换模型📦
 
@@ -65,20 +74,28 @@
 
 现在可以用基岩版进服下载资源包看看是否正常生效了
 
+---
+
 # 注意事项❗
 
 * `geysermodelenginepackgenerator`是检测模型的数量有变更才会执行转换打包指令，想重新生成资源包建议先删掉`generated_pack.zip`然后重启服务器重新生成资源包。记得改uuid或版本号!!!
 * 在新版本中不用把这个包丢进`geyser/packs`目录，他会自己加载上
 
+---
+
 # 完结🤗
 
 恭喜你现在学会如何使用了😎有BUG或建议请发Issues
+
+---
 
 # 当前限制💢
 
 * 不支持多纹理
 * 头部旋转跟JE不太同步
 * 待挖掘
+
+---
 
 # 常见问题❓
 
