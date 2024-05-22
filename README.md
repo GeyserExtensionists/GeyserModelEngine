@@ -4,7 +4,8 @@
 
 ---
 
-🌏 Language
+🌏 Language 🌏
+
 [[English](README_EN.md)] [[简体中文](README.md)] [欢迎贡献更多语言]
 
 ---
