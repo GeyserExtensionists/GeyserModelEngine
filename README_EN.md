@@ -21,7 +21,9 @@ Download the following plugins according to the server core
 | GeyserCustomEntity Fork        | [Github](https://github.com/zimzaza4/Geyser)                         | Make Geyser support custom entities            |
 | GeyserModelEnginePackGenerator | [Github](https://github.com/zimzaza4/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
-place `GeyserModelEngine` `GeyserCustomEntityFork` in the plugins folder
+replace your Geyser with that Geyser fork
+
+put `GeyserModelEngine` in the plugins folder (only spigot)
 
 and `geyserutils-spigot`/`velocity`/`bungeecord` 
 

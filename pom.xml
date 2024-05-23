@@ -112,7 +112,7 @@
         <dependency>
             <groupId>me.zimzaza4</groupId>
             <artifactId>geyserutils-spigot</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/geyserutils-spigot-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
@@ -120,12 +120,6 @@
             <groupId>org.geysermc.floodgate</groupId>
             <artifactId>api</artifactId>
             <version>2.2.2-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>LibsDisguises</groupId>
-            <artifactId>LibsDisguises</artifactId>
-            <version>10.0.35</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

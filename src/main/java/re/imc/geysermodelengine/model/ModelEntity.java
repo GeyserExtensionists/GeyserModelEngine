@@ -1,23 +1,21 @@
 package re.imc.geysermodelengine.model;
 
 import com.google.common.collect.Sets;
+import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -54,9 +52,12 @@ public class ModelEntity {
         for (Player viewer : viewers) {
             viewer.sendActionBar("X:" + modeledEntity.getXHeadRot() + ", Y:" + modeledEntity.getYHeadRot());
         }
-         */
 
-        entity.teleportAsync(location);
+         */
+        Vector vector = modeledEntity.getBase().getMoveController().getVelocity();
+        ModelEngineAPI.getEntityHandler().setPosition(entity, location.getX(), location.getY(), location.getZ());
+        // ModelEngineAPI.getEntityHandler().movePassenger(entity, location.getX(), location.getY(), location.getZ());
+        controllerEntity.getMoveController().setVelocity(vector.getX(), vector.getY(), vector.getZ());
         if (modeledEntity.getBase() instanceof BukkitEntity bukkitEntity && bukkitEntity.getOriginal() instanceof LivingEntity livingEntity) {
             controllerEntity.getLookController().setHeadYaw(livingEntity.getEyeLocation().getYaw());
             controllerEntity.getLookController().setPitch(livingEntity.getEyeLocation().getPitch());
@@ -68,17 +69,23 @@ public class ModelEntity {
         ModelEntity modelEntity = new ModelEntity(entity, model);
         int id = entity.getBase().getEntityId();
         Map<ActiveModel, ModelEntity> map = ENTITIES.computeIfAbsent(id, k -> new HashMap<>());
+        for (Map.Entry<ActiveModel, ModelEntity> entry : map.entrySet()) {
+            if (entry.getKey() !=  model && entry.getKey().getBlueprint().getName().equals(model.getBlueprint().getName())) {
+                return null;
+            }
+        }
         map.put(model, modelEntity);
 
         return modelEntity;
     }
 
     public LivingEntity spawnEntity() {
-        entity = (LivingEntity) modeledEntity.getBase().getLocation().getWorld().spawnEntity(modeledEntity.getBase().getLocation(), GeyserModelEngine.getInstance().getModelEntityType());
-        applyFeatures(entity, "model." + activeModel.getBlueprint().getName());
         ModelEntity model = this;
-        int id = entity.getEntityId();
-        MODEL_ENTITIES.put(id, model);
+        // int lastEntityId = ReflectionManager.getNewEntityId();
+        // System.out.println("RID:" + entityId);
+        GeyserModelEngine.getInstance().setSpawningModelEntity(true);
+        GeyserModelEngine.getInstance().setCurrentModel(model);
+        entity = (LivingEntity) modeledEntity.getBase().getLocation().getWorld().spawnEntity(modeledEntity.getBase().getLocation(), GeyserModelEngine.getInstance().getModelEntityType());
         controllerEntity = new BukkitEntity(entity);
         return entity;
     }
@@ -89,11 +96,11 @@ public class ModelEntity {
     }
 
 
-    private void applyFeatures(LivingEntity display, String name) {
+    public void applyFeatures(LivingEntity display, String name) {
         display.setGravity(false);
         display.setMaxHealth(2048);
         display.setHealth(2048);
-
+        display.setMetadata("model_entity", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
 
         //display.setInvulnerable(true);
 
@@ -102,15 +109,17 @@ public class ModelEntity {
         display.setPersistent(false);
 
         // armorStand.setVisible(false);
+
+        /*
         String uuid = UUID.randomUUID().toString();
-        PlayerDisguise disguise = new PlayerDisguise(name + "_" + uuid);
+        MobDisguise disguise = new MobDisguise(DisguiseType.getType(entity.getType()));
+        disguise.setDisguiseName(uuid);
 
-        DisguiseAPI.disguiseEntity(display, disguise.setNameVisible(false));
+        DisguiseAPI.disguiseEntity(display, disguise);
 
+         */
 
     }
-
-
 
 
 }
