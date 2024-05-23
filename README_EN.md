@@ -2,7 +2,7 @@
 
 > GitHub：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
-[English (working)](README_EN.md) | [简体中文](README.md)
+🌏 [[English](README_EN.md)] [[简体中文](README.md)] [Welcome to contribute more languages]
 
 # About
 
@@ -14,13 +14,12 @@ Unlike the master, this one is truly a custom entity
 
 Download the following plugins according to the server core
 
-[GeyserUtils](https://github.com/zimzaza4/GeyserUtils)
-
-[GeyserModelEngine](https://github.com/zimzaza4/GeyserModelEngine)
-
-[zimzaza4's Geyser Fork](https://github.com/zimzaza4/Geyser)
-
-[GeyserModelEnginePackGenerator](https://github.com/zimzaza4/GeyserModelEnginePackGenerator)
+| plugins                        | Link                                                                 | effect                          |
+| :---                           | :----                                                                | :---                            |
+| GeyserUtils                    | [Github](https://github.com/zimzaza4/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
+| GeyserModelEngine              | [Github](https://github.com/zimzaza4/GeyserModelEngine)              | Make your bedrock support MEG4                            |
+| GeyserCustomEntity Fork        | [Github](https://github.com/zimzaza4/Geyser)                         | Make Geyser support custom entities            |
+| GeyserModelEnginePackGenerator | [Github](https://github.com/zimzaza4/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
 replace your Geyser with that Geyser fork
 
@@ -56,13 +55,13 @@ go to `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`
 
 <img src="docsimg/example2.jpg" width="500">
 
-Will `geysermodelenginepackgenerator` generated `generated_pack.zip` put into the `GeyserSpigot/packs` directory is installed
+final step, reload Geyser or restart the server to load the resource pack
 
-As a final step, reload Geyser or restart the server to load the resource pack
+# tips
 
-Pay attention! It is packaged by detecting the number of models and will not execute if the number does not change.
-
-To repackage it is recommended to delete `generated_pack.zip` and change the uuid or version
+* Pay attention! It is packaged by detecting the number of models and will not execute if the number does not change.
+* To repackage it is recommended to delete `generated_pack.zip` and change the uuid or version
+* instead of dropping the package into the `geyser/packs` directory, it will load pack itself
 
 # The end
 
