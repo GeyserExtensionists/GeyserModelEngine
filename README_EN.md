@@ -45,7 +45,11 @@ For example, if I have a model with the id `parry_knight`, name it `parry_knight
 
 > Each model should have a separate model folder
 
-We drop the model, animations, and textures into this folder intact
+Then drop the model, animations, and textures into this folder intact
+
+The new version of BlockBench exports the bedrock model format_version as `1.21.0`
+You need to change it to `1.12.0` manually
+Otherwise your client will not see the model
 
 <img src="docsimg/example1.jpg" width="500">
 
