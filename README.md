@@ -59,6 +59,10 @@
 
 > 每个模型都要有独立的模型文件夹
 
+新版本BlockBench 导出的基岩版模型format_version 是1.21.0
+需要手动改成1.12.0
+否则你的客户端看不到模型
+
 我们将模型、动画和纹理全部原封不动丢进这个文件夹
 
 <img src="docsimg/example1.jpg" width="500">
