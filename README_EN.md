@@ -18,7 +18,6 @@ Download the following plugins according to the server core
 | :---                           | :----                                                                | :---                            |
 | GeyserUtils                    | [Github](https://github.com/zimzaza4/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
 | GeyserModelEngine              | [Github](https://github.com/zimzaza4/GeyserModelEngine)              | Make your bedrock support MEG4                            |
-| GeyserCustomEntity Fork        | [Github](https://github.com/zimzaza4/Geyser)                         | Make Geyser support custom entities            |
 | GeyserModelEnginePackGenerator | [Github](https://github.com/zimzaza4/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
 replace your Geyser with that Geyser fork
