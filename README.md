@@ -2,6 +2,7 @@
 
 > GitHub仓库：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
 
+> [Discord](https://discord.gg/NNNaUdAbpP)
 ---
 
 🌏 Language 🌏
