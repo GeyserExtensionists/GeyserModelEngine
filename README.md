@@ -12,8 +12,6 @@
 
 # 这个跟主分支有什么区别?
 
-这是个针对[zimzaza4的Geyser自定义实体分支](https://github.com/zimzaza4/Geyser)做的版本，同样支持MEG4但是不支持原版Geyser❌
-
 跟主分支不同的是，这个是真正的自定义实体!!!🎉🎉🎉
 
 而主分支是给BE生成个史蒂夫发送4d皮肤给be玩家，支持原版Geyser
