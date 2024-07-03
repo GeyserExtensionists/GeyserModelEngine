@@ -8,6 +8,7 @@ import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.common.animation.Animation;
+import me.zimzaza4.geyserutils.spigot.GeyserUtils;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -40,6 +41,7 @@ public class EntityTask {
     boolean firstAnimation = true;
     boolean spawnAnimationPlayed = false;
     boolean removed = false;
+    boolean registered = false;
 
     String lastAnimation = "";
     boolean looping = true;
@@ -199,11 +201,14 @@ public class EntityTask {
         if (animationCooldown.get() > 0) {
             animationCooldown.decrementAndGet();
         }
+
+        updateVisibility(model.getViewers());
     }
 
     public void sendEntityData(Player player, int delay) {
         // System.out.println("TYPE: " + "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
+        registerProperties(player);
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
@@ -216,6 +221,16 @@ public class EntityTask {
                 sendHitBox(player);
             }, 8);
         }, delay);
+    }
+
+    // the only reason I do it here is for safety, it's also done in the Pack generator (just like adding the custom entity)
+    public void registerProperties(Player player) {
+        Entity entity = model.getEntity();
+        PlayerUtils.registerProperty(player, entity, "nm_raccoon:visibility", Boolean.class);
+
+        model.getActiveModel().getBones().forEach((s,bone) -> {
+            PlayerUtils.registerProperty(player, entity, "nm_raccoon:" + s, Boolean.class);
+        });
     }
 
     public void sendScale(Player player) {
@@ -346,6 +361,14 @@ public class EntityTask {
             PlayerUtils.playEntityAnimation(viewer, animation.build(), entity);
         }
 
+    }
+
+    public void updateVisibility(Set<Player> viewers) {
+        Entity entity = model.getEntity();
+
+        for (Player viewer : viewers) {
+            PlayerUtils.sendBoolProperty(viewer, entity, "nm_raccoon:visibility", true);
+        }
     }
 
     private boolean canSee(Player player, Entity entity) {
