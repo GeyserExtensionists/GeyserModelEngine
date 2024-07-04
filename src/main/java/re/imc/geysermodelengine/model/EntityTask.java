@@ -208,7 +208,6 @@ public class EntityTask {
     public void sendEntityData(Player player, int delay) {
         // System.out.println("TYPE: " + "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
-        registerProperties(player);
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
@@ -221,15 +220,6 @@ public class EntityTask {
                 sendHitBox(player);
             }, 8);
         }, delay);
-    }
-
-    // the only reason I do it here is for safety, it's also done in the Pack generator (just like adding the custom entity)
-    public void registerProperties(Player player) {
-        Entity entity = model.getEntity();
-
-        model.getActiveModel().getBones().forEach((s,bone) -> {
-            PlayerUtils.registerProperty(player, entity, model.getActiveModel().getBlueprint().getName() + ":" + s, Boolean.class);
-        });
     }
 
     public void sendScale(Player player) {
