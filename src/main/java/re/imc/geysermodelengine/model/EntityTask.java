@@ -226,10 +226,9 @@ public class EntityTask {
     // the only reason I do it here is for safety, it's also done in the Pack generator (just like adding the custom entity)
     public void registerProperties(Player player) {
         Entity entity = model.getEntity();
-        PlayerUtils.registerProperty(player, entity, "nm_raccoon:visibility", Boolean.class);
 
         model.getActiveModel().getBones().forEach((s,bone) -> {
-            PlayerUtils.registerProperty(player, entity, "nm_raccoon:" + s, Boolean.class);
+            PlayerUtils.registerProperty(player, entity, model.getActiveModel().getBlueprint().getName() + ":" + s, Boolean.class);
         });
     }
 
@@ -367,7 +366,10 @@ public class EntityTask {
         Entity entity = model.getEntity();
 
         for (Player viewer : viewers) {
-            PlayerUtils.sendBoolProperty(viewer, entity, "nm_raccoon:visibility", true);
+            model.getActiveModel().getBones().forEach((s,bone) -> {
+                PlayerUtils.sendBoolProperty(viewer, entity,
+                        model.getActiveModel().getBlueprint().getName() + ":" + s, bone.isVisible());
+            });
         }
     }
 
