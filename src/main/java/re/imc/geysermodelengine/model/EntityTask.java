@@ -1,10 +1,13 @@
 package re.imc.geysermodelengine.model;
 
+import com.google.common.base.Joiner;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
+import com.ticxo.modelengine.api.model.bone.ModelBone;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.common.animation.Animation;
@@ -17,10 +20,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.listener.ModelListener;
 
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
@@ -42,6 +46,9 @@ public class EntityTask {
     boolean spawnAnimationPlayed = false;
     boolean removed = false;
     boolean registered = false;
+
+    float lastScale = -1.0f;
+    Map<ModelBone, Boolean> lastSet = new HashMap<>();
 
     String lastAnimation = "";
     boolean looping = true;
@@ -202,7 +209,11 @@ public class EntityTask {
             animationCooldown.decrementAndGet();
         }
 
-        updateVisibility(model.getViewers());
+        Optional<Player> player = model.getViewers().stream().findAny();
+        if (player.isEmpty()) return;
+
+        sendScale(player.get());
+        updateVisibility(player.get());
     }
 
     public void sendEntityData(Player player, int delay) {
@@ -223,7 +234,14 @@ public class EntityTask {
     }
 
     public void sendScale(Player player) {
-        // todo?
+        if (player == null) return;
+
+        Vector3f scale = model.getActiveModel().getScale();
+        float average = (scale.x + scale.y + scale.z) / 3;
+        if (average == lastScale) return;
+
+        PlayerUtils.sendCustomScale(player, model.getEntity(), average);
+        lastScale = average;
     }
 
     public void sendHitBoxToAll() {
@@ -352,16 +370,24 @@ public class EntityTask {
 
     }
 
-    public void updateVisibility(Set<Player> viewers) {
+    public void updateVisibility(Player player) {
         Entity entity = model.getEntity();
 
-        for (Player viewer : viewers) {
-            model.getActiveModel().getBones().forEach((s,bone) -> {
-                PlayerUtils.sendBoolProperty(viewer, entity,
-                        model.getActiveModel().getBlueprint().getName() + ":" + s, bone.isVisible());
-            });
-        }
+        // pretty sure it gets set on the entity, so no need to send it for every single viewer (small pyramid btw)
+        model.getActiveModel().getBones().forEach((s,bone) -> {
+            if (!lastSet.containsKey(bone)) lastSet.put(bone, !bone.isVisible());
+
+            if (!lastSet.get(bone).equals(bone.isVisible())) {
+                PlayerUtils.sendBoolProperty(player,entity,
+                        model.getActiveModel().getBlueprint().getName() + ":" + bone.getBoneId().toLowerCase(), bone.isVisible());
+                lastSet.replace(bone, bone.isVisible());
+
+                Bukkit.getLogger().info(model.getActiveModel().getBlueprint().getName() + ":" + bone.getBoneId().toLowerCase());
+            }
+
+        });
     }
+
 
     private boolean canSee(Player player, Entity entity) {
         if (!player.isOnline()) {
