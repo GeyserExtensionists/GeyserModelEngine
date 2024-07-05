@@ -25,6 +25,7 @@ import org.joml.Vector3f;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.listener.ModelListener;
 
+import java.awt.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,6 +49,7 @@ public class EntityTask {
     boolean removed = false;
 
     float lastScale = -1.0f;
+    Color lastColor = null;
     Map<ModelBone, Boolean> lastSet = new HashMap<>();
 
 
@@ -185,7 +187,6 @@ public class EntityTask {
             }
         }
 
-
         tick ++;
         if (tick > 400) {
             tick = 0;
@@ -213,9 +214,11 @@ public class EntityTask {
         Optional<Player> player = viewers.stream().findAny();
         if (player.isEmpty()) return;
 
-        // somehow the scale needs more to update, for now just scale each tick lol
         updateVisibility(player.get(), false);
+
+        // do not actually use this, atleast bundle these up ;(
         sendScale(player.get(), true);
+        sendColor(player.get(), true);
     }
 
     public void sendEntityData(Player player, int delay) {
@@ -250,21 +253,35 @@ public class EntityTask {
         lastScale = average;
     }
 
+    public void sendColor(Player player, boolean ignore) {
+        if (player == null) return;
+
+        Color color = new Color(model.getActiveModel().getDefaultTint().asARGB());
+        if (color.equals(lastColor)) return;
+
+        PlayerUtils.sendCustomColor(player, model.getEntity(), color);
+
+        if (ignore) return;
+        lastColor = color;
+    }
+
     public void updateVisibility(Player player, boolean ignore) {
         Entity entity = model.getEntity();
 
-        // pretty sure it gets set on the entity, so no need to send it for every single viewer (small pyramid btw)
+        Map<String, Boolean> updates = new HashMap<>();
         model.getActiveModel().getBones().forEach((s,bone) -> {
             if (!lastSet.containsKey(bone)) lastSet.put(bone, !bone.isVisible());
 
             if (!lastSet.get(bone).equals(bone.isVisible()) || ignore) {
                 String name = unstripName(bone).toLowerCase();
-                PlayerUtils.sendBoolProperty(player,entity,
-                        model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
+                updates.put(model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
                 lastSet.replace(bone, bone.isVisible());
             }
 
         });
+
+        if (updates.isEmpty()) return;
+        PlayerUtils.sendBoolProperties(player, entity, updates);
     }
 
     private String unstripName(ModelBone bone) {
@@ -355,14 +372,7 @@ public class EntityTask {
         return animationCooldown.get();
     }
 
-    /*
-    private void clearLoopAnimation() {
-        playStopBedrockAnimation(lastAnimation);
-
-    }
-
-
-    private void playStopBedrockAnimation(String animationId) {
+    public void playStopBedrockAnimation(String animationId) {
 
         Entity entity = model.getEntity();
         Set<Player> viewers = model.getViewers();
@@ -383,7 +393,7 @@ public class EntityTask {
     }
 
 
-    */
+
     public void playBedrockAnimation(String animationId, Set<Player> viewers, boolean loop, float blendTime) {
 
         // model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
