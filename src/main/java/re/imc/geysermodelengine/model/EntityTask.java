@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
+import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
@@ -45,10 +46,10 @@ public class EntityTask {
     boolean firstAnimation = true;
     boolean spawnAnimationPlayed = false;
     boolean removed = false;
-    boolean registered = false;
 
     float lastScale = -1.0f;
     Map<ModelBone, Boolean> lastSet = new HashMap<>();
+
 
     String lastAnimation = "";
     boolean looping = true;
@@ -209,11 +210,12 @@ public class EntityTask {
             animationCooldown.decrementAndGet();
         }
 
-        Optional<Player> player = model.getViewers().stream().findAny();
+        Optional<Player> player = viewers.stream().findAny();
         if (player.isEmpty()) return;
 
-        sendScale(player.get());
-        updateVisibility(player.get());
+        // somehow the scale needs more to update, for now just scale each tick lol
+        updateVisibility(player.get(), false);
+        sendScale(player.get(), true);
     }
 
     public void sendEntityData(Player player, int delay) {
@@ -226,14 +228,16 @@ public class EntityTask {
                 playBedrockAnimation(lastAnimation, Set.of(player), looping, 0f);
             }
             sendHitBox(player);
-            sendScale(player);
+            sendScale(player, true);
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
                 sendHitBox(player);
+                sendScale(player, true);
+                updateVisibility(player, true);
             }, 8);
         }, delay);
     }
 
-    public void sendScale(Player player) {
+    public void sendScale(Player player, boolean ignore) {
         if (player == null) return;
 
         Vector3f scale = model.getActiveModel().getScale();
@@ -241,7 +245,36 @@ public class EntityTask {
         if (average == lastScale) return;
 
         PlayerUtils.sendCustomScale(player, model.getEntity(), average);
+
+        if (ignore) return;
         lastScale = average;
+    }
+
+    public void updateVisibility(Player player, boolean ignore) {
+        Entity entity = model.getEntity();
+
+        // pretty sure it gets set on the entity, so no need to send it for every single viewer (small pyramid btw)
+        model.getActiveModel().getBones().forEach((s,bone) -> {
+            if (!lastSet.containsKey(bone)) lastSet.put(bone, !bone.isVisible());
+
+            if (!lastSet.get(bone).equals(bone.isVisible()) || ignore) {
+                String name = unstripName(bone).toLowerCase();
+                PlayerUtils.sendBoolProperty(player,entity,
+                        model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
+                lastSet.replace(bone, bone.isVisible());
+            }
+
+        });
+    }
+
+    private String unstripName(ModelBone bone) {
+        String name = bone.getBoneId();
+        if (bone.getBlueprintBone().getBehaviors().get("head") != null) {
+            if (!bone.getBlueprintBone().getBehaviors().get("head").isEmpty()) return "hi_" + name;
+            return "h_" + name;
+        }
+
+        return name;
     }
 
     public void sendHitBoxToAll() {
@@ -369,25 +402,6 @@ public class EntityTask {
         }
 
     }
-
-    public void updateVisibility(Player player) {
-        Entity entity = model.getEntity();
-
-        // pretty sure it gets set on the entity, so no need to send it for every single viewer (small pyramid btw)
-        model.getActiveModel().getBones().forEach((s,bone) -> {
-            if (!lastSet.containsKey(bone)) lastSet.put(bone, !bone.isVisible());
-
-            if (!lastSet.get(bone).equals(bone.isVisible())) {
-                PlayerUtils.sendBoolProperty(player,entity,
-                        model.getActiveModel().getBlueprint().getName() + ":" + bone.getBoneId().toLowerCase(), bone.isVisible());
-                lastSet.replace(bone, bone.isVisible());
-
-                Bukkit.getLogger().info(model.getActiveModel().getBlueprint().getName() + ":" + bone.getBoneId().toLowerCase());
-            }
-
-        });
-    }
-
 
     private boolean canSee(Player player, Entity entity) {
         if (!player.isOnline()) {
