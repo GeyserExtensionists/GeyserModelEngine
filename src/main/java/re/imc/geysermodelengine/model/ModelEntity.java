@@ -6,7 +6,10 @@ import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
+import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -41,7 +44,6 @@ public class ModelEntity {
         this.activeModel = model;
         this.entity = spawnEntity();
         runEntityTask();
-
     }
 
     public void teleportToModel() {

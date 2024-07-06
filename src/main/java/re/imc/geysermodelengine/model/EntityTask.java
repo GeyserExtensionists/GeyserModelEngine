@@ -1,13 +1,18 @@
 package re.imc.geysermodelengine.model;
 
+import com.google.common.base.Joiner;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
+import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
+import com.ticxo.modelengine.api.model.bone.ModelBone;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.common.animation.Animation;
+import me.zimzaza4.geyserutils.spigot.GeyserUtils;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -16,10 +21,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.listener.ModelListener;
 
-import java.util.Set;
+import java.awt.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
@@ -40,6 +47,11 @@ public class EntityTask {
     boolean firstAnimation = true;
     boolean spawnAnimationPlayed = false;
     boolean removed = false;
+
+    float lastScale = -1.0f;
+    Color lastColor = null;
+    Map<ModelBone, Boolean> lastSet = new HashMap<>();
+
 
     String lastAnimation = "";
     boolean looping = true;
@@ -175,7 +187,6 @@ public class EntityTask {
             }
         }
 
-
         tick ++;
         if (tick > 400) {
             tick = 0;
@@ -199,6 +210,15 @@ public class EntityTask {
         if (animationCooldown.get() > 0) {
             animationCooldown.decrementAndGet();
         }
+
+        Optional<Player> player = viewers.stream().findAny();
+        if (player.isEmpty()) return;
+
+        updateVisibility(player.get(), false);
+
+        // do not actually use this, atleast bundle these up ;(
+        sendScale(player.get(), true);
+        sendColor(player.get(), true);
     }
 
     public void sendEntityData(Player player, int delay) {
@@ -211,15 +231,67 @@ public class EntityTask {
                 playBedrockAnimation(lastAnimation, Set.of(player), looping, 0f);
             }
             sendHitBox(player);
-            sendScale(player);
+            sendScale(player, true);
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
                 sendHitBox(player);
+                sendScale(player, true);
+                updateVisibility(player, true);
             }, 8);
         }, delay);
     }
 
-    public void sendScale(Player player) {
-        // todo?
+    public void sendScale(Player player, boolean ignore) {
+        if (player == null) return;
+
+        Vector3f scale = model.getActiveModel().getScale();
+        float average = (scale.x + scale.y + scale.z) / 3;
+        if (average == lastScale) return;
+
+        PlayerUtils.sendCustomScale(player, model.getEntity(), average);
+
+        if (ignore) return;
+        lastScale = average;
+    }
+
+    public void sendColor(Player player, boolean ignore) {
+        if (player == null) return;
+
+        Color color = new Color(model.getActiveModel().getDefaultTint().asARGB());
+        if (color.equals(lastColor)) return;
+
+        PlayerUtils.sendCustomColor(player, model.getEntity(), color);
+
+        if (ignore) return;
+        lastColor = color;
+    }
+
+    public void updateVisibility(Player player, boolean ignore) {
+        Entity entity = model.getEntity();
+
+        Map<String, Boolean> updates = new HashMap<>();
+        model.getActiveModel().getBones().forEach((s,bone) -> {
+            if (!lastSet.containsKey(bone)) lastSet.put(bone, !bone.isVisible());
+
+            if (!lastSet.get(bone).equals(bone.isVisible()) || ignore) {
+                String name = unstripName(bone).toLowerCase();
+                updates.put(model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
+                lastSet.replace(bone, bone.isVisible());
+            }
+
+        });
+
+        if (updates.isEmpty()) return;
+        PlayerUtils.sendBoolProperties(player, entity, updates);
+    }
+
+    private String unstripName(ModelBone bone) {
+        String name = bone.getBoneId();
+        if (bone.getBlueprintBone().getBehaviors().get("head") != null) {
+            if (!bone.getBlueprintBone().getBehaviors().get("head").isEmpty()) return "hi_" + name;
+            return "h_" + name;
+        }
+
+        return name;
     }
 
     public void sendHitBoxToAll() {
@@ -300,14 +372,7 @@ public class EntityTask {
         return animationCooldown.get();
     }
 
-    /*
-    private void clearLoopAnimation() {
-        playStopBedrockAnimation(lastAnimation);
-
-    }
-
-
-    private void playStopBedrockAnimation(String animationId) {
+    public void playStopBedrockAnimation(String animationId) {
 
         Entity entity = model.getEntity();
         Set<Player> viewers = model.getViewers();
@@ -328,7 +393,7 @@ public class EntityTask {
     }
 
 
-    */
+
     public void playBedrockAnimation(String animationId, Set<Player> viewers, boolean loop, float blendTime) {
 
         // model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
