@@ -4,26 +4,16 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.entity.BukkitEntity;
-import com.ticxo.modelengine.api.entity.Hitbox;
-import com.ticxo.modelengine.api.interaction.DynamicHitbox;
-import com.ticxo.modelengine.api.interaction.InteractionTracker;
-import com.ticxo.modelengine.api.model.bone.type.SubHitbox;
-import com.ticxo.modelengine.api.nms.entity.HitboxEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.geysermc.floodgate.api.FloodgateApi;
-import org.jetbrains.annotations.NotNull;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.model.EntityTask;
 import re.imc.geysermodelengine.model.ModelEntity;
 
 import java.util.Set;
-import java.util.UUID;
 
+@Deprecated
 public class AddEntityPacketListener extends PacketAdapter {
     public AddEntityPacketListener() {
         super(GeyserModelEngine.getInstance(), ListenerPriority.HIGHEST, Set.of(PacketType.Play.Server.SPAWN_ENTITY), ListenerOptions.SYNC);
@@ -62,10 +52,10 @@ public class AddEntityPacketListener extends PacketAdapter {
                 }
                 if (task == null || firstJoined) {
                     Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> {
-                        model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
+                        model.getTask().sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSendDelay());
                         }, delay);
                 } else {
-                    task.sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSkinSendDelay());
+                    task.sendEntityData(event.getPlayer(), GeyserModelEngine.getInstance().getSendDelay());
                 }
 
                 event.setCancelled(true);

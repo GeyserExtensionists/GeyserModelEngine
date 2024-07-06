@@ -97,21 +97,6 @@ public class ModelListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onModelHurt(EntityDamageEvent event) {
-        ModelEntity model = ModelEntity.MODEL_ENTITIES.get(event.getEntity().getEntityId());
-        if (model != null) {
-            if (!event.getEntity().hasMetadata("show_damage")) {
-                event.setCancelled(true);
-            }
-            event.getEntity().removeMetadata("show_damage", GeyserModelEngine.getInstance());
-
-            if (!model.getEntity().isDead()) {
-                event.setDamage(0);
-                model.getEntity().setHealth(model.getEntity().getMaxHealth());
-            }
-        }
-    }
 
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -142,8 +127,7 @@ public class ModelListener implements Listener {
         if (model != null) {
             for (Map.Entry<ActiveModel, ModelEntity> entry : model.entrySet()) {
                 if (!entry.getValue().getEntity().isDead()) {
-                    entry.getValue().getEntity().setMetadata("show_damage", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
-                    entry.getValue().getEntity().damage(0);
+                    entry.getValue().getEntity().sendHurtPacket(entry.getValue().getViewers());
                 }
             }
 
@@ -163,20 +147,6 @@ public class ModelListener implements Listener {
     }
 
      */
-
-    @EventHandler
-    public void onModelHit(ProjectileHitEvent event) {
-        if (event.getHitEntity() == null) {
-            return;
-        }
-        ModelEntity model = ModelEntity.MODEL_ENTITIES.get(event.getHitEntity().getEntityId());
-        if (model != null) {
-
-            event.setCancelled(true);
-            model.getEntity().setHealth(model.getEntity().getMaxHealth());
-
-        }
-    }
 
 
     @EventHandler

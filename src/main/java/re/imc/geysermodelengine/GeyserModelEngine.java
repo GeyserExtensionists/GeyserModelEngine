@@ -16,7 +16,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import re.imc.geysermodelengine.listener.AddEntityPacketListener;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.model.ModelEntity;
@@ -35,7 +34,7 @@ public final class GeyserModelEngine extends JavaPlugin {
     private static boolean alwaysSendSkin;
 
     @Getter
-    private int skinSendDelay;
+    private int sendDelay;
 
     @Getter
     private int viewDistance;
@@ -72,8 +71,8 @@ public final class GeyserModelEngine extends JavaPlugin {
         // Plugin startup logic
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
-        skinSendDelay = getConfig().getInt("skin-send-delay", 0);
-        viewDistance = getConfig().getInt("skin-view-distance", 60);
+        sendDelay = getConfig().getInt("data-send-delay", 0);
+        viewDistance = getConfig().getInt("entity-view-distance", 60);
         debug = getConfig().getBoolean("debug", false);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));
         joinSendDelay = getConfig().getInt("join-send-delay", 20);
@@ -82,7 +81,7 @@ public final class GeyserModelEngine extends JavaPlugin {
                     .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
         }
         instance = this;
-        ProtocolLibrary.getProtocolManager().addPacketListener(new AddEntityPacketListener());
+        // ProtocolLibrary.getProtocolManager().addPacketListener(new AddEntityPacketListener());
         ProtocolLibrary.getProtocolManager().addPacketListener(new MountPacketListener());
 
         Bukkit.getPluginManager().registerEvents(new ModelListener(), this);

@@ -41,15 +41,12 @@ public class MountPacketListener extends PacketAdapter {
                     if (event.getPlayer().getInventory().getHeldItemSlot() == 0) {
                         event.getPacket().getBooleans().writeSafely(0, true);
                         event.getPlayer().getInventory().setHeldItemSlot(3);
-                        event.getPlayer().sendActionBar("jump");
                     }
                     if (pitch > 89 || event.getPlayer().getInventory().getHeldItemSlot() == 1) {
                         event.getPacket().getBooleans().writeSafely(1, true);
-                        event.getPlayer().sendActionBar("shift");
                     }
                     if (event.getPlayer().getInventory().getHeldItemSlot() == 8) {
                         event.getPacket().getBooleans().writeSafely(0, true);
-                        event.getPlayer().sendActionBar("hold jump");
                     }
                 }
             }

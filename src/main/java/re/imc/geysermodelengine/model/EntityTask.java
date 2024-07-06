@@ -1,29 +1,22 @@
 package re.imc.geysermodelengine.model;
 
-import com.google.common.base.Joiner;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.entity.BaseEntity;
-import com.ticxo.modelengine.api.entity.BukkitEntity;
-import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.common.animation.Animation;
-import me.zimzaza4.geyserutils.spigot.GeyserUtils;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.BoundingBox;
 import org.geysermc.floodgate.api.FloodgateApi;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import re.imc.geysermodelengine.GeyserModelEngine;
-import re.imc.geysermodelengine.listener.ModelListener;
+import re.imc.geysermodelengine.packet.entity.PacketEntity;
 
 import java.awt.*;
 import java.util.*;
@@ -64,35 +57,13 @@ public class EntityTask {
     public EntityTask(ModelEntity model) {
         this.model = model;
     }
-
-    public void runSync() {
-
-        syncTick ++;
-        if (syncTick > 400) {
-            syncTick = 0;
-        }
-
-        if (syncTick % 5 == 0) {
-
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-                    onlinePlayer.hideEntity(GeyserModelEngine.getInstance(), model.getEntity());
-                }
-            }
-        }
-
-        if (!removed && model.getEntity().isDead() && model.getModeledEntity().getBase().isAlive() && !model.getActiveModel().isRemoved()) {
-            // model.spawnEntity();
-        }
-
-        model.getEntity().setVisualFire(false);
-        model.teleportToModel();
-    }
     public void runAsync() {
-        Entity entity = model.getEntity();
+        PacketEntity entity = model.getEntity();
         if (entity.isDead()) {
             return;
         }
+
+        model.teleportToModel();
         Set<Player> viewers = model.getViewers();
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
@@ -147,6 +118,7 @@ public class EntityTask {
                     if (canSee(onlinePlayer, model.getEntity())) {
 
                         if (!viewers.contains(onlinePlayer)) {
+                            sendSpawnPacket(onlinePlayer);
                             viewers.add(onlinePlayer);
                             /*
                             if (GeyserModelEngine.getInstance().getSkinSendDelay() > 0) {
@@ -162,6 +134,8 @@ public class EntityTask {
                              */
                         }
                     } else {
+
+                        entity.sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
                         viewers.remove(onlinePlayer);
                     }
                 }
@@ -221,10 +195,27 @@ public class EntityTask {
         sendColor(player.get(), true);
     }
 
+    private void sendSpawnPacket(Player onlinePlayer) {
+        EntityTask task = model.getTask();
+        int delay = 1;
+        boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
+        if (firstJoined) {
+            delay = GeyserModelEngine.getInstance().getJoinSendDelay();
+        }
+        if (task == null || firstJoined) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
+                model.getTask().sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getSendDelay());
+            }, delay);
+        } else {
+            task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getSendDelay());
+        }
+    }
+
     public void sendEntityData(Player player, int delay) {
         // System.out.println("TYPE: " + "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
 
+        model.getEntity().sendSpawnPacket(Collections.singletonList(player));
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
             if (looping) {
@@ -442,7 +433,7 @@ public class EntityTask {
     }
 
     public void cancel() {
-        syncTask.cancel();
+        // syncTask.cancel();
         asyncTask.cancel();
     }
 
@@ -458,13 +449,6 @@ public class EntityTask {
 
         lastAnimation = id;
         sendHitBoxToAll();
-        syncTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                runSync();
-            }
-        };
-        syncTask.runTaskTimer(instance, i, 0);
 
         asyncTask = new BukkitRunnable() {
             @Override
