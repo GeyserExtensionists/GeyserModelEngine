@@ -99,28 +99,6 @@ public class ModelListener implements Listener {
 
 
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onModelEntitySpawn(EntitySpawnEvent event) {
-        if (GeyserModelEngine.getInstance().isSpawningModelEntity() && event.getEntity() instanceof LivingEntity entity) {
-            if (event.isCancelled()) {
-                event.setCancelled(false);
-            }
-            ModelEntity model = GeyserModelEngine.getInstance().getCurrentModel();
-            int id = entity.getEntityId();
-            ActiveModel activeModel = model.getActiveModel();
-            ModelEntity.MODEL_ENTITIES.put(id, model);
-            model.applyFeatures(entity, "model." + activeModel.getBlueprint().getName());
-            GeyserModelEngine.getInstance().setCurrentModel(null);
-            GeyserModelEngine.getInstance().setSpawningModelEntity(false);
-
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-                    PlayerUtils.setCustomEntity(onlinePlayer, entity.getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
-                }
-            }
-        }
-    }
-
     @EventHandler
     public void onModelEntityHurt(EntityDamageEvent event) {
         Map<ActiveModel, ModelEntity> model = ModelEntity.ENTITIES.get(event.getEntity().getEntityId());

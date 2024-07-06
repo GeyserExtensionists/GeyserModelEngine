@@ -69,30 +69,4 @@ public class ModelEntity {
     }
 
 
-    public void applyFeatures(LivingEntity display, String name) {
-        display.setGravity(false);
-        display.setMaxHealth(2048);
-        display.setHealth(2048);
-        display.setMetadata("model_entity", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
-
-        //display.setInvulnerable(true);
-
-        display.setAI(false);
-        display.setSilent(true);
-        display.setPersistent(false);
-
-        // armorStand.setVisible(false);
-
-        /*
-        String uuid = UUID.randomUUID().toString();
-        MobDisguise disguise = new MobDisguise(DisguiseType.getType(entity.getType()));
-        disguise.setDisguiseName(uuid);
-
-        DisguiseAPI.disguiseEntity(display, disguise);
-
-         */
-
-    }
-
-
 }

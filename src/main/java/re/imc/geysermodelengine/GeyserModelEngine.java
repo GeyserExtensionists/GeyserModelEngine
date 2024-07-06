@@ -46,16 +46,6 @@ public final class GeyserModelEngine extends JavaPlugin {
     private Cache<Player, Boolean> joinedPlayer;
 
     @Getter
-    @Setter
-    private boolean spawningModelEntity = false;
-
-
-    @Getter
-    @Setter
-    private ModelEntity currentModel = null;
-
-
-    @Getter
     private int joinSendDelay;
 
     @Getter
