@@ -110,7 +110,7 @@ public class EntityTask {
             spawnAnimationPlayed = true;
         }
 
-        if (tick > 1 && tick % 5 == 0) {
+        if (tick % 5 == 0) {
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
@@ -134,9 +134,10 @@ public class EntityTask {
                              */
                         }
                     } else {
-
-                        entity.sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
-                        viewers.remove(onlinePlayer);
+                        if (viewers.contains(onlinePlayer)) {
+                            entity.sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
+                            viewers.remove(onlinePlayer);
+                        }
                     }
                 }
             }
@@ -212,18 +213,16 @@ public class EntityTask {
     }
 
     public void sendEntityData(Player player, int delay) {
-        // System.out.println("TYPE: " + "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         PlayerUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
 
-        model.getEntity().sendSpawnPacket(Collections.singletonList(player));
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
             // PlayerUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
-            if (looping) {
-                playBedrockAnimation(lastAnimation, Set.of(player), looping, 0f);
-            }
-            sendHitBox(player);
-            sendScale(player, true);
+            model.getEntity().sendSpawnPacket(Collections.singletonList(player));
+
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
+                if (looping) {
+                    playBedrockAnimation(lastAnimation, Set.of(player), looping, 0f);
+                }
                 sendHitBox(player);
                 sendScale(player, true);
                 updateVisibility(player, true);
@@ -409,9 +408,6 @@ public class EntityTask {
             return false;
         }
         if (player.isDead()) {
-            return false;
-        }
-        if (player.getWorld() != entity.getWorld()) {
             return false;
         }
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {

@@ -1,4 +1,4 @@
-data-send-delay: 0
+data-send-delay: 5
 entity-view-distance: 50
 join-send-delay: 20
 model-entity-type: BAT # must be a living entity

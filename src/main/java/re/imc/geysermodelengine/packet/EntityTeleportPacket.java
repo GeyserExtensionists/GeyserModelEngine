@@ -20,6 +20,8 @@ public class EntityTeleportPacket implements WrapperPacket {
         packet.getDoubles().write(0, loc.getX());
         packet.getDoubles().write(1, loc.getY());
         packet.getDoubles().write(2, loc.getZ());
+        packet.getBytes().write(1, (byte) (loc.getPitch() * 256.0F / 360.0F));
+        packet.getBytes().write(0, (byte) (loc.getYaw() * 256.0F / 360.0F));
         return packet;
     }
 }

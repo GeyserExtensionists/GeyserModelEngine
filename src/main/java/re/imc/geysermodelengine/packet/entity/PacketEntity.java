@@ -21,10 +21,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import re.imc.geysermodelengine.packet.EntityDestroyPacket;
-import re.imc.geysermodelengine.packet.EntityHurtAnimationPacket;
-import re.imc.geysermodelengine.packet.EntitySpawnPacket;
-import re.imc.geysermodelengine.packet.EntityTeleportPacket;
+import re.imc.geysermodelengine.packet.*;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -52,7 +49,7 @@ public class PacketEntity implements Entity {
 
     @Override
     public boolean teleport(@NotNull Location location) {
-        this.location = location;
+        this.location = location.clone();
         sendLocationPacket(viewers);
         return true;
     }
@@ -77,7 +74,9 @@ public class PacketEntity implements Entity {
 
     public void sendSpawnPacket(Collection<Player> players) {
         EntitySpawnPacket packet = new EntitySpawnPacket(id, uuid, type, location);
+        EntityMetadataPacket metadataPacket = new EntityMetadataPacket(id);
         players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
+        players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, metadataPacket.encode()));
     }
     public void sendLocationPacket(Collection<Player> players) {
         EntityTeleportPacket packet = new EntityTeleportPacket(id, location);
@@ -88,13 +87,16 @@ public class PacketEntity implements Entity {
     public void sendHurtPacket(Collection<Player> players) {
         EntityHurtAnimationPacket packet = new EntityHurtAnimationPacket(id);
         players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
-
     }
 
     public void sendEntityDestroyPacket(Collection<Player> players) {
         EntityDestroyPacket packet = new EntityDestroyPacket(id);
         players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
+    }
 
+    @Override
+    public int getEntityId() {
+        return id;
     }
 
     // ----------------
@@ -181,10 +183,7 @@ public class PacketEntity implements Entity {
         return null;
     }
 
-    @Override
-    public int getEntityId() {
-        return 0;
-    }
+
 
     @Override
     public int getFireTicks() {
