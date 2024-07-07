@@ -1,107 +1,67 @@
-# GeyserModelEngine 自定义实体分支
+# GeyserModelEngine 
+# About
 
-> GitHub仓库：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity)
+Thanks to [Willem](https://github.com/OmeWillem/GeyserUtils) for adding the following features:
+- Part Visibility
+- Color support
+- Scaling support
+- & more
 
-> [Discord](https://discord.gg/NNNaUdAbpP)
----
+# How To Install
 
-🌏 Language 🌏
+Download the following plugins according to what server software you use.
 
-[[English](README_EN.md)] [[简体中文](README.md)] [欢迎贡献更多语言]
-
----
-
-# 这个跟主分支有什么区别?
-
-跟主分支不同的是，这个是真正的自定义实体!!!🎉🎉🎉
-
-而主分支是给BE生成个史蒂夫发送4d皮肤给be玩家，支持原版Geyser
-
-只需要往资源包里塞动画文件即可，可以有效防止那些进服下个资源包就跑白嫖你模型的贼，但同时限制也挺多😥
-
-总之两者各有各优势，根据各服务器情况选择
-
----
-
-# 如何安装
-
-根据服务端版本下载以下插件
-
-| 插件                           | 链接                                                                 | 作用                            |
+| plugins                        | Link                                                                 | effect                          |
 | :---                           | :----                                                                | :---                            |
-| GeyserUtils                    | [Github](https://github.com/zimzaza4/GeyserUtils)                    | 让你的Geyser支持调用一些BE的东西  |
-| GeyserModelEngine              | [Github](https://github.com/zimzaza4/GeyserModelEngine)              | 你猜                            |
-| GeyserModelEnginePackGenerator | [Github](https://github.com/zimzaza4/GeyserModelEnginePackGenerator) | 帮你自动转换模型生成资源包        |
+| GeyserUtils                    | [Github](https://github.com/OmeWillem/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
+| GeyserModelEngine              | [Github](https://github.com/OmeWillem/GeyserModelEngine)              | Make your bedrock support MEG4                            |
+| GeyserModelEnginePackGenerator | [Github](https://github.com/OmeWillem/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
-下载完后，将`GeyserModelEngine` `Geyser自定义实体分支`放入插件文件夹
+- Put `GeyserModelEngine` in the plugins folder (only Spigot or forks of Spigot supported)
+- Put either `geyserutils-spigot` in your plugins folder aswell (`geyserutils-velocity` in your Velocity plugins folder if you use it)
+- Put `GeyserModelEnginePackGenerator` and `geyserutils-geyser` into `plugins/[Geyser-Folder]/extensions`
 
-根据服务端版本把`geyserutils-spigot`/`velocity`/`bungeecord`放入插件文件夹
+Start the server to generate the relevant configuration files, and then shut down the server to convert any models.
 
-`GeyserModelEnginePackGenerator` `geyserutils-geyser`放入geyser的扩展文件夹
+# Convert Models
 
-先启动服务器生成相关配置文件，之后关闭服务器就安装好了
+`GeyserModelEnginePackGenerator` is capable of generating models all by itself. After generating it will also apply this pack automatically.
 
-当然，先别急着用，现在你还得接着读下去
-
----
-
-# 转换模型📦
-
-现在`GeyserModelEnginePackGenerator`长大了学会自己转换模型生成资源包了
-
-我们来到以下路径 `plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator/input/`
-
-在此目录创建一个文件夹名为模型的ID，比如我有个模型id为`parry_knight`，那就命名为`parry_knight`
+- First go to `plugins/[Geyser-Folder]/extensions/geysermodelenginepackgenerator/input/`
+- Create a folder in this directory with the ID of the model. (this is the same name as your model within ModelEngine 4.)
 
 <img src="docsimg/example.jpg" width="500">
 
-> 每个模型都要有独立的模型文件夹
+> Each model should have a separate model folder
 
-新版本BlockBench 导出的基岩版模型format_version 是1.21.0
-需要手动改成1.12.0
-否则你的客户端看不到模型
+- Now use BlockBench and convert your model to a Bedrock Entity, this will allow you to export the Bedrock Geometry and Animations.
+- Put the geometry, animations and texture file in this folder you've made.
 
-我们将模型、动画和纹理全部原封不动丢进这个文件夹
+> The new version of BlockBench exports the bedrock model format_version as `1.21.0`.
+> You need to change it to `1.12.0` manually.
+> Otherwise your client will NOT see the model.
 
 <img src="docsimg/example1.jpg" width="500">
 
-重启服务器或者重载geyser让他开始生成资源包
-
-来到`plugins/Geyser-Spigot/extensions/geysermodelenginepackgenerator`目录
-
-这里你会看见多了个`generated_pack.zip`，那就说明打包好了
+- Restart the server or reload geyser to start generating the resource pack.
+- Go to  `plugins/[Geyser-Folder]/extensions/geysermodelenginepackgenerator`, and you should see your pack generated!
 
 <img src="docsimg/example2.jpg" width="500">
 
-最后一步，重载Geyser或者重启服务器加载资源包
+- Final step, reload Geyser or restart the server to load the resource pack.
+- Congratulations, you've completed this tutorial!
 
-现在可以用基岩版进服下载资源包看看是否正常生效了
+# Tips
 
----
+* Pay attention! The pack only regenerates when the number of models changes, you can technically speaking remove the generated_pack folder to force a reload aswell.
+* You do not have to manually put the pack into the packs folder of Geyser, the extension is capable of loading the pack itself.
 
-# 注意事项❗
+# Current issues
 
-* `geysermodelenginepackgenerator`是检测模型的数量有变更才会执行转换打包指令，想重新生成资源包建议先删掉`generated_pack.zip`然后重启服务器重新生成资源包。记得改uuid或版本号!!!
-* 在新版本中不用把这个包丢进`geyser/packs`目录，他会自己加载上
+* Multi-textures are not supported
+* Please report any bugs (discord: https://discord.gg/NNNaUdAbpP)
 
----
+# FAQ
 
-# 完结🤗
-
-恭喜你现在学会如何使用了😎有BUG或建议请发Issues
-
----
-
-# 当前限制💢
-
-* 不支持多纹理
-* 头部旋转跟JE不太同步
-* 待挖掘
-
----
-
-# 常见问题❓
-
-### 召唤模型后召唤的并非模型而是史蒂夫?
-
-如果你确定你根据上面的教程一步一步做了，可能是这个模型的问题?
+### Where can I contact you?
+You can contact me on our Discord: https://discord.gg/NNNaUdAbpP

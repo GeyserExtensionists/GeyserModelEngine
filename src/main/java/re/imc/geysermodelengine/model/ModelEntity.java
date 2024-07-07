@@ -1,8 +1,6 @@
 package re.imc.geysermodelengine.model;
 
 import com.google.common.collect.Sets;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
@@ -10,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.packet.entity.PacketEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +23,7 @@ public class ModelEntity {
 
     public static Map<Integer, ModelEntity> MODEL_ENTITIES = new ConcurrentHashMap<>();
 
-    private LivingEntity entity;
-    private BukkitEntity controllerEntity;
+    private PacketEntity entity;
 
     private final Set<Player> viewers = Sets.newConcurrentHashSet();
 
@@ -41,29 +38,11 @@ public class ModelEntity {
         this.activeModel = model;
         this.entity = spawnEntity();
         runEntityTask();
-
     }
 
     public void teleportToModel() {
         Location location = modeledEntity.getBase().getLocation();
-        /*
-        location.setPitch(modeledEntity.getXHeadRot());
-        location.setYaw(modeledEntity.getYHeadRot());
-        for (Player viewer : viewers) {
-            viewer.sendActionBar("X:" + modeledEntity.getXHeadRot() + ", Y:" + modeledEntity.getYHeadRot());
-        }
-
-         */
-        Vector vector = modeledEntity.getBase().getMoveController().getVelocity();
-        ModelEngineAPI.getEntityHandler().setPosition(entity, location.getX(), location.getY(), location.getZ());
-        // ModelEngineAPI.getEntityHandler().movePassenger(entity, location.getX(), location.getY(), location.getZ());
-        controllerEntity.getMoveController().setVelocity(vector.getX(), vector.getY(), vector.getZ());
-        if (modeledEntity.getBase() instanceof BukkitEntity bukkitEntity && bukkitEntity.getOriginal() instanceof LivingEntity livingEntity) {
-            controllerEntity.getLookController().setHeadYaw(livingEntity.getEyeLocation().getYaw());
-            controllerEntity.getLookController().setPitch(livingEntity.getEyeLocation().getPitch());
-            controllerEntity.getLookController().setBodyYaw(livingEntity.getBodyYaw());
-        }
-
+        entity.teleport(location);
     }
     public static ModelEntity create(ModeledEntity entity, ActiveModel model) {
         ModelEntity modelEntity = new ModelEntity(entity, model);
@@ -79,46 +58,14 @@ public class ModelEntity {
         return modelEntity;
     }
 
-    public LivingEntity spawnEntity() {
-        ModelEntity model = this;
-        // int lastEntityId = ReflectionManager.getNewEntityId();
-        // System.out.println("RID:" + entityId);
-        GeyserModelEngine.getInstance().setSpawningModelEntity(true);
-        GeyserModelEngine.getInstance().setCurrentModel(model);
-        entity = (LivingEntity) modeledEntity.getBase().getLocation().getWorld().spawnEntity(modeledEntity.getBase().getLocation(), GeyserModelEngine.getInstance().getModelEntityType());
-        controllerEntity = new BukkitEntity(entity);
+    public PacketEntity spawnEntity() {
+        entity = new PacketEntity(GeyserModelEngine.getInstance().getModelEntityType(), viewers, modeledEntity.getBase().getLocation());
         return entity;
     }
 
     public void runEntityTask() {
         task = new EntityTask(this);
         task.run(GeyserModelEngine.getInstance(), 0);
-    }
-
-
-    public void applyFeatures(LivingEntity display, String name) {
-        display.setGravity(false);
-        display.setMaxHealth(2048);
-        display.setHealth(2048);
-        display.setMetadata("model_entity", new FixedMetadataValue(GeyserModelEngine.getInstance(), true));
-
-        //display.setInvulnerable(true);
-
-        display.setAI(false);
-        display.setSilent(true);
-        display.setPersistent(false);
-
-        // armorStand.setVisible(false);
-
-        /*
-        String uuid = UUID.randomUUID().toString();
-        MobDisguise disguise = new MobDisguise(DisguiseType.getType(entity.getType()));
-        disguise.setDisguiseName(uuid);
-
-        DisguiseAPI.disguiseEntity(display, disguise);
-
-         */
-
     }
 
 
