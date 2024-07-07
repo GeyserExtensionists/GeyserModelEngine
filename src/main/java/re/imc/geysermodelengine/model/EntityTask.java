@@ -245,7 +245,7 @@ public class EntityTask {
             }
 
         });
-        if (!lastAnimProperty.equals(currentAnimProperty)) {
+        if (ignore || !lastAnimProperty.equals(currentAnimProperty)) {
             updates.put(lastAnimProperty, false);
             updates.put(currentAnimProperty, true);
         }
@@ -315,7 +315,7 @@ public class EntityTask {
 
         if (play) {
             setAnimationProperty("modelengine:anim_stop");
-            model.getViewers().forEach(viewer -> updateEntityProperties(viewer, true));
+            model.getViewers().forEach(viewer -> updateEntityProperties(viewer, false));
             currentAnimationPriority.set(p);
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
