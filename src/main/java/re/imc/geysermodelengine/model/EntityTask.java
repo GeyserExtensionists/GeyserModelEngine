@@ -235,10 +235,15 @@ public class EntityTask {
         Entity entity = model.getEntity();
 
         Map<String, Boolean> updates = new HashMap<>();
-        model.getActiveModel().getBones().forEach((s,bone) -> {
-            if (!lastModelBoneSet.containsKey(bone)) lastModelBoneSet.put(bone, !bone.isVisible());
+        model.getActiveModel().getBones().forEach((s, bone) -> {
+            if (!lastModelBoneSet.containsKey(bone))
+                lastModelBoneSet.put(bone, !bone.isVisible());
 
-            if (!lastModelBoneSet.get(bone).equals(bone.isVisible()) || ignore) {
+            Boolean lastBone = lastModelBoneSet.get(bone);
+            if (lastBone == null)
+                return;
+
+            if (!lastBone.equals(bone.isVisible()) || ignore) {
                 String name = unstripName(bone).toLowerCase();
                 updates.put(model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
                 lastModelBoneSet.replace(bone, bone.isVisible());
