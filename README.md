@@ -1,11 +1,7 @@
-# GeyserModelEngine Fork
-
-> GitHub：[https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity](https://github.com/OmeWillem/GeyserModelEngine/tree/custom-entity)
-
+# GeyserModelEngine 
 # About
 
-This is a fork of the GeyserModelEngine made by [zimzaza4](https://github.com/zimzaza4/GeyserModelEngine/tree/custom-entity). 
-This fork adds a bunch of stuff (alongside more recent bug fixes) like:
+Thanks to [Willem](https://github.com/OmeWillem/GeyserUtils) for adding the following features:
 - Part Visibility
 - Color support
 - Scaling support
@@ -63,10 +59,9 @@ Start the server to generate the relevant configuration files, and then shut dow
 # Current issues
 
 * Multi-textures are not supported
-* Please report any bugs (discord: willem.dev)
+* Please report any bugs (discord: https://discord.gg/NNNaUdAbpP)
 
 # FAQ
 
 ### Where can I contact you?
-You can contact me on discord under the name: willem.dev
-
+You can contact me on our Discord: https://discord.gg/NNNaUdAbpP
