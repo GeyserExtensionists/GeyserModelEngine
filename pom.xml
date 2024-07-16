@@ -110,7 +110,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.zimzaza4</groupId>
+            <groupId>com.github.geyserextensionists</groupId>
             <artifactId>geyserutils-spigot</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
