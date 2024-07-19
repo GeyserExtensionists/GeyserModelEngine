@@ -15,7 +15,7 @@ public class EntityHurtAnimationPacket implements WrapperPacket {
     public PacketContainer encode() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.HURT_ANIMATION);
         packet.getIntegers().write(0, id);
-        packet.getFloat().write(0, 1f);
+        packet.getFloat().write(0, 5f);
         return packet;
     }
 }

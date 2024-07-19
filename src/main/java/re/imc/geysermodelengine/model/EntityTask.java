@@ -33,6 +33,7 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Setter
 public class EntityTask {
 
+    private static final String STOP_ANIMATION_PROPERTY = "anim_stop";
     ModelEntity model;
 
     int tick = 0;
@@ -207,11 +208,11 @@ public class EntityTask {
 
         Vector3f scale = model.getActiveModel().getScale();
         float average = (scale.x + scale.y + scale.z) / 3;
-        if (average == lastScale) return;
-
+        if (ignore) {
+            if (average == lastScale) return;
+        }
         EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
 
-        if (ignore) return;
         lastScale = average;
     }
 
@@ -228,6 +229,8 @@ public class EntityTask {
     }
 
     public void setAnimationProperty(String currentAnimProperty) {
+        model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT P AN:" + currentAnimProperty));
+
         this.lastAnimProperty = currentAnimProperty;
         this.currentAnimProperty = currentAnimProperty;
     }
@@ -258,8 +261,13 @@ public class EntityTask {
 
 
         if (ignore || !lastAnimProperty.equals(currentAnimProperty)) {
-            updates.put("modelengine:" + lastAnimProperty, false);
-            updates.put("modelengine:" + currentAnimProperty, true);
+            if (animationCooldown.get() == 0) {
+                updates.put("modelengine:" + lastAnimProperty, false);
+                updates.put("modelengine:" + currentAnimProperty, true);
+            } else {
+                updates.put("modelengine:" + lastAnimProperty, false);
+                updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
+            }
         }
         if (updates.isEmpty()) return;
         EntityUtils.sendBoolProperties(player, entity, updates);
@@ -326,12 +334,13 @@ public class EntityTask {
 
 
         if (play) {
-            setAnimationProperty("modelengine:anim_stop");
+            setAnimationProperty(STOP_ANIMATION_PROPERTY);
             model.getViewers().forEach(viewer -> updateEntityProperties(viewer, false));
             currentAnimationPriority.set(p);
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
             lastAnimation = id;
+            model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + id));
 
             animationCooldown.set((int) (animationProperty.getLength() * 20));
             playBedrockAnimation(id, model.getViewers(), looping, blendTime);
