@@ -33,7 +33,7 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Setter
 public class EntityTask {
 
-    private static final String STOP_ANIMATION_PROPERTY = "anim_stop";
+    private static final String ANIMATION_PROPERTY = "modelengine:anim";
     ModelEntity model;
 
     int tick = 0;
@@ -51,8 +51,8 @@ public class EntityTask {
 
 
     String lastAnimation = "";
-    String currentAnimProperty = "anim_spawn";
-    String lastAnimProperty = "";
+    int currentAnimProperty = 1;
+    int lastAnimProperty = -1;
 
     boolean looping = true;
 
@@ -149,11 +149,11 @@ public class EntityTask {
         } else if (base.isJumping() && hasAnimation("jump")) {
             playAnimation("jump", 30);
         } else if (base.isWalking() && hasAnimation("walk")) {
-            setAnimationProperty("modelengine:anim_walk");
+            setAnimationProperty(3);
             // playAnimation("walk", 20);
         } else if (hasAnimation("idle")) {
             // playAnimation("idle", 0);
-            setAnimationProperty("modelengine:anim_idle");
+            setAnimationProperty(2);
         }
 
         if (animationCooldown.get() > 0) {
@@ -162,6 +162,7 @@ public class EntityTask {
 
         Optional<Player> player = viewers.stream().findAny();
         if (player.isEmpty()) return;
+
         updateEntityProperties(player.get(), false);
 
         // do not actually use this, atleast bundle these up ;(
@@ -225,9 +226,7 @@ public class EntityTask {
         lastColor = color;
     }
 
-    public void setAnimationProperty(String currentAnimProperty) {
-        model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT P AN:" + currentAnimProperty));
-
+    public void setAnimationProperty(int currentAnimProperty) {
         this.lastAnimProperty = currentAnimProperty;
         this.currentAnimProperty = currentAnimProperty;
     }
@@ -255,18 +254,20 @@ public class EntityTask {
             });
         }
 
+        int animationUpdate = -1;
 
-
-        if (ignore || !lastAnimProperty.equals(currentAnimProperty)) {
+        if (ignore || !(lastAnimProperty == currentAnimProperty)) {
             if (animationCooldown.get() == 0) {
-                updates.put("modelengine:" + lastAnimProperty, false);
-                updates.put("modelengine:" + currentAnimProperty, true);
+                animationUpdate = currentAnimProperty;
             } else {
-                updates.put("modelengine:" + lastAnimProperty, false);
-                updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
+                animationUpdate = 0;
             }
         }
+        if (animationUpdate != -1) {
+            EntityUtils.sendIntProperty(player, entity, ANIMATION_PROPERTY, animationUpdate);
+        }
         if (updates.isEmpty()) return;
+
         EntityUtils.sendBoolProperties(player, entity, updates);
     }
 
@@ -331,8 +332,8 @@ public class EntityTask {
 
 
         if (play) {
-            setAnimationProperty(STOP_ANIMATION_PROPERTY);
-            model.getViewers().forEach(viewer -> updateEntityProperties(viewer, false));
+            setAnimationProperty(0);
+
             currentAnimationPriority.set(p);
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
