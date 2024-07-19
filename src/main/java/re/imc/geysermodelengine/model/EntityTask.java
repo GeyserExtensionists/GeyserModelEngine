@@ -162,10 +162,7 @@ public class EntityTask {
 
         Optional<Player> player = viewers.stream().findAny();
         if (player.isEmpty()) return;
-
-        // i think properties need send to all players
-        // because lastSet
-        viewers.forEach(viewer -> updateEntityProperties(player.get(), false));
+        updateEntityProperties(player.get(), false);
 
         // do not actually use this, atleast bundle these up ;(
         sendScale(player.get(), true);
