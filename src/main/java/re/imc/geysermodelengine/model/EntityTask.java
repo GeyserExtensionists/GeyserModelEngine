@@ -190,8 +190,6 @@ public class EntityTask {
     public void sendEntityData(Player player, int delay) {
         EntityUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
         Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
-            // EntityUtils.sendCustomSkin(player, model.getEntity(), model.getActiveModel().getBlueprint().getName());
-
             model.getEntity().sendSpawnPacket(Collections.singletonList(player));
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
                 if (looping) {
@@ -238,6 +236,7 @@ public class EntityTask {
         int entity = model.getEntity().getEntityId();
 
         Map<String, Boolean> updates = new HashMap<>();
+
         model.getActiveModel().getBones().forEach((s, bone) -> {
             if (!lastModelBoneSet.containsKey(bone))
                 lastModelBoneSet.put(bone, !bone.isVisible());
@@ -253,9 +252,11 @@ public class EntityTask {
             }
 
         });
+
+
         if (ignore || !lastAnimProperty.equals(currentAnimProperty)) {
-            updates.put(lastAnimProperty, false);
-            updates.put(currentAnimProperty, true);
+            updates.put("modelengine:" + lastAnimProperty, false);
+            updates.put("modelengine:" + currentAnimProperty, true);
         }
         if (updates.isEmpty()) return;
         EntityUtils.sendBoolProperties(player, entity, updates);
