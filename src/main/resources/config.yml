@@ -2,4 +2,6 @@ data-send-delay: 5
 entity-view-distance: 50
 join-send-delay: 20
 model-entity-type: BAT # must be a living entity
+enable-part-visibility-models:
+  - example
 debug: false

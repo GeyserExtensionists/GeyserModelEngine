@@ -20,6 +20,8 @@ import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.model.ModelEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,6 +58,9 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private boolean initialized = false;
+
+    @Getter
+    private List<String> enablePartVisibilityModels = new ArrayList<>();
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -66,6 +71,7 @@ public final class GeyserModelEngine extends JavaPlugin {
         debug = getConfig().getBoolean("debug", false);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));
         joinSendDelay = getConfig().getInt("join-send-delay", 20);
+        enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
         if (joinSendDelay > 0) {
             joinedPlayer = CacheBuilder.newBuilder()
                     .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();

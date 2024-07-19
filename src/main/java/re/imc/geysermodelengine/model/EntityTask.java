@@ -237,21 +237,24 @@ public class EntityTask {
 
         Map<String, Boolean> updates = new HashMap<>();
 
-        model.getActiveModel().getBones().forEach((s, bone) -> {
-            if (!lastModelBoneSet.containsKey(bone))
-                lastModelBoneSet.put(bone, !bone.isVisible());
+        if (GeyserModelEngine.getInstance().getEnablePartVisibilityModels().contains(model.getActiveModel().getBlueprint().getName())) {
+            model.getActiveModel().getBones().forEach((s, bone) -> {
+                if (!lastModelBoneSet.containsKey(bone))
+                    lastModelBoneSet.put(bone, !bone.isVisible());
 
-            Boolean lastBone = lastModelBoneSet.get(bone);
-            if (lastBone == null)
-                return;
+                Boolean lastBone = lastModelBoneSet.get(bone);
+                if (lastBone == null)
+                    return;
 
-            if (!lastBone.equals(bone.isVisible()) || ignore) {
-                String name = unstripName(bone).toLowerCase();
-                updates.put(model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
-                lastModelBoneSet.replace(bone, bone.isVisible());
-            }
+                if (!lastBone.equals(bone.isVisible()) || ignore) {
+                    String name = unstripName(bone).toLowerCase();
+                    updates.put(model.getActiveModel().getBlueprint().getName() + ":" + name, bone.isVisible());
+                    lastModelBoneSet.replace(bone, bone.isVisible());
+                }
 
-        });
+            });
+        }
+
 
 
         if (ignore || !lastAnimProperty.equals(currentAnimProperty)) {
