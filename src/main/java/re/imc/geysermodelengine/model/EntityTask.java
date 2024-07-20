@@ -206,11 +206,11 @@ public class EntityTask {
 
         Vector3f scale = model.getActiveModel().getScale();
         float average = (scale.x + scale.y + scale.z) / 3;
-        if (ignore) {
-            if (average == lastScale) return;
-        }
+        if (average == lastScale) return;
+
         EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
 
+        if (ignore) return;
         lastScale = average;
     }
 
