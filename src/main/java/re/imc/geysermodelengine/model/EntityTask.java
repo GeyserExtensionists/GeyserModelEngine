@@ -8,15 +8,12 @@ import com.ticxo.modelengine.api.model.bone.ModelBone;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.common.animation.Animation;
-import me.zimzaza4.geyserutils.spigot.GeyserUtils;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.geysermc.floodgate.api.FloodgateApi;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
@@ -24,7 +21,6 @@ import re.imc.geysermodelengine.packet.entity.PacketEntity;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
 import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
@@ -33,7 +29,8 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Setter
 public class EntityTask {
 
-    private static final String ANIMATION_PROPERTY = "modelengine:anim";
+    private static final String STOP_ANIMATION_PROPERTY = "anim_stop";
+    private static final Map<String, Boolean> ALL_PROPERTIES = Map.of("modelengine:anim_walk", false, "modelengine:anim_idle", false, "modelengine:anim_stop", false);
     ModelEntity model;
 
     int tick = 0;
@@ -51,8 +48,8 @@ public class EntityTask {
 
 
     String lastAnimation = "";
-    int currentAnimProperty = 1;
-    int lastAnimProperty = -1;
+    Map<String, Boolean> lastAnimPropertySet = new HashMap<>();
+
 
     boolean looping = true;
 
@@ -149,17 +146,14 @@ public class EntityTask {
         } else if (base.isJumping() && hasAnimation("jump")) {
             playAnimation("jump", 30);
         } else if (base.isWalking() && hasAnimation("walk")) {
-            setAnimationProperty(3);
-            // playAnimation("walk", 20);
+            playAnimation("walk", 20);
         } else if (hasAnimation("idle")) {
-            // playAnimation("idle", 0);
-            setAnimationProperty(2);
+            playAnimation("idle", 0);
         }
 
         if (animationCooldown.get() > 0) {
             animationCooldown.decrementAndGet();
         }
-
         Optional<Player> player = viewers.stream().findAny();
         if (player.isEmpty()) return;
 
@@ -168,6 +162,7 @@ public class EntityTask {
         // do not actually use this, atleast bundle these up ;(
         sendScale(player.get(), true);
         sendColor(player.get(), true);
+
     }
 
     private void sendSpawnPacket(Player onlinePlayer) {
@@ -223,10 +218,26 @@ public class EntityTask {
 
         lastColor = color;
     }
+    public void setAnimationProperty(String currentAnimProperty) {
 
-    public void setAnimationProperty(int currentAnimProperty) {
-        this.lastAnimProperty = currentAnimProperty;
-        this.currentAnimProperty = currentAnimProperty;
+        Map<String, Boolean> updates = new HashMap<>(ALL_PROPERTIES);
+
+        Optional<Player> player = model.getViewers().stream().findAny();
+        if (player.isEmpty()) return;
+
+        if (animationCooldown.get() == 0) {
+            updates.put("modelengine:" + currentAnimProperty, true);
+        } else {
+            updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
+        }
+
+        if (updates.equals(lastAnimPropertySet)) {
+            return;
+        } else {
+            lastAnimPropertySet.clear();
+            lastAnimPropertySet.putAll(updates);
+        }
+        EntityUtils.sendBoolProperties(player.get(), model.getEntity().getEntityId(), updates);
     }
 
     public void updateEntityProperties(Player player, boolean ignore) {
@@ -252,20 +263,24 @@ public class EntityTask {
             });
         }
 
-        int animationUpdate = -1;
+        /*
+        if (!lastAnimProperty.equals(currentAnimProperty)) {
 
-        if (ignore || !(lastAnimProperty == currentAnimProperty)) {
+            player.sendMessage("CHANGED");
             if (animationCooldown.get() == 0) {
-                animationUpdate = currentAnimProperty;
+                player.sendMessage(lastAnimProperty + " -> " + currentAnimProperty);
+
+                updates.put("modelengine:" + lastAnimProperty, false);
+                updates.put("modelengine:" + currentAnimProperty, true);
             } else {
-                animationUpdate = 0;
+                updates.put("modelengine:" + lastAnimProperty, false);
+                updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
             }
         }
-        if (animationUpdate != -1) {
-            EntityUtils.sendIntProperty(player, entity, ANIMATION_PROPERTY, animationUpdate);
-        }
         if (updates.isEmpty()) return;
+        player.sendMessage("SEND: " + updates);
 
+         */
         EntityUtils.sendBoolProperties(player, entity, updates);
     }
 
@@ -311,6 +326,14 @@ public class EntityTask {
             return 0;
         }
 
+        if (animationProperty.getName().equalsIgnoreCase("walk")) {
+            setAnimationProperty("anim_walk");
+            return 0;
+        }
+        if (animationProperty.getName().equalsIgnoreCase("idle")) {
+            setAnimationProperty("anim_idle");
+            return 0;
+        }
 
         boolean play = false;
         if (currentAnimationPriority.get() < p) {
@@ -327,17 +350,17 @@ public class EntityTask {
             }
         }
 
-
-
         if (play) {
-            setAnimationProperty(0);
+            // setAnimationProperty(0);
 
             currentAnimationPriority.set(p);
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
             lastAnimation = id;
-            animationCooldown.set((int) (animationProperty.getLength() * 20));
+            animationCooldown.set((int) Math.min(Math.floor(animationProperty.getLength() * 20) - 3, 1));
+
             playBedrockAnimation(id, model.getViewers(), looping, blendTime);
+            setAnimationProperty("stop");
         }
         return animationCooldown.get();
     }
@@ -365,9 +388,6 @@ public class EntityTask {
 
 
     public void playBedrockAnimation(String animationId, Set<Player> viewers, boolean loop, float blendTime) {
-
-        // model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + animationId));
-
         int entity = model.getEntity().getEntityId();
 
         Animation.AnimationBuilder animation = Animation.builder()
@@ -416,12 +436,7 @@ public class EntityTask {
     public void run(GeyserModelEngine instance, int i) {
 
         String id = "";
-        ActiveModel activeModel = model.getActiveModel();
-        if (hasAnimation("spawn")) {
-            id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + ".spawn";
-        } else {
-            id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + ".idle";
-        }
+        playAnimation("spawn", 30);
 
         lastAnimation = id;
         sendHitBoxToAll();

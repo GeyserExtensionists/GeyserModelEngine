@@ -1,17 +1,24 @@
 package re.imc.geysermodelengine.packet.entity;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import re.imc.geysermodelengine.packet.*;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Getter
 public class PacketEntity {
     public PacketEntity(EntityType type, Set<Player> viewers, Location location) {
         this.id = ThreadLocalRandom.current().nextInt(300000000, 400000000);
@@ -27,6 +34,8 @@ public class PacketEntity {
     private Set<Player> viewers;
     private Location location;
     private boolean removed = false;
+
+    private Map<EnumWrappers.ItemSlot, ItemStack> equipment = new ConcurrentHashMap<>();
 
     public @NotNull Location getLocation() {
         return location;
@@ -59,7 +68,18 @@ public class PacketEntity {
         players.forEach(player -> {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode());
         });
+        sendAllEquipmentPacket(players);
         // players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, metadataPacket.encode()));
+    }
+
+    public void sendAllEquipmentPacket(Collection<Player> players) {
+        for (Map.Entry<EnumWrappers.ItemSlot, ItemStack> e : equipment.entrySet()) {
+            EntityEquipmentPacket packet = new EntityEquipmentPacket(id, e.getKey(), e.getValue());
+
+            players.forEach(player -> {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode());
+            });
+        }
     }
 
     public void sendLocationPacket(Collection<Player> players) {
@@ -80,6 +100,17 @@ public class PacketEntity {
 
     public int getEntityId() {
         return id;
+    }
+
+    public void setSlot(EnumWrappers.ItemSlot slot, ItemStack itemStack) {
+        if (itemStack == null) {
+            itemStack = new ItemStack(Material.AIR);
+        }
+        equipment.put(slot, itemStack);
+        EntityEquipmentPacket packet = new EntityEquipmentPacket(id, slot, itemStack);
+        viewers.forEach(player -> {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode());
+        });
     }
 
 }

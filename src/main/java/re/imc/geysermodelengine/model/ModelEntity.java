@@ -1,12 +1,15 @@
 package re.imc.geysermodelengine.model;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.google.common.collect.Sets;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
