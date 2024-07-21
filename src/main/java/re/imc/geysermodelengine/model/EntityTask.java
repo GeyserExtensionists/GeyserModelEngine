@@ -418,6 +418,10 @@ public class EntityTask {
             return true;
         }
 
+        if (entity.getLocation().getWorld() != player.getWorld()) {
+            return false;
+        }
+
         if (player.getLocation().distanceSquared(entity.getLocation()) > player.getSimulationDistance() * player.getSimulationDistance() * 256) {
             return false;
         }
