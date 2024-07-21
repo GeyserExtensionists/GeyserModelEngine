@@ -48,8 +48,8 @@ public class EntityTask {
 
 
     String lastAnimation = "";
-    Map<String, Boolean> lastAnimPropertySet = new HashMap<>();
-
+    // Map<String, Boolean> lastAnimPropertySet = new HashMap<>();
+    int lastAnimationVariant = 0;
 
     boolean looping = true;
 
@@ -218,15 +218,15 @@ public class EntityTask {
 
         lastColor = color;
     }
-    public void setAnimationProperty(String currentAnimProperty) {
-
+    public void setAnimationProperty(int currentAnimProperty) {
+        /*
         Map<String, Boolean> updates = new HashMap<>(ALL_PROPERTIES);
 
         Optional<Player> player = model.getViewers().stream().findAny();
         if (player.isEmpty()) return;
 
         if (animationCooldown.get() == 0) {
-            updates.put("modelengine:" + currentAnimProperty, true);
+            // updates.put("modelengine:" + currentAnimProperty, true);
         } else {
             updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
         }
@@ -238,6 +238,17 @@ public class EntityTask {
             lastAnimPropertySet.putAll(updates);
         }
         EntityUtils.sendBoolProperties(player.get(), model.getEntity().getEntityId(), updates);
+
+         */
+        // i really dont know why crash
+        Optional<Player> player = model.getViewers().stream().findAny();
+        if (player.isEmpty()) return;
+
+        int toSend = 3;
+        if (animationCooldown.get() == 0) {
+            toSend = currentAnimProperty;
+        }
+        EntityUtils.sendVariant(player.get(), model.getEntity().getEntityId(), toSend);
     }
 
     public void updateEntityProperties(Player player, boolean ignore) {
@@ -277,10 +288,9 @@ public class EntityTask {
                 updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
             }
         }
-        if (updates.isEmpty()) return;
-        player.sendMessage("SEND: " + updates);
 
          */
+        if (updates.isEmpty()) return;
         EntityUtils.sendBoolProperties(player, entity, updates);
     }
 
@@ -327,11 +337,11 @@ public class EntityTask {
         }
 
         if (animationProperty.getName().equalsIgnoreCase("walk")) {
-            setAnimationProperty("anim_walk");
+            setAnimationProperty(2);
             return 0;
         }
         if (animationProperty.getName().equalsIgnoreCase("idle")) {
-            setAnimationProperty("anim_idle");
+            setAnimationProperty(1);
             return 0;
         }
 
@@ -357,10 +367,10 @@ public class EntityTask {
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
             lastAnimation = id;
-            animationCooldown.set((int) Math.min(Math.floor(animationProperty.getLength() * 20) - 3, 1));
+            animationCooldown.set((int) Math.min(Math.floor(animationProperty.getLength() * 20) - 4, 1));
 
             playBedrockAnimation(id, model.getViewers(), looping, blendTime);
-            setAnimationProperty("stop");
+            setAnimationProperty(3);
         }
         return animationCooldown.get();
     }
