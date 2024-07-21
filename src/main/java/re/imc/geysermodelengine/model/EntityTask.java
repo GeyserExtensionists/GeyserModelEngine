@@ -210,7 +210,6 @@ public class EntityTask {
 
         EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
 
-        if (ignore) return;
         lastScale = average;
     }
 
@@ -222,7 +221,6 @@ public class EntityTask {
 
         EntityUtils.sendCustomColor(player, model.getEntity().getEntityId(), color);
 
-        if (ignore) return;
         lastColor = color;
     }
 
@@ -338,8 +336,6 @@ public class EntityTask {
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
             lastAnimation = id;
-            model.getViewers().forEach(viewer -> viewer.sendActionBar("CURRENT AN:" + id));
-
             animationCooldown.set((int) (animationProperty.getLength() * 20));
             playBedrockAnimation(id, model.getViewers(), looping, blendTime);
         }

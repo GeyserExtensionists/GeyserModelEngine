@@ -54,12 +54,12 @@ public class PacketEntity {
 
     public void sendSpawnPacket(Collection<Player> players) {
         EntitySpawnPacket packet = new EntitySpawnPacket(id, uuid, type, location);
-        EntityMetadataPacket metadataPacket = new EntityMetadataPacket(id);
+        // EntityMetadataPacket metadataPacket = new EntityMetadataPacket(id);
 
         players.forEach(player -> {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode());
         });
-        players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, metadataPacket.encode()));
+        // players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, metadataPacket.encode()));
     }
 
     public void sendLocationPacket(Collection<Player> players) {
@@ -69,7 +69,7 @@ public class PacketEntity {
     }
 
     public void sendHurtPacket(Collection<Player> players) {
-        EntityHurtAnimationPacket packet = new EntityHurtAnimationPacket(id);
+        EntityHurtPacket packet = new EntityHurtPacket(id);
         players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
     }
 
