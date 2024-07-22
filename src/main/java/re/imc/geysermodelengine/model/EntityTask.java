@@ -72,14 +72,14 @@ public class EntityTask {
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
         if (activeModel.isDestroyed() || activeModel.isRemoved() || !modeledEntity.getBase().isAlive()) {
-            if (!activeModel.isRemoved() && hasAnimation("death")) {
+            if (!modeledEntity.getBase().isAlive() && hasAnimation("death")) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         removed = true;
                         entity.remove();
                     }
-                }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation("death", 999, 5f, true) - 3, 0), 200));
+                }.runTaskLater(GeyserModelEngine.getInstance(), Math.min(Math.max(playAnimation("death", 999) + 2, 0), 200));
             } else {
                 new BukkitRunnable() {
                     @Override
@@ -241,14 +241,15 @@ public class EntityTask {
 
          */
         // i really dont know why crash
-        Optional<Player> player = model.getViewers().stream().findAny();
-        if (player.isEmpty()) return;
 
         int toSend = 3;
         if (animationCooldown.get() == 0) {
             toSend = currentAnimProperty;
         }
-        EntityUtils.sendVariant(player.get(), model.getEntity().getEntityId(), toSend);
+        for (Player viewer : model.getViewers()) {
+            EntityUtils.sendVariant(viewer, model.getEntity().getEntityId(), toSend);
+        }
+
     }
 
     public void updateEntityProperties(Player player, boolean ignore) {
@@ -344,6 +345,10 @@ public class EntityTask {
             setAnimationProperty(1);
             return 0;
         }
+        if (animationProperty.getName().equalsIgnoreCase("spawn")) {
+            setAnimationProperty(0);
+            return 0;
+        }
 
         boolean play = false;
         if (currentAnimationPriority.get() < p) {
@@ -367,7 +372,7 @@ public class EntityTask {
 
             String id = "animation." + activeModel.getBlueprint().getName().toLowerCase() + "." + animationProperty.getName().toLowerCase();
             lastAnimation = id;
-            animationCooldown.set((int) Math.min(Math.floor(animationProperty.getLength() * 20) - 4, 1));
+            animationCooldown.set((int) Math.max(Math.floor(animationProperty.getLength() * 20) - 5, 1));
 
             playBedrockAnimation(id, model.getViewers(), looping, blendTime);
             setAnimationProperty(3);
