@@ -15,10 +15,10 @@ Download the following plugins according to what server software you use.
 | :---                           | :----                                                                | :---                            |
 | GeyserUtils                    | [Github](https://github.com/GeyserExtensionists/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
 | GeyserModelEngine              | [Github](https://github.com/GeyserExtensionists/GeyserModelEngine)              | Make your bedrock support MEG4                            |
-| GeyserModelEnginePackGenerator | [Github](https://github.com/GeyserExtensonists/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
+| GeyserModelEnginePackGenerator | [Github](https://github.com/GeyserExtensionists/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
 - Put `GeyserModelEngine` in the plugins folder (only Spigot or forks of Spigot supported)
-- Put either `geyserutils-spigot` in your plugins folder aswell (`geyserutils-velocity` in your Velocity plugins folder if you use it)
+- Put either `geyserutils-spigot` in your plugins folder aswell (`geyserutils-velocity`/`geyserutils-bungeecord` in your Velocity/Bungeecord plugins folder if you use it)
 - Put `GeyserModelEnginePackGenerator` and `geyserutils-geyser` into `plugins/[Geyser-Folder]/extensions`
 
 Start the server to generate the relevant configuration files, and then shut down the server to convert any models.
@@ -33,6 +33,7 @@ Start the server to generate the relevant configuration files, and then shut dow
 <img src="docsimg/example.jpg" width="500">
 
 > Each model should have a separate model folder
+> Subfolders are supported if you want to categorize them
 
 - Now use BlockBench and convert your model to a Bedrock Entity, this will allow you to export the Bedrock Geometry and Animations.
 - Put the geometry, animations and texture file in this folder you've made.
