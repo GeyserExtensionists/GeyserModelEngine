@@ -14,7 +14,7 @@ Download the following plugins according to what server software you use.
 | plugins                        | Link                                                                 | effect                          |
 | :---                           | :----                                                                | :---                            |
 | GeyserUtils                    | [Github](https://github.com/GeyserExtensionists/GeyserUtils)                    | Get your Geyser to support calling some BE stuff  |
-| GeyserModelEngine              | [Github](https://github.com/Geyser extensionists/GeyserModelEngine)              | Make your bedrock support MEG4                            |
+| GeyserModelEngine              | [Github](https://github.com/GeyserExtensionists/GeyserModelEngine)              | Make your bedrock support MEG4                            |
 | GeyserModelEnginePackGenerator | [Github](https://github.com/GeyserExtensonists/GeyserModelEnginePackGenerator) | Help you automatically transform the model to generate resource packs        |
 
 - Put `GeyserModelEngine` in the plugins folder (only Spigot or forks of Spigot supported)
@@ -59,9 +59,9 @@ Start the server to generate the relevant configuration files, and then shut dow
 # Current issues
 
 * Multi-textures are not supported
-* Please report any bugs (discord: https://discord.gg/NNNaUdAbpP)
+* Please report any bugs
 
 # FAQ
 
 ### Where can I contact you?
-You can contact me on our Discord: https://discord.gg/NNNaUdAbpP
+You can contact us on our Discord: https://discord.gg/NNNaUdAbpP
