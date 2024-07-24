@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
+import re.imc.geysermodelengine.model.BedrockMountControl;
 import re.imc.geysermodelengine.model.ModelEntity;
 
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ public final class GeyserModelEngine extends JavaPlugin {
                     initialized = true;
 
                 }, 100);
+        BedrockMountControl.startTask();
     }
 
     @Override

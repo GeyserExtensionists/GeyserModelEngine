@@ -1,6 +1,7 @@
 package re.imc.geysermodelengine.packet.entity;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -20,6 +21,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 public class PacketEntity {
+
+    public static final MinecraftVersion V1_20_5 = new MinecraftVersion("1.20.5");
     public PacketEntity(EntityType type, Set<Player> viewers, Location location) {
         this.id = ThreadLocalRandom.current().nextInt(300000000, 400000000);
         this.uuid = UUID.randomUUID();
@@ -89,8 +92,11 @@ public class PacketEntity {
     }
 
     public void sendHurtPacket(Collection<Player> players) {
-        EntityHurtPacket packet = new EntityHurtPacket(id);
-        players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
+        // 1.21 error
+        if (MinecraftVersion.getCurrentVersion().compareTo(V1_20_5) < 0) {
+            EntityHurtPacket packet = new EntityHurtPacket(id);
+            players.forEach(player -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet.encode()));
+        }
     }
 
     public void sendEntityDestroyPacket(Collection<Player> players) {

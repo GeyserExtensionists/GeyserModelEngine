@@ -1,6 +1,9 @@
 package re.imc.geysermodelengine.model;
 
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
+import com.ticxo.modelengine.api.animation.ModelState;
+import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
+import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -56,6 +59,7 @@ public class EntityTask {
     private BukkitRunnable syncTask;
 
     private BukkitRunnable asyncTask;
+
 
 
     public EntityTask(ModelEntity model) {
@@ -139,18 +143,22 @@ public class EntityTask {
 
         BaseEntity<?> base = modeledEntity.getBase();
 
-        if (base.isStrafing() && hasAnimation("strafe")) {
-            playAnimation("strafe", 50);
-        } else if (base.isFlying() && hasAnimation("fly")) {
-            playAnimation("fly", 40);
-        } else if (base.isJumping() && hasAnimation("jump")) {
-            playAnimation("jump", 30);
-        } else if (base.isWalking() && hasAnimation("walk")) {
-            playAnimation("walk", 20);
-        } else if (hasAnimation("idle")) {
-            playAnimation("idle", 0);
+        AnimationHandler handler = activeModel.getAnimationHandler();
+        if (base.isStrafing()) {
+           playAnimation(handler.getDefaultProperty(ModelState.STRAFE).getAnimation(), 50);
+        } else if (base.isFlying()) {
+            if (base.isWalking()) {
+                playAnimation(handler.getDefaultProperty(ModelState.FLY).getAnimation(), 40);
+            } else {
+                playAnimation(handler.getDefaultProperty(ModelState.HOVER).getAnimation(), 40);
+            }
+        } else if (base.isJumping()) {
+            playAnimation(handler.getDefaultProperty(ModelState.JUMP).getAnimation(), 30);
+        } else if (base.isWalking()) {
+            playAnimation(handler.getDefaultProperty(ModelState.WALK).getAnimation(), 20);
+        } else if (hasAnimation(handler.getDefaultProperty(ModelState.IDLE).getAnimation())) {
+            playAnimation(handler.getDefaultProperty(ModelState.IDLE).getAnimation(), 0);
         }
-
         if (animationCooldown.get() > 0) {
             animationCooldown.decrementAndGet();
         }
@@ -160,8 +168,8 @@ public class EntityTask {
         updateEntityProperties(player.get(), false);
 
         // do not actually use this, atleast bundle these up ;(
-        sendScale(player.get(), true);
-        sendColor(player.get(), true);
+        sendScale(player.get(), false);
+        sendColor(player.get(), false);
 
     }
 
@@ -191,29 +199,33 @@ public class EntityTask {
                 }
                 sendHitBox(player);
                 sendScale(player, true);
+                sendColor(player, true);
                 updateEntityProperties(player, true);
             }, 8);
         }, delay);
     }
 
-    public void sendScale(Player player, boolean ignore) {
+    public void sendScale(Player player, boolean firstSend) {
         if (player == null) return;
 
         Vector3f scale = model.getActiveModel().getScale();
         float average = (scale.x + scale.y + scale.z) / 3;
-        if (average == lastScale) return;
 
+        if (!firstSend) {
+            if (average == lastScale) return;
+        }
         EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
 
         lastScale = average;
     }
 
-    public void sendColor(Player player, boolean ignore) {
+    public void sendColor(Player player, boolean firstSend) {
         if (player == null) return;
 
         Color color = new Color(model.getActiveModel().getDefaultTint().asARGB());
-        if (color.equals(lastColor)) return;
-
+        if (firstSend) {
+            if (color.equals(lastColor)) return;
+        }
         EntityUtils.sendCustomColor(player, model.getEntity().getEntityId(), color);
 
         lastColor = color;
