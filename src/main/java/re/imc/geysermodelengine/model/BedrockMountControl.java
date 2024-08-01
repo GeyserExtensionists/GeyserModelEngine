@@ -8,6 +8,7 @@ import com.ticxo.modelengine.api.mount.controller.MountController;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
 
 public class BedrockMountControl {
@@ -17,6 +18,9 @@ public class BedrockMountControl {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                        continue;
+                    }
                     float pitch = player.getPitch();
                     Pair<ActiveModel, Mount> seat = GeyserModelEngine.getInstance().getDrivers().get(player);
                     if (seat != null) {
@@ -31,7 +35,7 @@ public class BedrockMountControl {
                                 }
                             }
                         }
-                        if (pitch > 50) {
+                        if (pitch > 80) {
                             MountController controller = ModelEngineAPI.getMountPairManager()
                                     .getController(player.getUniqueId());
                             if (controller != null) {
