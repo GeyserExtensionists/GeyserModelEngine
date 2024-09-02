@@ -357,10 +357,6 @@ public class EntityTask {
             setAnimationProperty(1);
             return 0;
         }
-        if (animationProperty.getName().equalsIgnoreCase("spawn")) {
-            setAnimationProperty(0);
-            return 0;
-        }
 
         boolean play = false;
         if (currentAnimationPriority.get() < p) {
