@@ -82,23 +82,7 @@ public class ModelListener implements Listener {
     }
 
 
-    @EventHandler
-    public void onAnimationPlay(AnimationPlayEvent event) {
-        if (event.getModel().getModeledEntity() == null) {
-            return;
-        }
-        Map<ActiveModel, ModelEntity> map = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId());
-        if (map == null) {
-            return;
-        }
-        ModelEntity model = map.get(event.getModel());
 
-        if (model != null) {
-            EntityTask task = model.getTask();
-            int p = (event.getProperty().isForceOverride() ? 80 : (event.getProperty().isOverride() ? 70 : 60));
-            task.playAnimation(event.getProperty().getName(), p);
-        }
-    }
 
 
 
