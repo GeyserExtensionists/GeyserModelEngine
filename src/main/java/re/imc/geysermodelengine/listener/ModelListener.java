@@ -88,6 +88,9 @@ public class ModelListener implements Listener {
 
     @EventHandler
     public void onModelEntityHurt(EntityDamageEvent event) {
+        if (event.isCancelled())
+            return;
+
         Map<ActiveModel, ModelEntity> model = ModelEntity.ENTITIES.get(event.getEntity().getEntityId());
         if (model != null) {
             for (Map.Entry<ActiveModel, ModelEntity> entry : model.entrySet()) {
