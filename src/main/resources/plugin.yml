@@ -8,3 +8,4 @@ api-version: '1.19'
 depend:
   - ModelEngine
   - floodgate
+  - ProtocolLib
