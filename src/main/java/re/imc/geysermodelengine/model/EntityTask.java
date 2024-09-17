@@ -123,14 +123,16 @@ public class EntityTask {
         }
 
         BaseEntity<?> base = modeledEntity.getBase();
-        Optional<Player> player = viewers.stream().findAny();
-        if (player.isEmpty()) return;
+        // Optional<Player> player = viewers.stream().findAny();
+        // if (player.isEmpty()) return;
+        for (Player viewer : viewers) {
 
-        updateEntityProperties(player.get(), false);
+            updateEntityProperties(viewer, false);
 
-        // do not actually use this, atleast bundle these up ;(
-        sendScale(player.get(), false);
-        sendColor(player.get(), false);
+            // do not actually use this, atleast bundle these up ;(
+            sendScale(viewer, false);
+            sendColor(viewer, false);
+        }
 
     }
 
