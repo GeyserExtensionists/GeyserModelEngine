@@ -124,15 +124,14 @@ public class EntityTask {
 
         BaseEntity<?> base = modeledEntity.getBase();
         // Optional<Player> player = viewers.stream().findAny();
-        // if (player.isEmpty()) return;
-        for (Player viewer : viewers) {
+        // if (player.isEmpty()) return
 
-            updateEntityProperties(viewer, false);
+        updateEntityProperties(viewers, false);
 
-            // do not actually use this, atleast bundle these up ;(
-            sendScale(viewer, false);
-            sendColor(viewer, false);
-        }
+        // do not actually use this, atleast bundle these up ;(
+        sendScale(viewers, false);
+        sendColor(viewers, false);
+
 
     }
 
@@ -158,36 +157,39 @@ public class EntityTask {
             model.getEntity().sendSpawnPacket(Collections.singletonList(player));
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
                 sendHitBox(player);
-                sendScale(player, true);
-                sendColor(player, true);
-                updateEntityProperties(player, true);
-            }, 8);
+                sendScale(Collections.singleton(player), true);
+                sendColor(Collections.singleton(player), true);
+                updateEntityProperties(Collections.singleton(player), true);
+            }, 1);
         }, delay);
     }
 
-    public void sendScale(Player player, boolean firstSend) {
-        if (player == null) return;
-
+    public void sendScale(Collection<Player> players, boolean firstSend) {
+        if (players.isEmpty()) {
+            return;
+        }
         Vector3f scale = model.getActiveModel().getScale();
         float average = (scale.x + scale.y + scale.z) / 3;
 
         if (!firstSend) {
             if (average == lastScale) return;
         }
-        EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
-
+        for (Player player : players) {
+            EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
+        }
         lastScale = average;
     }
 
-    public void sendColor(Player player, boolean firstSend) {
-        if (player == null) return;
+    public void sendColor(Collection<Player> players, boolean firstSend) {
+        if (players.isEmpty()) return;
 
         Color color = new Color(model.getActiveModel().getDefaultTint().asARGB());
         if (firstSend) {
             if (color.equals(lastColor)) return;
         }
-        EntityUtils.sendCustomColor(player, model.getEntity().getEntityId(), color);
-
+        for (Player player : players) {
+            EntityUtils.sendCustomColor(player, model.getEntity().getEntityId(), color);
+        }
         lastColor = color;
     }
     public void setAnimationProperty(int currentAnimProperty) {
@@ -221,7 +223,7 @@ public class EntityTask {
 
     }
 
-    public void updateEntityProperties(Player player, boolean ignore) {
+    public void updateEntityProperties(Collection<Player> players, boolean ignore) {
         int entity = model.getEntity().getEntityId();
 
         Map<String, Boolean> boneUpdates = new HashMap<>();
@@ -293,7 +295,9 @@ public class EntityTask {
         System.out.println(intUpdates);
 
          */
-        EntityUtils.sendIntProperties(player, entity, intUpdates);
+        for (Player player : players) {
+            EntityUtils.sendIntProperties(player, entity, intUpdates);
+        }
     }
 
     private String unstripName(ModelBone bone) {
