@@ -5,6 +5,8 @@ import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler;
 import com.ticxo.modelengine.api.entity.BaseEntity;
+import com.ticxo.modelengine.api.entity.CullType;
+import com.ticxo.modelengine.api.entity.Dummy;
 import com.ticxo.modelengine.api.events.AnimationEndEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -75,7 +77,7 @@ public class EntityTask {
                     removed = true;
                     entity.remove();
                 }
-            }.runTask(GeyserModelEngine.getInstance());
+            }.runTaskLater(GeyserModelEngine.getInstance(), 1);
 
 
             ENTITIES.remove(modeledEntity.getBase().getEntityId());
@@ -87,23 +89,7 @@ public class EntityTask {
 
         if (tick % 5 == 0) {
 
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
-
-                    if (canSee(onlinePlayer, model.getEntity())) {
-
-                        if (!viewers.contains(onlinePlayer)) {
-                            sendSpawnPacket(onlinePlayer);
-                            viewers.add(onlinePlayer);
-                        }
-                    } else {
-                        if (viewers.contains(onlinePlayer)) {
-                            entity.sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
-                            viewers.remove(onlinePlayer);
-                        }
-                    }
-                }
-            }
+            checkViewers(viewers);
 
             if (tick % 40 == 0) {
 
@@ -135,6 +121,27 @@ public class EntityTask {
 
     }
 
+    public void checkViewers(Set<Player> viewers) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
+
+                if (canSee(onlinePlayer, model.getEntity())) {
+
+                    if (!viewers.contains(onlinePlayer)) {
+                        sendSpawnPacket(onlinePlayer);
+                        viewers.add(onlinePlayer);
+                    }
+                } else {
+                    if (viewers.contains(onlinePlayer)) {
+                        model.getEntity().sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
+                        viewers.remove(onlinePlayer);
+                    }
+                }
+            }
+        }
+
+    }
+
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
         int delay = 1;
@@ -144,10 +151,10 @@ public class EntityTask {
         }
         if (task == null || firstJoined) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
-                model.getTask().sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getSendDelay());
+                model.getTask().sendEntityData(onlinePlayer, 1);
             }, delay);
         } else {
-            task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getSendDelay());
+            task.sendEntityData(onlinePlayer, 1);
         }
     }
 
@@ -192,36 +199,7 @@ public class EntityTask {
         }
         lastColor = color;
     }
-    public void setAnimationProperty(int currentAnimProperty) {
-        /*
-        Map<String, Boolean> updates = new HashMap<>(ALL_PROPERTIES);
 
-        Optional<Player> player = model.getViewers().stream().findAny();
-        if (player.isEmpty()) return;
-
-        if (animationCooldown.get() == 0) {
-            // updates.put("modelengine:" + currentAnimProperty, true);
-        } else {
-            updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
-        }
-
-        if (updates.equals(lastAnimPropertySet)) {
-            return;
-        } else {
-            lastAnimPropertySet.clear();
-            lastAnimPropertySet.putAll(updates);
-        }
-        EntityUtils.sendBoolProperties(player.get(), model.getEntity().getEntityId(), updates);
-
-         */
-        // i really dont know why crash
-
-        int toSend = 3;
-        for (Player viewer : model.getViewers()) {
-            EntityUtils.sendVariant(viewer, model.getEntity().getEntityId(), toSend);
-        }
-
-    }
 
     public void updateEntityProperties(Collection<Player> players, boolean ignore) {
         int entity = model.getEntity().getEntityId();
@@ -339,23 +317,23 @@ public class EntityTask {
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
             return false;
         }
-
+        CullType type = model.getActiveModel().getModeledEntity().getBase().getData().getTracking().get(player);
+        return type != null;
+        /*
         if (entity.getLocation().getChunk() == player.getChunk()) {
             return true;
         }
-
         if (entity.getLocation().getWorld() != player.getWorld()) {
             return false;
         }
-
         if (player.getLocation().distanceSquared(entity.getLocation()) > player.getSimulationDistance() * player.getSimulationDistance() * 256) {
             return false;
         }
-        if (player.getLocation().distance(entity.getLocation()) > GeyserModelEngine.getInstance().getViewDistance()) {
+        if (player.getLocation().distance(entity.getLocation()) > model.getActiveModel().getModeledEntity().getBase().getRenderRadius()) {
             return false;
         }
         return true;
-
+         */
     }
 
     public void cancel() {
@@ -363,9 +341,7 @@ public class EntityTask {
         asyncTask.cancel();
     }
 
-    public void run(GeyserModelEngine instance, int i) {
-
-        String id = "";
+    public void run(GeyserModelEngine instance) {
         sendHitBoxToAll();
 
         asyncTask = new BukkitRunnable() {
@@ -374,6 +350,6 @@ public class EntityTask {
                 runAsync();
             }
         };
-        asyncTask.runTaskTimerAsynchronously(instance, i + 2, 0);
+        asyncTask.runTaskTimerAsynchronously(instance, 0, 0);
     }
 }
