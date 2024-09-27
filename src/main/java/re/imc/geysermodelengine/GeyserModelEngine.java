@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public final class GeyserModelEngine extends JavaPlugin {
@@ -52,6 +54,9 @@ public final class GeyserModelEngine extends JavaPlugin {
     private int joinSendDelay;
 
     @Getter
+    private long entityPositionUpdatePeriod;
+
+    @Getter
     private boolean debug;
 
     @Getter
@@ -62,6 +67,9 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private List<String> enablePartVisibilityModels = new ArrayList<>();
+
+    @Getter
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -72,6 +80,7 @@ public final class GeyserModelEngine extends JavaPlugin {
         debug = getConfig().getBoolean("debug", false);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));
         joinSendDelay = getConfig().getInt("join-send-delay", 20);
+        entityPositionUpdatePeriod = getConfig().getLong("entity-position-update-period", 35);
         enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
         if (joinSendDelay > 0) {
             joinedPlayer = CacheBuilder.newBuilder()
@@ -98,6 +107,16 @@ public final class GeyserModelEngine extends JavaPlugin {
                     initialized = true;
 
                 }, 100);
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
+                    models.values().forEach(ModelEntity::teleportToModel);
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
         BedrockMountControl.startTask();
     }
 

@@ -66,7 +66,6 @@ public class EntityTask {
             return;
         }
 
-        model.teleportToModel();
         Set<Player> viewers = model.getViewers();
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
@@ -108,7 +107,6 @@ public class EntityTask {
             sendHitBoxToAll();
         }
 
-        BaseEntity<?> base = modeledEntity.getBase();
         // Optional<Player> player = viewers.stream().findAny();
         // if (player.isEmpty()) return
 
@@ -191,6 +189,9 @@ public class EntityTask {
         if (players.isEmpty()) return;
 
         Color color = new Color(model.getActiveModel().getDefaultTint().asARGB());
+        if (model.getActiveModel().isMarkedHurt()) {
+            color = new Color(model.getActiveModel().getDamageTint().asARGB());
+        }
         if (firstSend) {
             if (color.equals(lastColor)) return;
         }

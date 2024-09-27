@@ -18,6 +18,7 @@ public class EntityHurtPacket implements WrapperPacket {
         packet.getIntegers().writeSafely(1,0);
         packet.getIntegers().writeSafely(2, 0);
         packet.getIntegers().writeSafely(3, 0);
+
         packet.getBooleans().writeSafely(0, false);
         return packet;
     }

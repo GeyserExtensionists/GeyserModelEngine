@@ -85,7 +85,7 @@ public class ModelListener implements Listener {
 
 
 
-
+    /*
     @EventHandler(priority = EventPriority.MONITOR)
     public void onModelEntityHurt(EntityDamageEvent event) {
         if (event.isCancelled()) {
@@ -96,13 +96,14 @@ public class ModelListener implements Listener {
         if (model != null) {
             for (Map.Entry<ActiveModel, ModelEntity> entry : model.entrySet()) {
                 if (!entry.getValue().getEntity().isDead()) {
-                    entry.getValue().getEntity().sendHurtPacket(entry.getValue().getViewers());
+                    //entry.getValue().getEntity().sendHurtPacket(entry.getValue().getViewers());
                 }
             }
 
         }
     }
 
+     */
     /*
 
     @EventHandler
