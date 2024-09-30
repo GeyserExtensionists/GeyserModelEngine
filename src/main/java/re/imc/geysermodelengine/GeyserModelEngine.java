@@ -69,7 +69,7 @@ public final class GeyserModelEngine extends JavaPlugin {
     private List<String> enablePartVisibilityModels = new ArrayList<>();
 
     @Getter
-    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -108,10 +108,24 @@ public final class GeyserModelEngine extends JavaPlugin {
 
                 }, 100);
 
+        ;
+
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
                     models.values().forEach(ModelEntity::teleportToModel);
+
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
+
+
+        scheduler.scheduleWithFixedDelay(() -> {
+            try {
+                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
+                    models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

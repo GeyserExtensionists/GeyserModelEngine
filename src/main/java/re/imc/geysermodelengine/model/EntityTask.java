@@ -1,5 +1,6 @@
 package re.imc.geysermodelengine.model;
 
+import com.google.common.collect.Sets;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
@@ -28,6 +29,7 @@ import re.imc.geysermodelengine.util.BooleanPacker;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
@@ -48,7 +50,7 @@ public class EntityTask {
 
     float lastScale = -1.0f;
     Color lastColor = null;
-    Map<String, Integer> lastIntSet = new HashMap<>();
+    Map<String, Integer> lastIntSet = new ConcurrentHashMap<>();
 
     // Map<String, Boolean> lastAnimPropertySet = new HashMap<>();
     private BukkitRunnable syncTask;
@@ -110,7 +112,10 @@ public class EntityTask {
         // Optional<Player> player = viewers.stream().findAny();
         // if (player.isEmpty()) return
 
-        updateEntityProperties(viewers, false);
+        if (viewers.isEmpty()) {
+            return;
+        }
+
 
         // do not actually use this, atleast bundle these up ;(
         sendScale(viewers, false);
@@ -202,8 +207,9 @@ public class EntityTask {
     }
 
 
-    public void updateEntityProperties(Collection<Player> players, boolean ignore) {
+    public void updateEntityProperties(Collection<Player> players, boolean ignore, String... forceAnims) {
         int entity = model.getEntity().getEntityId();
+        Set<String> forceAnimSet = Set.of(forceAnims);
 
         Map<String, Boolean> boneUpdates = new HashMap<>();
         Map<String, Boolean> animUpdates = new HashMap<>();
@@ -231,25 +237,23 @@ public class EntityTask {
         }
 
         model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
-            if (anim.isOverride() && model.getActiveModel().getAnimationHandler().isPlayingAnimation(s)) {
+            if (anim.isOverride() && (model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s))) {
                 overrideAnimUpdates.add(s);
             }
         });
         model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
             if (overrideAnimUpdates.isEmpty()) {
-                animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s));
+                animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s));
             } else {
                 if (overrideAnimUpdates.contains(s)) {
                     animUpdates.put(s, true);
                 } else if (defaultAnims.contains(s)) {
                     animUpdates.put(s, false);
                 } else {
-                    animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s));
+                    animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s));
                 }
             }
         });
-
-
         /*f
         if (!lastAnimProperty.equals(currentAnimProperty)) {
 
@@ -283,7 +287,8 @@ public class EntityTask {
             if (intUpdates.equals(lastIntSet)) {
                 return;
             } else {
-                lastIntSet = intUpdates;
+                lastIntSet.clear();
+                lastIntSet.putAll(intUpdates);
 
             }
         }

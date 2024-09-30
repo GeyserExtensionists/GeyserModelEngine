@@ -114,16 +114,29 @@ public class ModelListener implements Listener {
 
             task.playAnimation("attack", 55);
         }
+    }|
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onAnimationPlay(AnimationPlayEvent event) {
+        Map<ActiveModel, ModelEntity> map = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId());
+        if (map == null) {
+            return;
+        }
+
+        ModelEntity model = map.get(event.getModel());
+        model.getTask().updateEntityProperties(model.getViewers(), false, event.getProperty().getName());
     }
-
-     */
-
-
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onAnimationEnd(AnimationEndEvent event) {
+        Map<ActiveModel, ModelEntity> map = ModelEntity.ENTITIES.get(event.getModel().getModeledEntity().getBase().getEntityId());
+        if (map == null) {
+            return;
+        }
 
+        ModelEntity model = map.get(event.getModel());
+        model.getTask().updateEntityProperties(model.getViewers(), false, event.getProperty().);
     }
-
+     */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         GeyserModelEngine.getInstance().getJoinedPlayer().put(event.getPlayer(), true);
