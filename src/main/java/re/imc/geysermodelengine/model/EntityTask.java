@@ -208,7 +208,7 @@ public class EntityTask {
         Map<String, Boolean> boneUpdates = new HashMap<>();
         Map<String, Boolean> animUpdates = new HashMap<>();
         Set<String> overrideAnimUpdates = new HashSet<>();
-
+        Set<String> defaultAnims = new HashSet<>();
         // if (GeyserModelEngine.getInstance().getEnablePartVisibilityModels().contains(model.getActiveModel().getBlueprint().getName())) {
         model.getActiveModel().getBones().forEach((s, bone) -> {
             String name = unstripName(bone).toLowerCase();
@@ -223,6 +223,12 @@ public class EntityTask {
             boneUpdates.put(name, bone.isVisible());
         });
         // }
+        for (ModelState state : ModelState.values()) {
+            AnimationHandler.DefaultProperty p = model.getActiveModel().getAnimationHandler().getDefaultProperty(state);
+            if (p != null){
+                defaultAnims.add(p.getAnimation());
+            }
+        }
 
         model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
             if (anim.isOverride() && model.getActiveModel().getAnimationHandler().isPlayingAnimation(s)) {
@@ -233,7 +239,13 @@ public class EntityTask {
             if (overrideAnimUpdates.isEmpty()) {
                 animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s));
             } else {
-                animUpdates.put(s, overrideAnimUpdates.contains(s));
+                if (overrideAnimUpdates.contains(s)) {
+                    animUpdates.put(s, true);
+                } else if (defaultAnims.contains(s)) {
+                    animUpdates.put(s, false);
+                } else {
+                    animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s));
+                }
             }
         });
 
