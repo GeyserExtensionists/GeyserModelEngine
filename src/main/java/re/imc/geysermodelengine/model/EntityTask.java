@@ -1,22 +1,18 @@
 package re.imc.geysermodelengine.model;
 
-import com.google.common.collect.Sets;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
-import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler;
-import com.ticxo.modelengine.api.entity.BaseEntity;
+import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.entity.CullType;
-import com.ticxo.modelengine.api.entity.Dummy;
-import com.ticxo.modelengine.api.events.AnimationEndEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
 import lombok.Getter;
 import lombok.Setter;
-import me.zimzaza4.geyserutils.common.animation.Animation;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
-import me.zimzaza4.geyserutils.spigot.api.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,7 +26,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
 import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
@@ -51,10 +47,10 @@ public class EntityTask {
     float lastScale = -1.0f;
     Color lastColor = null;
     Map<String, Integer> lastIntSet = new ConcurrentHashMap<>();
+    Cache<String, Boolean> lastPlayedAnim = CacheBuilder.newBuilder()
+            .expireAfterWrite(50, TimeUnit.MILLISECONDS).build();
 
-    // Map<String, Boolean> lastAnimPropertySet = new HashMap<>();
     private BukkitRunnable syncTask;
-
     private BukkitRunnable asyncTask;
 
 
@@ -115,7 +111,7 @@ public class EntityTask {
         if (viewers.isEmpty()) {
             return;
         }
-
+        // updateEntityProperties(viewers, false);
 
         // do not actually use this, atleast bundle these up ;(
         sendScale(viewers, false);
@@ -237,7 +233,7 @@ public class EntityTask {
         }
 
         model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
-            if (anim.isOverride() && (model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s))) {
+            if (anim.isOverride() && !defaultAnims.contains(s) && (model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s))) {
                 overrideAnimUpdates.add(s);
             }
         });
@@ -254,22 +250,26 @@ public class EntityTask {
                 }
             }
         });
-        /*f
-        if (!lastAnimProperty.equals(currentAnimProperty)) {
 
-            player.sendMessage("CHANGED");
-            if (animationCooldown.get() == 0) {
-                player.sendMessage(lastAnimProperty + " -> " + currentAnimProperty);
 
-                updates.put("modelengine:" + lastAnimProperty, false);
-                updates.put("modelengine:" + currentAnimProperty, true);
-            } else {
-                updates.put("modelengine:" + lastAnimProperty, false);
-                updates.put("modelengine:" + STOP_ANIMATION_PROPERTY, true);
+        Set<String> lastPlayed = new HashSet<>(lastPlayedAnim.asMap().keySet());
+
+        for (Map.Entry<String, Boolean> anim : animUpdates.entrySet()) {
+            if (anim.getValue()) {
+                lastPlayedAnim.put(anim.getKey(), true);
             }
         }
 
-         */
+        for (String anim : lastPlayed) {
+            animUpdates.put(anim, true);
+        }
+
+
+
+
+
+
+
         if (boneUpdates.isEmpty() && animUpdates.isEmpty()) return;
 
         Map<String, Integer> intUpdates = new HashMap<>();
@@ -292,16 +292,18 @@ public class EntityTask {
 
             }
         }
-        /*
-        System.out.println("AN: " + animUpdates.size() + ", BO:" + boneUpdates.size());
-        System.out.println(animUpdates);
-        List<String> list = new ArrayList<>(boneUpdates.keySet());
-        Collections.sort(list);
-        System.out.println(list);
-        System.out.println(boneUpdates);
-        System.out.println(intUpdates);
 
-         */
+        // System.out.println("AN: " + animUpdates.size() + ", BO:" + boneUpdates.size());
+        System.out.println(animUpdates);
+
+
+        //Collections.sort(list);
+        //System.out.println(list);
+        //System.out.println(boneUpdates);
+        //System.out.println(intUpdates);
+
+
+
         for (Player player : players) {
             EntityUtils.sendIntProperties(player, entity, intUpdates);
         }

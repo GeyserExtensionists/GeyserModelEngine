@@ -114,12 +114,12 @@ public final class GeyserModelEngine extends JavaPlugin {
             try {
                 for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
                     models.values().forEach(ModelEntity::teleportToModel);
-
                 }
             } catch (Throwable t) {
                 t.printStackTrace();
             }
         }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
+
 
 
         scheduler.scheduleWithFixedDelay(() -> {
@@ -131,6 +131,9 @@ public final class GeyserModelEngine extends JavaPlugin {
                 t.printStackTrace();
             }
         }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
+
+
+
         BedrockMountControl.startTask();
     }
 
