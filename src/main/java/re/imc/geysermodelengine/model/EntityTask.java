@@ -7,6 +7,7 @@ import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.entity.CullType;
+import com.ticxo.modelengine.api.entity.Dummy;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
@@ -264,12 +265,6 @@ public class EntityTask {
             animUpdates.put(anim, true);
         }
 
-
-
-
-
-
-
         if (boneUpdates.isEmpty() && animUpdates.isEmpty()) return;
 
         Map<String, Integer> intUpdates = new HashMap<>();
@@ -294,7 +289,9 @@ public class EntityTask {
         }
 
         // System.out.println("AN: " + animUpdates.size() + ", BO:" + boneUpdates.size());
-        System.out.println(animUpdates);
+        if (GeyserModelEngine.getInstance().isDebug()) {
+            GeyserModelEngine.getInstance().getLogger().info(animUpdates.toString());
+        }
 
 
         //Collections.sort(list);
