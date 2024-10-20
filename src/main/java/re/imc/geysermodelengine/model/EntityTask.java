@@ -7,7 +7,6 @@ import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.entity.CullType;
-import com.ticxo.modelengine.api.entity.Dummy;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
@@ -25,7 +24,6 @@ import re.imc.geysermodelengine.util.BooleanPacker;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -35,9 +33,6 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Getter
 @Setter
 public class EntityTask {
-
-    private static final String STOP_ANIMATION_PROPERTY = "anim_stop";
-    private static final Map<String, Boolean> ALL_PROPERTIES = Map.of("modelengine:anim_walk", false, "modelengine:anim_idle", false, "modelengine:anim_stop", false);
     ModelEntity model;
 
     int tick = 0;
@@ -49,7 +44,7 @@ public class EntityTask {
     Color lastColor = null;
     Map<String, Integer> lastIntSet = new ConcurrentHashMap<>();
     Cache<String, Boolean> lastPlayedAnim = CacheBuilder.newBuilder()
-            .expireAfterWrite(50, TimeUnit.MILLISECONDS).build();
+            .expireAfterWrite(30, TimeUnit.MILLISECONDS).build();
 
     private BukkitRunnable syncTask;
     private BukkitRunnable asyncTask;
@@ -210,8 +205,7 @@ public class EntityTask {
 
         Map<String, Boolean> boneUpdates = new HashMap<>();
         Map<String, Boolean> animUpdates = new HashMap<>();
-        Set<String> overrideAnimUpdates = new HashSet<>();
-        Set<String> defaultAnims = new HashSet<>();
+        Set<String> anims = new HashSet<>();
         // if (GeyserModelEngine.getInstance().getEnablePartVisibilityModels().contains(model.getActiveModel().getBlueprint().getName())) {
         model.getActiveModel().getBones().forEach((s, bone) -> {
             String name = unstripName(bone).toLowerCase();
@@ -226,32 +220,27 @@ public class EntityTask {
             boneUpdates.put(name, bone.isVisible());
         });
         // }
-        for (ModelState state : ModelState.values()) {
-            AnimationHandler.DefaultProperty p = model.getActiveModel().getAnimationHandler().getDefaultProperty(state);
-            if (p != null){
-                defaultAnims.add(p.getAnimation());
+
+        AnimationHandler handler = model.getActiveModel().getAnimationHandler();
+        Set<String> priority = model.getActiveModel().getBlueprint().getAnimationDescendingPriority();
+        for (String animId : priority) {
+            if (handler.isPlayingAnimation(animId)) {
+                BlueprintAnimation anim = model.getActiveModel().getBlueprint().getAnimations().get(animId);
+
+                anims.add(animId);
+                if (anim.isOverride() && anim.getLoopMode() == BlueprintAnimation.LoopMode.ONCE) {
+                    break;
+                }
             }
         }
 
-        model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
-            if (anim.isOverride() && !defaultAnims.contains(s) && (model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s))) {
-                overrideAnimUpdates.add(s);
-            }
-        });
-        model.getActiveModel().getBlueprint().getAnimations().forEach((s, anim) -> {
-            if (overrideAnimUpdates.isEmpty()) {
-                animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s));
+        for (String id : priority) {
+            if (anims.contains(id)) {
+                animUpdates.put(id, true);
             } else {
-                if (overrideAnimUpdates.contains(s)) {
-                    animUpdates.put(s, true);
-                } else if (defaultAnims.contains(s)) {
-                    animUpdates.put(s, false);
-                } else {
-                    animUpdates.put(s, model.getActiveModel().getAnimationHandler().isPlayingAnimation(s) || forceAnimSet.contains(s));
-                }
+                animUpdates.put(id, false);
             }
-        });
-
+        }
 
         Set<String> lastPlayed = new HashSet<>(lastPlayedAnim.asMap().keySet());
 
@@ -264,6 +253,7 @@ public class EntityTask {
         for (String anim : lastPlayed) {
             animUpdates.put(anim, true);
         }
+
 
         if (boneUpdates.isEmpty() && animUpdates.isEmpty()) return;
 
