@@ -3,9 +3,7 @@ package re.imc.geysermodelengine.model;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
-import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
-import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.entity.CullType;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -221,6 +219,7 @@ public class EntityTask {
         });
         // }
 
+
         AnimationHandler handler = model.getActiveModel().getAnimationHandler();
         Set<String> priority = model.getActiveModel().getBlueprint().getAnimationDescendingPriority();
         for (String animId : priority) {
@@ -288,8 +287,6 @@ public class EntityTask {
         //System.out.println(list);
         //System.out.println(boneUpdates);
         //System.out.println(intUpdates);
-
-
 
         for (Player player : players) {
             EntityUtils.sendIntProperties(player, entity, intUpdates);
