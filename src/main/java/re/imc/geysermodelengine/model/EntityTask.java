@@ -8,6 +8,7 @@ import com.ticxo.modelengine.api.entity.CullType;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
+import com.ticxo.modelengine.api.model.render.DisplayRenderer;
 import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
@@ -311,7 +312,13 @@ public class EntityTask {
     }
 
     public void sendHitBox(Player viewer) {
-        EntityUtils.sendCustomHitBox(viewer, model.getEntity().getEntityId(), 0.01f, 0.01f);
+        float w = 0;
+        if (model.getActiveModel().isShadowVisible()) {
+            if (model.getActiveModel().getModelRenderer() instanceof DisplayRenderer displayRenderer) {
+                w = displayRenderer.getHitbox().getShadowRadius().get();
+            }
+        }
+        EntityUtils.sendCustomHitBox(viewer, model.getEntity().getEntityId(), 0.02f, w);
 
     }
 
