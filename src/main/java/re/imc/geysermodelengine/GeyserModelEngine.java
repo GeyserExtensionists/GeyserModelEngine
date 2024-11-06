@@ -69,13 +69,14 @@ public final class GeyserModelEngine extends JavaPlugin {
     private List<String> enablePartVisibilityModels = new ArrayList<>();
 
     @Getter
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    private ScheduledExecutorService scheduler;
     @Override
     public void onEnable() {
         // Plugin startup logic
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
         sendDelay = getConfig().getInt("data-send-delay", 0);
+        scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 6));
         viewDistance = getConfig().getInt("entity-view-distance", 60);
         debug = getConfig().getBoolean("debug", false);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));

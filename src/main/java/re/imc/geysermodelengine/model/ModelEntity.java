@@ -68,7 +68,6 @@ public class ModelEntity {
 
     public void runEntityTask() {
         task = new EntityTask(this);
-        task.checkViewers(viewers);
         task.run(GeyserModelEngine.getInstance());
     }
 

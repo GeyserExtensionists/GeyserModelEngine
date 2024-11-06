@@ -24,6 +24,7 @@ import re.imc.geysermodelengine.util.BooleanPacker;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static re.imc.geysermodelengine.model.ModelEntity.ENTITIES;
@@ -45,10 +46,7 @@ public class EntityTask {
     Cache<String, Boolean> lastPlayedAnim = CacheBuilder.newBuilder()
             .expireAfterWrite(30, TimeUnit.MILLISECONDS).build();
 
-    private BukkitRunnable syncTask;
-    private BukkitRunnable asyncTask;
-
-
+    private ScheduledFuture scheduledFuture;
 
     public EntityTask(ModelEntity model) {
         this.model = model;
@@ -69,7 +67,7 @@ public class EntityTask {
                     removed = true;
                     entity.remove();
                 }
-            }.runTaskLater(GeyserModelEngine.getInstance(), 1);
+            }.runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), 1);
 
 
             ENTITIES.remove(modeledEntity.getBase().getEntityId());
@@ -333,9 +331,6 @@ public class EntityTask {
         if (!player.isOnline()) {
             return false;
         }
-        if (player.isDead()) {
-            return false;
-        }
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
             return false;
         }
@@ -360,18 +355,19 @@ public class EntityTask {
 
     public void cancel() {
         // syncTask.cancel();
-        asyncTask.cancel();
+        scheduledFuture.cancel(true);
     }
 
     public void run(GeyserModelEngine instance) {
+
         sendHitBoxToAll();
 
-        asyncTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                runAsync();
-            }
+        Runnable asyncTask = () -> {
+            checkViewers(model.getViewers());
+            runAsync();
         };
-        asyncTask.runTaskTimerAsynchronously(instance, 0, 0);
+        scheduledFuture = GeyserModelEngine.getInstance().getScheduler().scheduleAtFixedRate(asyncTask, 0, 20, TimeUnit.MILLISECONDS);
+
+        //asyncTask.runTaskTimerAsynchronously(instance, 0, 0);
     }
 }
