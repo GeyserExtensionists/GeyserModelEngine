@@ -46,11 +46,7 @@ public class ModelListener implements Listener {
         if (!GeyserModelEngine.getInstance().isInitialized()) {
             return;
         }
-
-        Bukkit.getScheduler().runTask(GeyserModelEngine.getInstance(), () -> {
-            ModelEntity.create(event.getTarget(), event.getModel());
-        });
-
+        ModelEntity.create(event.getTarget(), event.getModel());
     }
 
 

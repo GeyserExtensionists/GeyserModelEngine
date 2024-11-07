@@ -76,7 +76,7 @@ public final class GeyserModelEngine extends JavaPlugin {
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
         sendDelay = getConfig().getInt("data-send-delay", 0);
-        scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 6));
+        scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 4));
         viewDistance = getConfig().getInt("entity-view-distance", 60);
         debug = getConfig().getBoolean("debug", false);
         modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));

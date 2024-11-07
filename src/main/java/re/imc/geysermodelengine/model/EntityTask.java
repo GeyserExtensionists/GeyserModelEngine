@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.geysermc.floodgate.api.FloodgateApi;
@@ -61,14 +62,8 @@ public class EntityTask {
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
         if (activeModel.isDestroyed() || activeModel.isRemoved()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    removed = true;
-                    entity.remove();
-                }
-            }.runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), 1);
-
+            removed = true;
+            entity.remove();
 
             ENTITIES.remove(modeledEntity.getBase().getEntityId());
             MODEL_ENTITIES.remove(entity.getEntityId());
@@ -142,9 +137,9 @@ public class EntityTask {
             delay = GeyserModelEngine.getInstance().getJoinSendDelay();
         }
         if (task == null || firstJoined) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
+            GeyserModelEngine.getInstance().getScheduler().schedule(() -> {
                 model.getTask().sendEntityData(onlinePlayer, 1);
-            }, delay);
+            }, delay, TimeUnit.MILLISECONDS);
         } else {
             task.sendEntityData(onlinePlayer, 1);
         }
@@ -152,15 +147,15 @@ public class EntityTask {
 
     public void sendEntityData(Player player, int delay) {
         EntityUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
-        Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
+        GeyserModelEngine.getInstance().getScheduler().schedule(() -> {
             model.getEntity().sendSpawnPacket(Collections.singletonList(player));
-            Bukkit.getScheduler().runTaskLaterAsynchronously(GeyserModelEngine.getInstance(), () -> {
+            GeyserModelEngine.getInstance().getScheduler().schedule(() -> {
                 sendHitBox(player);
                 sendScale(Collections.singleton(player), true);
                 sendColor(Collections.singleton(player), true);
                 updateEntityProperties(Collections.singleton(player), true);
-            }, 1);
-        }, delay);
+            }, 20, TimeUnit.MILLISECONDS);
+        }, delay * 20L, TimeUnit.MILLISECONDS);
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
@@ -332,6 +327,13 @@ public class EntityTask {
             return false;
         }
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
+            return false;
+        }
+        Location playerLocation = player.getLocation();
+        Location entityLocation = entity.getLocation();
+        playerLocation.setY(0);
+        entityLocation.setY(0);
+        if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance()) {
             return false;
         }
         CullType type = model.getActiveModel().getModeledEntity().getBase().getData().getTracking().get(player);
