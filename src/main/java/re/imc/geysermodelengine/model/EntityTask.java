@@ -333,7 +333,7 @@ public class EntityTask {
         Location entityLocation = entity.getLocation();
         playerLocation.setY(0);
         entityLocation.setY(0);
-        if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance()) {
+        if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 16) {
             return false;
         }
         CullType type = model.getActiveModel().getModeledEntity().getBase().getData().getTracking().get(player);
