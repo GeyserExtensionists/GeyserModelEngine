@@ -34,8 +34,10 @@ public class EntitySpawnPacket implements WrapperPacket {
                 .write(1, this.location.getY())
                 .write(2, this.location.getZ());
         packet.getBytes()
-                .write(0, (byte) (this.location.getYaw() * 256.0F / 360.0F))
-                .write(1, (byte) (this.location.getPitch() * 256.0F / 360.0F));
+                .write(0, (byte) (this.location.getPitch() * 256.0F / 360.0F))
+                .write(1, (byte) (this.location.getYaw() * 256.0F / 360.0F))
+                .writeSafely(2, (byte) (this.location.getYaw() * 256.0F / 360.0F));
+
         packet.getEntityTypeModifier()
                 .writeSafely(0, type);
 

@@ -57,7 +57,6 @@ public class ModelEntity {
             }
         }
         map.put(model, modelEntity);
-
         return modelEntity;
     }
 
