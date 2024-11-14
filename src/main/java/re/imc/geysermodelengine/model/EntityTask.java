@@ -329,10 +329,14 @@ public class EntityTask {
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
             return false;
         }
+
         Location playerLocation = player.getLocation().clone();
         Location entityLocation = entity.getLocation().clone();
         playerLocation.setY(0);
         entityLocation.setY(0);
+        if (playerLocation.getWorld() != entityLocation.getWorld()) {
+            return false;
+        }
         if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 16) {
             return false;
         }
