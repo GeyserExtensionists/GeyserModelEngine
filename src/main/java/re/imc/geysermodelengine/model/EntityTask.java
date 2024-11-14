@@ -131,7 +131,7 @@ public class EntityTask {
 
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
-        int delay = 1;
+        int delay = 50;
         boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
         if (firstJoined) {
             delay = GeyserModelEngine.getInstance().getJoinSendDelay();
@@ -154,8 +154,8 @@ public class EntityTask {
                 sendScale(Collections.singleton(player), true);
                 sendColor(Collections.singleton(player), true);
                 updateEntityProperties(Collections.singleton(player), true);
-            }, 20, TimeUnit.MILLISECONDS);
-        }, delay * 20L, TimeUnit.MILLISECONDS);
+            }, 1000, TimeUnit.MILLISECONDS);
+        }, delay * 50L, TimeUnit.MILLISECONDS);
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
