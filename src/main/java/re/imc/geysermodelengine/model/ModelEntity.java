@@ -1,16 +1,14 @@
 package re.imc.geysermodelengine.model;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.google.common.collect.Sets;
+import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
 
@@ -61,7 +59,7 @@ public class ModelEntity {
     }
 
     public PacketEntity spawnEntity() {
-        entity = new PacketEntity(GeyserModelEngine.getInstance().getModelEntityType(), viewers, modeledEntity.getBase().getLocation());
+        entity = new PacketEntity(EntityTypes.BAT, viewers, modeledEntity.getBase().getLocation());
         return entity;
     }
 

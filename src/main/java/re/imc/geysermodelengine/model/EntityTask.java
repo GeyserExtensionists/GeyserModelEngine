@@ -58,6 +58,8 @@ public class EntityTask {
             return;
         }
 
+        model.teleportToModel();
+
         Set<Player> viewers = model.getViewers();
         ActiveModel activeModel = model.getActiveModel();
         ModeledEntity modeledEntity = model.getModeledEntity();
@@ -333,7 +335,7 @@ public class EntityTask {
         Location entityLocation = entity.getLocation().clone();
         playerLocation.setY(0);
         entityLocation.setY(0);
-        if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 16) {
+        if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 48) {
             return false;
         }
         CullType type = model.getActiveModel().getModeledEntity().getBase().getData().getTracking().get(player);

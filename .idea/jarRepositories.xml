@@ -2,6 +2,11 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="codemc-snapshots" />
+      <option name="name" value="codemc-snapshots" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
@@ -20,6 +25,11 @@
       <option name="id" value="opencollab-release-repo" />
       <option name="name" value="opencollab-release-repo" />
       <option name="url" value="https://repo.opencollab.dev/maven-releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="codemc-releases" />
+      <option name="name" value="codemc-releases" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="dmulloy2-repo" />

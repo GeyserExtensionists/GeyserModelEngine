@@ -1,11 +1,11 @@
 package re.imc.geysermodelengine.model;
 
-import com.comphenix.protocol.wrappers.Pair;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.bone.type.Mount;
 import com.ticxo.modelengine.api.mount.controller.MountController;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -15,6 +15,7 @@ import re.imc.geysermodelengine.GeyserModelEngine;
 public class BedrockMountControl {
 
     public static void startTask() {
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -38,7 +39,7 @@ public class BedrockMountControl {
                             }
                         }
                         if (pitch > 80) {
-                            if (seat.getFirst().getModeledEntity().getBase() instanceof BukkitEntity bukkitEntity) {
+                            if (seat.getKey().getModeledEntity().getBase() instanceof BukkitEntity bukkitEntity) {
                                 if (bukkitEntity.getOriginal().isOnGround()) {
                                     return;
                                 }
@@ -60,5 +61,8 @@ public class BedrockMountControl {
 
             }
         }.runTaskTimerAsynchronously(GeyserModelEngine.getInstance(), 1,  1);
+
+
+
     }
 }

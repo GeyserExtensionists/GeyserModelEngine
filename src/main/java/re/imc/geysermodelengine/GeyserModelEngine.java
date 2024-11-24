@@ -1,7 +1,9 @@
 package re.imc.geysermodelengine;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.wrappers.Pair;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.ModelEngineAPI;
@@ -9,11 +11,10 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.type.Mount;
 import lombok.Getter;
-import lombok.Setter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import re.imc.geysermodelengine.listener.ModelListener;
@@ -45,9 +46,6 @@ public final class GeyserModelEngine extends JavaPlugin {
     private int viewDistance;
 
     @Getter
-    private EntityType modelEntityType;
-
-    @Getter
     private Cache<Player, Boolean> joinedPlayer;
 
     @Getter
@@ -70,16 +68,21 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private ScheduledExecutorService scheduler;
+
+    @Override
+    public void onLoad() {
+        PacketEvents.getAPI().load();
+    }
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        PacketEvents.getAPI().init();
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
         sendDelay = getConfig().getInt("data-send-delay", 0);
         scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 4));
         viewDistance = getConfig().getInt("entity-view-distance", 60);
         debug = getConfig().getBoolean("debug", false);
-        modelEntityType = EntityType.valueOf(getConfig().getString("model-entity-type", "BAT"));
         joinSendDelay = getConfig().getInt("join-send-delay", 20);
         entityPositionUpdatePeriod = getConfig().getLong("entity-position-update-period", 35);
         enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
@@ -88,8 +91,30 @@ public final class GeyserModelEngine extends JavaPlugin {
                     .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
         }
         instance = this;
-        // ProtocolLibrary.getProtocolManager().addPacketListener(new AddEntityPacketListener());
-        ProtocolLibrary.getProtocolManager().addPacketListener(new MountPacketListener());
+        PacketEvents.getAPI().getEventManager().registerListener(new MountPacketListener(), PacketListenerPriority.NORMAL);
+        /*
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
+                    models.values().forEach(ModelEntity::teleportToModel);
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
+
+         */
+
+        scheduler.scheduleWithFixedDelay(() -> {
+            try {
+                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
+                    models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
+
 
         Bukkit.getPluginManager().registerEvents(new ModelListener(), this);
         Bukkit.getScheduler()
@@ -109,37 +134,13 @@ public final class GeyserModelEngine extends JavaPlugin {
 
                 }, 100);
 
-        ;
-
-        scheduler.scheduleAtFixedRate(() -> {
-            try {
-                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
-                    models.values().forEach(ModelEntity::teleportToModel);
-                }
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
-
-
-
-        scheduler.scheduleWithFixedDelay(() -> {
-            try {
-                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
-                    models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
-                }
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
-
-
 
         BedrockMountControl.startTask();
     }
 
     @Override
     public void onDisable() {
+        PacketEvents.getAPI().terminate();
         for (Map<ActiveModel, ModelEntity> entities : ModelEntity.ENTITIES.values()) {
             entities.forEach((model, modelEntity) -> {
                 modelEntity.getEntity().remove();
