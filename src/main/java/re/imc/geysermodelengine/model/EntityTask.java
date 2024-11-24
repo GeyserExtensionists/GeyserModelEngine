@@ -133,7 +133,7 @@ public class EntityTask {
 
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
-        int delay = 1;
+        int delay = 50;
         boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
         if (firstJoined) {
             delay = GeyserModelEngine.getInstance().getJoinSendDelay();
@@ -156,8 +156,8 @@ public class EntityTask {
                 sendScale(Collections.singleton(player), true);
                 sendColor(Collections.singleton(player), true);
                 updateEntityProperties(Collections.singleton(player), true);
-            }, 20, TimeUnit.MILLISECONDS);
-        }, delay * 20L, TimeUnit.MILLISECONDS);
+            }, 1000, TimeUnit.MILLISECONDS);
+        }, delay * 50L, TimeUnit.MILLISECONDS);
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
@@ -331,10 +331,14 @@ public class EntityTask {
         if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
             return false;
         }
+
         Location playerLocation = player.getLocation().clone();
         Location entityLocation = entity.getLocation().clone();
         playerLocation.setY(0);
         entityLocation.setY(0);
+        if (playerLocation.getWorld() != entityLocation.getWorld()) {
+            return false;
+        }
         if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 48) {
             return false;
         }
