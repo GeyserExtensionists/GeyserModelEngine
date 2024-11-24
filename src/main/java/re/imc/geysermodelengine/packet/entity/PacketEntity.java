@@ -50,7 +50,6 @@ public class PacketEntity {
         boolean sent = this.location.getWorld() != location.getWorld() || this.location.distanceSquared(location) > 0.000001;
         this.location = location.clone();
         if (sent) {
-            GeyserModelEngine.getInstance().getLogger().info("SEND LOC PACKET TO: " + viewers);
             sendLocationPacket(viewers);
         }
         return true;
