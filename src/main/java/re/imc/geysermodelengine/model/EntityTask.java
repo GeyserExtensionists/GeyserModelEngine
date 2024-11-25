@@ -7,7 +7,9 @@ import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.entity.CullType;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
+import com.ticxo.modelengine.api.model.bone.type.Mount;
 import com.ticxo.modelengine.api.model.render.DisplayRenderer;
 import lombok.Getter;
 import lombok.Setter;
@@ -203,6 +205,7 @@ public class EntityTask {
         // if (GeyserModelEngine.getInstance().getEnablePartVisibilityModels().contains(model.getActiveModel().getBlueprint().getName())) {
         model.getActiveModel().getBones().forEach((s, bone) -> {
             String name = unstripName(bone).toLowerCase();
+
             if (name.equals("hitbox") ||
                     name.equals("shadow") ||
                     name.equals("mount") ||

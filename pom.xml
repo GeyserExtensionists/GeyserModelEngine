@@ -42,14 +42,6 @@
                             <shadedPattern>re.imc.geysermodelengine.libs.io.github.retrooper.packetevents</shadedPattern>
                         </relocation>
                     </relocations>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>net/kyori/**</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
                 </configuration>
                 <executions>
                     <execution>
