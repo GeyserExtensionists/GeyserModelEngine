@@ -63,7 +63,7 @@ This is new way to convert model
 
 # Current issues
 
-* Multi-textures and Animated textures need use [a blockbench plugin] (https://github.com/GeyserExtensionists/GeyserModelEngineBlockbenchPacker) to export
+* Multi-textures and Animated textures need use [a blockbench plugin](https://github.com/GeyserExtensionists/GeyserModelEngineBlockbenchPacker) to export
 
 * Please report any bugs
 
