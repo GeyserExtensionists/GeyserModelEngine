@@ -77,13 +77,8 @@ public class EntityTask {
 
 
         if (tick % 5 == 0) {
-
-            checkViewers(viewers);
-
             if (tick % 40 == 0) {
-
                 for (Player viewer : Set.copyOf(viewers)) {
-
                     if (!canSee(viewer, model.getEntity())) {
                         viewers.remove(viewer);
                     }
@@ -135,17 +130,12 @@ public class EntityTask {
 
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
-        int delay = 50;
         boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
+
         if (firstJoined) {
-            delay = GeyserModelEngine.getInstance().getJoinSendDelay();
-        }
-        if (task == null || firstJoined) {
-            GeyserModelEngine.getInstance().getScheduler().schedule(() -> {
-                model.getTask().sendEntityData(onlinePlayer, 1);
-            }, delay, TimeUnit.MILLISECONDS);
+            task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getJoinSendDelay() / 50);
         } else {
-            task.sendEntityData(onlinePlayer, 1);
+            task.sendEntityData(onlinePlayer, 2);
         }
     }
 
@@ -195,7 +185,7 @@ public class EntityTask {
     }
 
 
-    public void updateEntityProperties(Collection<Player> players, boolean ignore, String... forceAnims) {
+    public void updateEntityProperties(Collection<Player> players, boolean firstSend, String... forceAnims) {
         int entity = model.getEntity().getEntityId();
         Set<String> forceAnimSet = Set.of(forceAnims);
 
@@ -266,7 +256,7 @@ public class EntityTask {
             intUpdates.put("modelengine:anim" + i, integer);
             i++;
         }
-        if (!ignore) {
+        if (!firstSend) {
             if (intUpdates.equals(lastIntSet)) {
                 return;
             } else {
