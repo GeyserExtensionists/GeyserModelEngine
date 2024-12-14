@@ -26,6 +26,7 @@ import re.imc.geysermodelengine.util.BooleanPacker;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +61,9 @@ public class EntityTask {
             return;
         }
 
+        PacketEntity packetEntity = model.getEntity();
+        // packetEntity.setHeadYaw((float) Math.toDegrees(model.getModeledEntity().getYHeadRot()));
+        // packetEntity.setHeadPitch((float) Math.toDegrees(model.getModeledEntity().getXHeadRot()));
         model.teleportToModel();
 
         Set<Player> viewers = model.getViewers();
@@ -206,6 +210,7 @@ public class EntityTask {
             }
             boneUpdates.put(name, bone.isVisible());
         });
+
         // }
 
 
@@ -272,10 +277,8 @@ public class EntityTask {
         }
 
 
-        //Collections.sort(list);
-        //System.out.println(list);
-        //System.out.println(boneUpdates);
-        //System.out.println(intUpdates);
+        List<String> list = new ArrayList<>(boneUpdates.keySet());
+        Collections.sort(list);
 
         for (Player player : players) {
             EntityUtils.sendIntProperties(player, entity, intUpdates);
@@ -301,9 +304,10 @@ public class EntityTask {
 
     public void sendHitBox(Player viewer) {
         float w = 0;
+
         if (model.getActiveModel().isShadowVisible()) {
             if (model.getActiveModel().getModelRenderer() instanceof DisplayRenderer displayRenderer) {
-                w = displayRenderer.getHitbox().getShadowRadius().get();
+            //    w = displayRenderer.getHitbox().getShadowRadius().get();
             }
         }
         EntityUtils.sendCustomHitBox(viewer, model.getEntity().getEntityId(), 0.02f, w);

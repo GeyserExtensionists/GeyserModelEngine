@@ -8,12 +8,10 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.teleport.RelativeFlag;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.*;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
+@Setter
 public class PacketEntity {
 
     // public static final MinecraftVersion V1_20_5 = new MinecraftVersion("1.20.5");
@@ -41,6 +40,9 @@ public class PacketEntity {
     private EntityType type;
     private Set<Player> viewers;
     private Location location;
+    private float headYaw;
+    private float headPitch;
+
     private boolean removed = false;
     public @NotNull Location getLocation() {
         return location;
@@ -51,6 +53,7 @@ public class PacketEntity {
         this.location = location.clone();
         if (sent) {
             sendLocationPacket(viewers);
+            // sendHeadRotation(viewers); // TODO
         }
         return true;
     }
@@ -87,6 +90,11 @@ public class PacketEntity {
         }
         players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet));
 
+    }
+
+    public void sendHeadRotation(Collection<Player> players) {
+        WrapperPlayServerEntityRotation packet = new WrapperPlayServerEntityRotation(id, headYaw, headPitch, false);
+        players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet));
     }
 
     public void sendEntityDestroyPacket(Collection<Player> players) {
