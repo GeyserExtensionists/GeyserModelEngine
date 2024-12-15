@@ -154,7 +154,7 @@ public class EntityTask {
                 sendColor(Collections.singleton(player), true);
                 updateEntityProperties(Collections.singleton(player), true);
             }, 1000, TimeUnit.MILLISECONDS);
-        }, delay * 50L, TimeUnit.MILLISECONDS);
+        }, Math.max(50, delay * 50L), TimeUnit.MILLISECONDS);
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
@@ -351,8 +351,7 @@ public class EntityTask {
         if (playerLocation.distanceSquared(entityLocation) > player.getSendViewDistance() * player.getSendViewDistance() * 48) {
             return false;
         }
-        CullType type = model.getActiveModel().getModeledEntity().getBase().getData().getTracking().get(player);
-        return type != null;
+        return true;
         /*
         if (entity.getLocation().getChunk() == player.getChunk()) {
             return true;

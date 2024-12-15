@@ -59,7 +59,7 @@ public class ModelEntity {
     }
 
     public PacketEntity spawnEntity() {
-        entity = new PacketEntity(EntityTypes.BAT, viewers, modeledEntity.getBase().getLocation());
+        entity = new PacketEntity(EntityTypes.PIG, viewers, modeledEntity.getBase().getLocation());
         return entity;
     }
 
