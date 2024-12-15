@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.entity.CullType;
+import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
@@ -197,20 +198,10 @@ public class EntityTask {
         Map<String, Boolean> animUpdates = new HashMap<>();
         Set<String> anims = new HashSet<>();
         // if (GeyserModelEngine.getInstance().getEnablePartVisibilityModels().contains(model.getActiveModel().getBlueprint().getName())) {
-        model.getActiveModel().getBones().forEach((s, bone) -> {
-            String name = unstripName(bone).toLowerCase();
 
-            if (name.equals("hitbox") ||
-                    name.equals("shadow") ||
-                    name.equals("mount") ||
-                    name.startsWith("p_") ||
-                    name.startsWith("b_") ||
-                    name.startsWith("ob_")) {
-                return;
-            }
-            boneUpdates.put(name, bone.isVisible());
+        model.getActiveModel().getBlueprint().getBones().forEach((s, bone) -> {
+            processBone(bone, boneUpdates);
         });
-
         // }
 
 
@@ -285,10 +276,31 @@ public class EntityTask {
         }
     }
 
-    private String unstripName(ModelBone bone) {
-        String name = bone.getBoneId();
-        if (bone.getBlueprintBone().getBehaviors().get("head") != null) {
-            if (!bone.getBlueprintBone().getBehaviors().get("head").isEmpty()) return "hi_" + name;
+    private void processBone(BlueprintBone bone, Map<String, Boolean> map) {
+        String name = unstripName(bone).toLowerCase();
+        if (name.equals("hitbox") ||
+                name.equals("shadow") ||
+                name.equals("mount") ||
+                name.startsWith("p_") ||
+                name.startsWith("b_") ||
+                name.startsWith("ob_")) {
+            return;
+        }
+        for (BlueprintBone blueprintBone : bone.getChildren().values()) {
+            processBone(blueprintBone, map);
+        }
+        ModelBone activeBone = model.getActiveModel().getBones().get(bone.getName());
+
+        boolean visible = false;
+        if (activeBone != null) {
+            visible = activeBone.isVisible();
+        }
+        map.put(name, visible);
+    }
+    private String unstripName(BlueprintBone bone) {
+        String name = bone.getName();
+        if (bone.getBehaviors().get("head") != null) {
+            if (!bone.getBehaviors().get("head").isEmpty()) return "hi_" + name;
             return "h_" + name;
         }
 
