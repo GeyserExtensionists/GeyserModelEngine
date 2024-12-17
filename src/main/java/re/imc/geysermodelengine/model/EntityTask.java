@@ -154,7 +154,7 @@ public class EntityTask {
                 sendColor(Collections.singleton(player), true);
                 updateEntityProperties(Collections.singleton(player), true);
             }, 1000, TimeUnit.MILLISECONDS);
-        }, Math.max(50, delay * 50L), TimeUnit.MILLISECONDS);
+        }, 100, TimeUnit.MILLISECONDS);
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
