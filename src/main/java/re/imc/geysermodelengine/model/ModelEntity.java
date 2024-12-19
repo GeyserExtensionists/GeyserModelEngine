@@ -2,10 +2,8 @@ package re.imc.geysermodelengine.model;
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.google.common.collect.Sets;
-import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

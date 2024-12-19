@@ -8,3 +8,7 @@ api-version: '1.19'
 depend:
   - ModelEngine
   - floodgate
+commands:
+  geysermodelengine:
+    usage: /geysermodelengine reload
+    permission: geysermodelengine.reload

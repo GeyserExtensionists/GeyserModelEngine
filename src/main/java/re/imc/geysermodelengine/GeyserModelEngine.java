@@ -2,8 +2,6 @@ package re.imc.geysermodelengine;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.ModelEngineAPI;
@@ -18,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import re.imc.geysermodelengine.commands.ReloadCommand;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.model.BedrockMountControl;
@@ -118,6 +117,7 @@ public final class GeyserModelEngine extends JavaPlugin {
         }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
 
 
+        getCommand("geysermodelengine").setExecutor(new ReloadCommand(this));
         Bukkit.getPluginManager().registerEvents(new ModelListener(), this);
         Bukkit.getScheduler()
                 .runTaskLater(GeyserModelEngine.getInstance(), () -> {
