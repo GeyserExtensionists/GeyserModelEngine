@@ -26,10 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public final class GeyserModelEngine extends JavaPlugin {
 
@@ -68,6 +65,7 @@ public final class GeyserModelEngine extends JavaPlugin {
 
     @Getter
     private ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> updateTask;
 
     @Override
     public void onLoad() {
@@ -78,20 +76,6 @@ public final class GeyserModelEngine extends JavaPlugin {
     @Override
     public void onEnable() {
         PacketEvents.getAPI().init();
-        saveDefaultConfig();
-        // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
-        sendDelay = getConfig().getInt("data-send-delay", 0);
-        scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 4));
-        viewDistance = getConfig().getInt("entity-view-distance", 60);
-        debug = getConfig().getBoolean("debug", false);
-        joinSendDelay = getConfig().getInt("join-send-delay", 20);
-        entityPositionUpdatePeriod = getConfig().getLong("entity-position-update-period", 35);
-        enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
-        if (joinSendDelay > 0) {
-            joinedPlayer = CacheBuilder.newBuilder()
-                    .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
-        }
-        instance = this;
         PacketEvents.getAPI().getEventManager().registerListener(new MountPacketListener(), PacketListenerPriority.NORMAL);
         /*
         scheduler.scheduleAtFixedRate(() -> {
@@ -106,17 +90,7 @@ public final class GeyserModelEngine extends JavaPlugin {
 
          */
 
-        scheduler.scheduleWithFixedDelay(() -> {
-            try {
-                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
-                    models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
-                }
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
-
-
+        reload();
         getCommand("geysermodelengine").setExecutor(new ReloadCommand(this));
         Bukkit.getPluginManager().registerEvents(new ModelListener(), this);
         Bukkit.getScheduler()
@@ -138,6 +112,36 @@ public final class GeyserModelEngine extends JavaPlugin {
 
 
         BedrockMountControl.startTask();
+    }
+
+    public void reload() {
+        saveDefaultConfig();
+        // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
+        sendDelay = getConfig().getInt("data-send-delay", 0);
+        scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 4));
+        viewDistance = getConfig().getInt("entity-view-distance", 60);
+        debug = getConfig().getBoolean("debug", false);
+        joinSendDelay = getConfig().getInt("join-send-delay", 20);
+        entityPositionUpdatePeriod = getConfig().getLong("entity-position-update-period", 35);
+        enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
+        if (joinSendDelay > 0) {
+            joinedPlayer = CacheBuilder.newBuilder()
+                    .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
+        }
+        instance = this;
+        if (updateTask != null) {
+            updateTask.cancel(true);
+        }
+
+        updateTask = scheduler.scheduleWithFixedDelay(() -> {
+            try {
+                for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
+                    models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
     }
 
     @Override

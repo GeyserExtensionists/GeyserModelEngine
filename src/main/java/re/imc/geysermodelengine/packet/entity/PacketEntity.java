@@ -76,7 +76,7 @@ public class PacketEntity {
     public void sendSpawnPacket(Collection<Player> players) {
         // EntitySpawnPacket packet = new EntitySpawnPacket(id, uuid, type, location);
         // EntityMetadataPacket metadataPacket = new EntityMetadataPacket(id);
-        WrapperPlayServerSpawnEntity spawnEntity = new WrapperPlayServerSpawnEntity(id, uuid, EntityTypes.BAT, SpigotConversionUtil.fromBukkitLocation(location), location.getYaw(), 0, null);
+        WrapperPlayServerSpawnEntity spawnEntity = new WrapperPlayServerSpawnEntity(id, uuid, type, SpigotConversionUtil.fromBukkitLocation(location), location.getYaw(), 0, null);
         players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawnEntity));
     }
 

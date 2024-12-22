@@ -23,7 +23,7 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         plugin.reloadConfig();
-        plugin.onEnable();
+        plugin.reload();
 
         sender.sendMessage("§aGeyserModelEngine configuration reloaded!");
         return true;
