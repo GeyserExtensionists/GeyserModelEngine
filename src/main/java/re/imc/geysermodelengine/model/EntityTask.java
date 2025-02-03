@@ -136,7 +136,7 @@ public class EntityTask {
         if (firstJoined) {
             task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getJoinSendDelay() / 50);
         } else {
-            task.sendEntityData(onlinePlayer, 2);
+            task.sendEntityData(onlinePlayer, 5);
         }
     }
 
