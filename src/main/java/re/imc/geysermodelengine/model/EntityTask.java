@@ -131,7 +131,7 @@ public class EntityTask {
 
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
-        boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
+        boolean firstJoined = !GeyserModelEngine.getInstance().getJoinedPlayers().contains(onlinePlayer);
 
         if (firstJoined) {
             task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getJoinSendDelay() / 50);
@@ -333,7 +333,7 @@ public class EntityTask {
         if (!player.isOnline()) {
             return false;
         }
-        if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
+        if (!GeyserModelEngine.getInstance().getJoinedPlayers().contains(player)) {
             return false;
         }
 
