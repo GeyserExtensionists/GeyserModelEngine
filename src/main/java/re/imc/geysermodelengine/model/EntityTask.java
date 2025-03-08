@@ -154,19 +154,23 @@ public class EntityTask {
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
-        if (players.isEmpty()) {
-            return;
-        }
-        Vector3f scale = model.getActiveModel().getScale();
-        float average = (scale.x + scale.y + scale.z) / 3;
+        try {
+            if (players.isEmpty()) {
+                return;
+            }
+            Vector3f scale = model.getActiveModel().getScale();
+            float average = (scale.x + scale.y + scale.z) / 3;
 
-        if (!firstSend) {
-            if (average == lastScale) return;
+            if (!firstSend) {
+                if (average == lastScale) return;
+            }
+            for (Player player : players) {
+                EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
+            }
+            lastScale = average;
+        } catch (Throwable t) {
+            // ignore
         }
-        for (Player player : players) {
-            EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
-        }
-        lastScale = average;
     }
 
     public void sendColor(Collection<Player> players, boolean firstSend) {
@@ -375,8 +379,12 @@ public class EntityTask {
         sendHitBoxToAll();
 
         Runnable asyncTask = () -> {
-            checkViewers(model.getViewers());
-            runAsync();
+            try {
+                checkViewers(model.getViewers());
+                runAsync();
+            } catch (Throwable t) {
+
+            }
         };
         scheduledFuture = GeyserModelEngine.getInstance().getScheduler().scheduleAtFixedRate(asyncTask, 0, 20, TimeUnit.MILLISECONDS);
 
