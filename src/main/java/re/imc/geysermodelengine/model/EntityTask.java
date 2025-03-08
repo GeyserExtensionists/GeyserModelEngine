@@ -17,11 +17,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
 import re.imc.geysermodelengine.util.BooleanPacker;
 
 import java.awt.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +36,16 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Getter
 @Setter
 public class EntityTask {
+    public static final Method GET_SCALE;
+
+    static {
+        try {
+            GET_SCALE = ActiveModel.class.getMethod("getScale");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     ModelEntity model;
 
     int tick = 0;
@@ -158,8 +170,9 @@ public class EntityTask {
             if (players.isEmpty()) {
                 return;
             }
-            Vector3f scale = model.getActiveModel().getScale();
-            float average = (scale.x + scale.y + scale.z) / 3;
+            Vector3fc scale = (Vector3fc) GET_SCALE.invoke(model.getActiveModel());
+
+            float average = (scale.x() + scale.y() + scale.z()) / 3;
 
             if (!firstSend) {
                 if (average == lastScale) return;
