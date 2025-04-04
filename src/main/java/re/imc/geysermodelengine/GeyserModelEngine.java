@@ -22,10 +22,7 @@ import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.model.BedrockMountControl;
 import re.imc.geysermodelengine.model.ModelEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 
 public final class GeyserModelEngine extends JavaPlugin {
@@ -43,7 +40,7 @@ public final class GeyserModelEngine extends JavaPlugin {
     private int viewDistance;
 
     @Getter
-    private Cache<Player, Boolean> joinedPlayer;
+    private Set<Player> joinedPlayers = new HashSet<>();
 
     @Getter
     private int joinSendDelay;
@@ -117,17 +114,14 @@ public final class GeyserModelEngine extends JavaPlugin {
     public void reload() {
         saveDefaultConfig();
         // alwaysSendSkin = getConfig().getBoolean("always-send-skin");
-        sendDelay = getConfig().getInt("data-send-delay", 0);
+        sendDelay = getConfig().getInt("data-send-delay", 5);
         scheduler = Executors.newScheduledThreadPool(getConfig().getInt("thread-pool-size", 4));
         viewDistance = getConfig().getInt("entity-view-distance", 60);
         debug = getConfig().getBoolean("debug", false);
         joinSendDelay = getConfig().getInt("join-send-delay", 20);
         entityPositionUpdatePeriod = getConfig().getLong("entity-position-update-period", 35);
         enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
-        if (joinSendDelay > 0) {
-            joinedPlayer = CacheBuilder.newBuilder()
-                    .expireAfterWrite(joinSendDelay * 50L, TimeUnit.MILLISECONDS).build();
-        }
+
         instance = this;
         if (updateTask != null) {
             updateTask.cancel(true);

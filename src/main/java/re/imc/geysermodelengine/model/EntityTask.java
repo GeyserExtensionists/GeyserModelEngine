@@ -17,11 +17,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
 import re.imc.geysermodelengine.util.BooleanPacker;
 
 import java.awt.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +36,16 @@ import static re.imc.geysermodelengine.model.ModelEntity.MODEL_ENTITIES;
 @Getter
 @Setter
 public class EntityTask {
+    public static final Method GET_SCALE;
+
+    static {
+        try {
+            GET_SCALE = ActiveModel.class.getMethod("getScale");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     ModelEntity model;
 
     int tick = 0;
@@ -131,12 +143,12 @@ public class EntityTask {
 
     private void sendSpawnPacket(Player onlinePlayer) {
         EntityTask task = model.getTask();
-        boolean firstJoined = GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(onlinePlayer) != null;
+        boolean firstJoined = !GeyserModelEngine.getInstance().getJoinedPlayers().contains(onlinePlayer);
 
         if (firstJoined) {
             task.sendEntityData(onlinePlayer, GeyserModelEngine.getInstance().getJoinSendDelay() / 50);
         } else {
-            task.sendEntityData(onlinePlayer, 2);
+            task.sendEntityData(onlinePlayer, 5);
         }
     }
 
@@ -154,19 +166,24 @@ public class EntityTask {
     }
 
     public void sendScale(Collection<Player> players, boolean firstSend) {
-        if (players.isEmpty()) {
-            return;
-        }
-        Vector3f scale = model.getActiveModel().getScale();
-        float average = (scale.x + scale.y + scale.z) / 3;
+        try {
+            if (players.isEmpty()) {
+                return;
+            }
+            Vector3fc scale = (Vector3fc) GET_SCALE.invoke(model.getActiveModel());
 
-        if (!firstSend) {
-            if (average == lastScale) return;
+            float average = (scale.x() + scale.y() + scale.z()) / 3;
+
+            if (!firstSend) {
+                if (average == lastScale) return;
+            }
+            for (Player player : players) {
+                EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
+            }
+            lastScale = average;
+        } catch (Throwable t) {
+            // ignore
         }
-        for (Player player : players) {
-            EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
-        }
-        lastScale = average;
     }
 
     public void sendColor(Collection<Player> players, boolean firstSend) {
@@ -333,7 +350,7 @@ public class EntityTask {
         if (!player.isOnline()) {
             return false;
         }
-        if (GeyserModelEngine.getInstance().getJoinedPlayer() != null && GeyserModelEngine.getInstance().getJoinedPlayer().getIfPresent(player) != null) {
+        if (!GeyserModelEngine.getInstance().getJoinedPlayers().contains(player)) {
             return false;
         }
 
@@ -375,8 +392,12 @@ public class EntityTask {
         sendHitBoxToAll();
 
         Runnable asyncTask = () -> {
-            checkViewers(model.getViewers());
-            runAsync();
+            try {
+                checkViewers(model.getViewers());
+                runAsync();
+            } catch (Throwable t) {
+
+            }
         };
         scheduledFuture = GeyserModelEngine.getInstance().getScheduler().scheduleAtFixedRate(asyncTask, 0, 20, TimeUnit.MILLISECONDS);
 

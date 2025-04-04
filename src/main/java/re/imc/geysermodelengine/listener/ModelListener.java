@@ -6,11 +6,14 @@ import com.ticxo.modelengine.api.events.ModelMountEvent;
 import com.ticxo.modelengine.api.events.RemoveModelEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.model.ModelEntity;
 
@@ -115,8 +118,11 @@ public class ModelListener implements Listener {
     }
      */
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        GeyserModelEngine.getInstance().getJoinedPlayer().put(event.getPlayer(), true);
+    public void onPlayerLogin(PlayerJoinEvent event) {
+        Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> GeyserModelEngine.getInstance().getJoinedPlayers().add(event.getPlayer()), 10);
     }
-
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Bukkit.getScheduler().runTaskLater(GeyserModelEngine.getInstance(), () -> GeyserModelEngine.getInstance().getJoinedPlayers().remove(event.getPlayer()), 10);
+    }
 }
