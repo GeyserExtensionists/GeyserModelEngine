@@ -1,0 +1,18 @@
+main: re.imc.geysermodelengine.GeyserModelEngine
+name: GeyserModelEngine
+version: '1.0.0'
+api-version: '1.21'
+
+authors:
+  - zimzaza4
+  - willem.dev
+  - TheLividaProject
+
+dependencies:
+  server:
+    packetevents:
+      required: true
+    ModelEngine:
+      required: true
+    floodgate:
+      required: true

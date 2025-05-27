@@ -14,6 +14,12 @@ import re.imc.geysermodelengine.GeyserModelEngine;
 
 public class MountPacketListener implements PacketListener {
 
+    private final GeyserModelEngine plugin;
+
+    public MountPacketListener(GeyserModelEngine plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() != PacketType.Play.Client.ENTITY_ACTION) return;
@@ -22,7 +28,7 @@ public class MountPacketListener implements PacketListener {
         Player player = event.getPlayer();
 
         WrapperPlayClientEntityAction action = new WrapperPlayClientEntityAction(event);
-        Pair<ActiveModel, Mount> seat = GeyserModelEngine.getInstance().getDrivers().get(player);
+        Pair<ActiveModel, Mount> seat = plugin.getBedrockMountControlManager().getDriversCache().get(player);
 
         if (seat == null) return;
         if (action.getAction() != WrapperPlayClientEntityAction.Action.START_SNEAKING) return;

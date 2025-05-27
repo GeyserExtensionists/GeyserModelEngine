@@ -27,14 +27,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @Setter
 public class PacketEntity {
 
-    public PacketEntity(EntityType type, Set<Player> viewers, Location location) {
-        this.id = ThreadLocalRandom.current().nextInt(300000000, 400000000);
-        this.uuid = UUID.randomUUID();
-        this.type = type;
-        this.viewers = viewers;
-        this.location = location;
-    }
-
     private int id;
     private UUID uuid;
     private EntityType type;
@@ -44,6 +36,15 @@ public class PacketEntity {
     private float headPitch;
 
     private boolean removed = false;
+
+    public PacketEntity(EntityType type, Set<Player> viewers, Location location) {
+        this.id = ThreadLocalRandom.current().nextInt(300000000, 400000000);
+        this.uuid = UUID.randomUUID();
+        this.type = type;
+        this.viewers = viewers;
+        this.location = location;
+    }
+
     public @NotNull Location getLocation() {
         return location;
     }
@@ -51,10 +52,9 @@ public class PacketEntity {
     public boolean teleport(@NotNull Location location) {
         boolean sent = this.location.getWorld() != location.getWorld() || this.location.distanceSquared(location) > 0.000001;
         this.location = location.clone();
-        if (sent) {
-            sendLocationPacket(viewers);
-            // sendHeadRotation(viewers); // TODO
-        }
+
+        if (sent) sendLocationPacket(viewers);
+
         return true;
     }
 
@@ -73,8 +73,6 @@ public class PacketEntity {
     }
 
     public void sendSpawnPacket(Collection<Player> players) {
-        // EntitySpawnPacket packet = new EntitySpawnPacket(id, uuid, type, location);
-        // EntityMetadataPacket metadataPacket = new EntityMetadataPacket(id);
         WrapperPlayServerSpawnEntity spawnEntity = new WrapperPlayServerSpawnEntity(id, uuid, type, SpigotConversionUtil.fromBukkitLocation(location), location.getYaw(), 0, null);
         players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawnEntity));
     }
@@ -83,13 +81,14 @@ public class PacketEntity {
 
         PacketWrapper<?> packet;
         EntityPositionData data = new EntityPositionData(SpigotConversionUtil.fromBukkitLocation(location).getPosition(), Vector3d.zero(), location.getYaw(), location.getPitch());
+
         if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2)) {
             packet = new WrapperPlayServerEntityPositionSync(id, data, false);
         } else {
             packet = new WrapperPlayServerEntityTeleport(id, data, RelativeFlag.NONE,false);
         }
-        players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet));
 
+        players.forEach(player -> PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet));
     }
 
     public void sendHeadRotation(Collection<Player> players) {

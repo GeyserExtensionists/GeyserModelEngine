@@ -6,25 +6,30 @@ import java.util.List;
 import java.util.Map;
 
 public class BooleanPacker {
-    public static final int MAX_BOOLEANS = 24;
 
-    public static int booleansToInt(List<Boolean> booleans) {
+    private final int MAX_BOOLEANS = 24;
+
+    public int booleansToInt(List<Boolean> booleans) {
         int result = 0;
         int i = 1;
+
         for (boolean b : booleans) {
             if (b) {
                 result += i;
             }
             i *= 2;
         }
+
         return result;
     }
 
-    public static int mapBooleansToInt(Map<String, Boolean> booleanMap) {
+    public int mapBooleansToInt(Map<String, Boolean> booleanMap) {
         int result = 0;
         int i = 1;
+
         List<String> keys = new ArrayList<>(booleanMap.keySet());
         Collections.sort(keys);
+
         for (String key : keys) {
             if (booleanMap.get(key)) {
                 result += i;
@@ -34,11 +39,12 @@ public class BooleanPacker {
         return result;
     }
 
-    public static List<Integer> booleansToInts(List<Boolean> booleans) {
+    public List<Integer> booleansToInts(List<Boolean> booleans) {
         List<Integer> results = new ArrayList<>();
         int result = 0;
         int i = 1;
         int i1 = 1;
+
         for (boolean b : booleans) {
             if (b) {
                 result += i;
@@ -56,15 +62,15 @@ public class BooleanPacker {
         return results;
     }
 
-    public static List<Integer> mapBooleansToInts(Map<String, Boolean> booleanMap) {
+    public List<Integer> mapBooleansToInts(Map<String, Boolean> booleanMap) {
         List<String> keys = new ArrayList<>(booleanMap.keySet());
         List<Boolean> booleans = new ArrayList<>();
+
         Collections.sort(keys);
+
         for (String key : keys) {
             booleans.add(booleanMap.get(key));
         }
         return booleansToInts(booleans);
     }
-
-
 }
