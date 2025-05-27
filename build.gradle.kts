@@ -30,6 +30,7 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.0.1")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.4")
+
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
