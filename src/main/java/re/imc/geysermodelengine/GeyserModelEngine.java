@@ -123,17 +123,15 @@ public final class GeyserModelEngine extends JavaPlugin {
         enablePartVisibilityModels.addAll(getConfig().getStringList("enable-part-visibility-models"));
 
         instance = this;
-        if (updateTask != null) {
-            updateTask.cancel(true);
-        }
+        if (updateTask != null) updateTask.cancel(true);
 
         updateTask = scheduler.scheduleWithFixedDelay(() -> {
             try {
                 for (Map<ActiveModel, ModelEntity> models : ModelEntity.ENTITIES.values()) {
                     models.values().forEach(model -> model.getTask().updateEntityProperties(model.getViewers(), false));
                 }
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } catch (Throwable err) {
+                throw new RuntimeException(err);
             }
         }, 10, entityPositionUpdatePeriod, TimeUnit.MILLISECONDS);
     }
