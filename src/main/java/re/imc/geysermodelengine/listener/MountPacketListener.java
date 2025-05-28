@@ -28,7 +28,7 @@ public class MountPacketListener implements PacketListener {
         Player player = event.getPlayer();
 
         WrapperPlayClientEntityAction action = new WrapperPlayClientEntityAction(event);
-        Pair<ActiveModel, Mount> seat = plugin.getBedrockMountControlManager().getDriversCache().get(player);
+        Pair<ActiveModel, Mount> seat = plugin.getModelManager().getDriversCache().get(player);
 
         if (seat == null) return;
         if (action.getAction() != WrapperPlayClientEntityAction.Action.START_SNEAKING) return;

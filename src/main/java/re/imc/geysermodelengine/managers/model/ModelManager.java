@@ -3,7 +3,10 @@ package re.imc.geysermodelengine.managers.model;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.model.bone.type.Mount;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.runnables.EntityTaskRunnable;
@@ -19,6 +22,8 @@ public class ModelManager {
 
     private final ConcurrentHashMap<Integer, Map<ActiveModel, ModelEntityData>> entitiesCache = new ConcurrentHashMap<>();
     private final Map<Integer, ModelEntityData> modelEntitiesCache = new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<Player, Pair<ActiveModel, Mount>> driversCache = new ConcurrentHashMap<>();
 
     public ModelManager(GeyserModelEngine plugin) {
         this.plugin = plugin;
@@ -55,5 +60,9 @@ public class ModelManager {
 
     public Map<Integer, ModelEntityData> getModelEntitiesCache() {
         return modelEntitiesCache;
+    }
+
+    public ConcurrentHashMap<Player, Pair<ActiveModel, Mount>> getDriversCache() {
+        return driversCache;
     }
 }

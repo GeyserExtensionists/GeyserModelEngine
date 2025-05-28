@@ -43,14 +43,14 @@ public class ModelListener implements Listener {
         ModelEntityData model = map.get(event.getVehicle());
 
         if (model != null && event.getPassenger() instanceof Player player) {
-            plugin.getBedrockMountControlManager().getDriversCache().put(player, Pair.of(event.getVehicle(), event.getSeat()));
+            plugin.getModelManager().getDriversCache().put(player, Pair.of(event.getVehicle(), event.getSeat()));
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onModelDismount(ModelDismountEvent event) {
         if (event.getPassenger() instanceof Player player) {
-            plugin.getBedrockMountControlManager().getDriversCache().remove(player);
+            plugin.getModelManager().getDriversCache().remove(player);
         }
     }
 

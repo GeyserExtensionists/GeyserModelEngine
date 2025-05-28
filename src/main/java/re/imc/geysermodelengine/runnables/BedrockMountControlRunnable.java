@@ -28,13 +28,12 @@ public class BedrockMountControlRunnable implements Consumer<ScheduledTask> {
             if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) continue;
 
             float pitch = player.getLocation().getPitch();
-            Pair<ActiveModel, Mount> seat = plugin.getBedrockMountControlManager().getDriversCache().get(player);
+            Pair<ActiveModel, Mount> seat = plugin.getModelManager().getDriversCache().get(player);
 
             if (seat == null) continue;
 
             if (pitch < -30) {
-                MountController controller = ModelEngineAPI.getMountPairManager()
-                        .getController(player.getUniqueId());
+                MountController controller = ModelEngineAPI.getMountPairManager().getController(player.getUniqueId());
                 if (controller != null) {
                     MountController.MountInput input = controller.getInput();
                     if (input != null) {

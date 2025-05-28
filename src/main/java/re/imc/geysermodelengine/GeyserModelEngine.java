@@ -2,20 +2,15 @@ package re.imc.geysermodelengine;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
-import com.ticxo.modelengine.api.model.ModeledEntity;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.managers.ConfigManager;
-import re.imc.geysermodelengine.managers.bedrock.BedrockMountControlManager;
 import re.imc.geysermodelengine.managers.commands.CommandManager;
 import re.imc.geysermodelengine.managers.model.EntityTaskManager;
 import re.imc.geysermodelengine.managers.model.ModelManager;
@@ -35,7 +30,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
     private ModelManager modelManager;
     private EntityTaskManager entityTaskManager;
-    private BedrockMountControlManager bedrockMountControlManager;
 
     private PlayerManager playerManager;
 
@@ -83,7 +77,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
         this.modelManager = new ModelManager(this);
         this.entityTaskManager = new EntityTaskManager(this);
-        this.bedrockMountControlManager = new BedrockMountControlManager();
 
         this.playerManager = new PlayerManager();
     }
@@ -107,10 +100,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
     public EntityTaskManager getEntityTaskManager() {
         return entityTaskManager;
-    }
-
-    public BedrockMountControlManager getBedrockMountControlManager() {
-        return bedrockMountControlManager;
     }
 
     public PlayerManager getPlayerManager() {
