@@ -14,7 +14,6 @@ import re.imc.geysermodelengine.managers.ConfigManager;
 import re.imc.geysermodelengine.managers.commands.CommandManager;
 import re.imc.geysermodelengine.managers.model.EntityTaskManager;
 import re.imc.geysermodelengine.managers.model.ModelManager;
-import re.imc.geysermodelengine.managers.player.PlayerManager;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.runnables.BedrockMountControlRunnable;
 import re.imc.geysermodelengine.runnables.UpdateTaskRunnable;
@@ -30,8 +29,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
     private ModelManager modelManager;
     private EntityTaskManager entityTaskManager;
-
-    private PlayerManager playerManager;
 
     @Override
     public void onLoad() {
@@ -77,8 +74,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
         this.modelManager = new ModelManager(this);
         this.entityTaskManager = new EntityTaskManager(this);
-
-        this.playerManager = new PlayerManager();
     }
 
     private void loadRunnables() {
@@ -100,9 +95,5 @@ public class GeyserModelEngine extends JavaPlugin {
 
     public EntityTaskManager getEntityTaskManager() {
         return entityTaskManager;
-    }
-
-    public PlayerManager getPlayerManager() {
-        return playerManager;
     }
 }

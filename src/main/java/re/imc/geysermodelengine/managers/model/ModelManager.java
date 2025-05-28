@@ -9,19 +9,18 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
-import re.imc.geysermodelengine.runnables.EntityTaskRunnable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ModelManager {
 
     private final GeyserModelEngine plugin;
 
+    private final HashSet<UUID> playerJoinedCache = new HashSet<>();
+
     private final ConcurrentHashMap<Integer, Map<ActiveModel, ModelEntityData>> entitiesCache = new ConcurrentHashMap<>();
-    private final Map<Integer, ModelEntityData> modelEntitiesCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ModelEntityData> modelEntitiesCache = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<Player, Pair<ActiveModel, Mount>> driversCache = new ConcurrentHashMap<>();
 
@@ -52,6 +51,10 @@ public class ModelManager {
 
         Optional<ActiveModel> model = modeledEntity.getModels().values().stream().findFirst();
         model.ifPresent(m -> create(modeledEntity, m));
+    }
+
+    public HashSet<UUID> getPlayerJoinedCache() {
+        return playerJoinedCache;
     }
 
     public ConcurrentHashMap<Integer, Map<ActiveModel, ModelEntityData>> getEntitiesCache() {

@@ -55,21 +55,20 @@ public class ModelListener implements Listener {
     }
 
     @EventHandler
-    public void onWorldLoad(WorldInitEvent event) {
+    public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         world.getEntities().forEach(entity -> plugin.getModelManager().processEntities(entity));
     }
 
-    //TODO Find out why we need this bc uh what?
     @EventHandler
-    public void onPlayerLogin(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().add(player.getUniqueId()), 10);
+        plugin.getModelManager().getPlayerJoinedCache().add(player.getUniqueId());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().remove(player.getUniqueId()), 10);
+        plugin.getModelManager().getPlayerJoinedCache().remove(player.getUniqueId());
     }
 }

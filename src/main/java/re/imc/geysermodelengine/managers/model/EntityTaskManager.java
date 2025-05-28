@@ -102,7 +102,7 @@ public class EntityTaskManager {
 
     private void sendSpawnPacket(ModelEntityData model, Player onlinePlayer) {
         EntityTaskRunnable task = model.getEntityTask();
-        boolean firstJoined = !plugin.getPlayerManager().getPlayerJoinedCache().contains(onlinePlayer.getUniqueId());
+        boolean firstJoined = !plugin.getModelManager().getPlayerJoinedCache().contains(onlinePlayer.getUniqueId());
 
         if (firstJoined) {
             task.sendEntityData(model, onlinePlayer, plugin.getConfigManager().getConfig().getInt("join-send-delay") / 50);
@@ -113,7 +113,7 @@ public class EntityTaskManager {
 
     public boolean canSee(Player player, PacketEntity entity) {
         if (!player.isOnline()) return false;
-        if (!plugin.getPlayerManager().getPlayerJoinedCache().contains(player.getUniqueId())) return false;
+        if (!plugin.getModelManager().getPlayerJoinedCache().contains(player.getUniqueId())) return false;
 
         Location playerLocation = player.getLocation().clone();
         Location entityLocation = entity.getLocation().clone();
