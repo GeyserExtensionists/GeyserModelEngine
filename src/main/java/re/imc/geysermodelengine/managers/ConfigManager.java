@@ -18,6 +18,12 @@ public class ConfigManager {
     }
 
     public void load() {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdir();
+            plugin.saveResource("config.yml", false);
+            plugin.saveResource("Lang/messages.yml", false);
+        }
+
         this.config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
         this.lang = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "Lang/messages.yml"));
     }
