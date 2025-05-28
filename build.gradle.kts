@@ -13,12 +13,8 @@ repositories {
 
     maven("https://mvn.lumine.io/repository/maven-public/")
 
-    maven("https://repo.opencollab.dev/maven-releases/") {
-        isAllowInsecureProtocol = true
-    }
-    maven("https://repo.opencollab.dev/maven-snapshots/") {
-        isAllowInsecureProtocol = true
-    }
+    maven("https://repo.opencollab.dev/maven-releases/")
+    maven("https://repo.opencollab.dev/maven-snapshots/")
 
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-releases/")
@@ -32,7 +28,7 @@ dependencies {
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.4")
 
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
-    compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
     implementation("com.github.retrooper:packetevents-spigot:2.8.0")
 
