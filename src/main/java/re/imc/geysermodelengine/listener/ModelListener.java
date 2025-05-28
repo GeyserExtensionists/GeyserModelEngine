@@ -6,12 +6,15 @@ import com.ticxo.modelengine.api.events.ModelMountEvent;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 
@@ -49,6 +52,12 @@ public class ModelListener implements Listener {
         if (event.getPassenger() instanceof Player player) {
             plugin.getBedrockMountControlManager().getDriversCache().remove(player);
         }
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldInitEvent event) {
+        World world = event.getWorld();
+        world.getEntities().forEach(entity -> plugin.getModelManager().processEntities(entity));
     }
 
     //TODO Find out why we need this bc uh what?

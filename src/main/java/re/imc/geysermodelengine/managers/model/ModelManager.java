@@ -1,13 +1,16 @@
 package re.imc.geysermodelengine.managers.model;
 
+import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import org.bukkit.entity.Entity;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.runnables.EntityTaskRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ModelManager {
@@ -34,6 +37,16 @@ public class ModelManager {
         }
 
         map.put(model, modelEntity);
+    }
+
+    public void processEntities(Entity entity) {
+        if (entitiesCache.containsKey(entity.getEntityId())) return;
+
+        ModeledEntity modeledEntity = ModelEngineAPI.getModeledEntity(entity);
+        if (modeledEntity == null) return;
+
+        Optional<ActiveModel> model = modeledEntity.getModels().values().stream().findFirst();
+        model.ifPresent(m -> create(modeledEntity, m));
     }
 
     public ConcurrentHashMap<Integer, Map<ActiveModel, ModelEntityData>> getEntitiesCache() {

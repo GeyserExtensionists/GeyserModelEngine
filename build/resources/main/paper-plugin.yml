@@ -8,6 +8,8 @@ authors:
   - willem.dev
   - TheLividaProject
 
+load: STARTUP
+
 dependencies:
   server:
     GeyserUtils:

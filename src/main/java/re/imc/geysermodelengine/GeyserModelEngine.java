@@ -20,7 +20,6 @@ import re.imc.geysermodelengine.managers.commands.CommandManager;
 import re.imc.geysermodelengine.managers.model.EntityTaskManager;
 import re.imc.geysermodelengine.managers.model.ModelManager;
 import re.imc.geysermodelengine.managers.player.PlayerManager;
-import re.imc.geysermodelengine.managers.server.ServerManager;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.runnables.BedrockMountControlRunnable;
 import re.imc.geysermodelengine.runnables.UpdateTaskRunnable;
@@ -31,7 +30,6 @@ import java.util.concurrent.*;
 public class GeyserModelEngine extends JavaPlugin {
 
     private ConfigManager configManager;
-    private ServerManager serverManager;
 
     private CommandManager commandManager;
 
@@ -58,24 +56,6 @@ public class GeyserModelEngine extends JavaPlugin {
         PacketEvents.getAPI().getEventManager().registerListener(new MountPacketListener(this), PacketListenerPriority.NORMAL);
 
         Bukkit.getPluginManager().registerEvents(new ModelListener(this), this);
-
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-                    for (World world : Bukkit.getWorlds()) {
-
-                        for (Entity entity : world.getEntities()) {
-
-                            if (!modelManager.getEntitiesCache().containsKey(entity.getEntityId())) {
-
-                                ModeledEntity modeledEntity = ModelEngineAPI.getModeledEntity(entity);
-
-                                if (modeledEntity != null) {
-                                    Optional<ActiveModel> model = modeledEntity.getModels().values().stream().findFirst();
-                                    model.ifPresent(m -> modelManager.create(modeledEntity, m));
-                                }
-                            }
-                        }
-                    }
-                }, 100);
     }
 
     @Override
@@ -98,7 +78,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
     private void loadManagers() {
         this.configManager = new ConfigManager(this);
-        this.serverManager = new ServerManager();
 
         this.commandManager = new CommandManager(this);
 
@@ -116,10 +95,6 @@ public class GeyserModelEngine extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    public ServerManager getServerManager() {
-        return serverManager;
     }
 
     public CommandManager getCommandManager() {
