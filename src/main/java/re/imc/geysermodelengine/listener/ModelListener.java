@@ -63,11 +63,13 @@ public class ModelListener implements Listener {
     //TODO Find out why we need this bc uh what?
     @EventHandler
     public void onPlayerLogin(PlayerJoinEvent event) {
-        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().add(event.getPlayer()), 10);
+        Player player = event.getPlayer();
+        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().add(player.getUniqueId()), 10);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().remove(event.getPlayer()), 10);
+        Player player = event.getPlayer();
+        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getPlayerManager().getPlayerJoinedCache().remove(player.getUniqueId()), 10);
     }
 }

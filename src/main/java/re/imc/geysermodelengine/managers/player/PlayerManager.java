@@ -1,14 +1,13 @@
 package re.imc.geysermodelengine.managers.player;
 
-import org.bukkit.entity.Player;
-
 import java.util.HashSet;
+import java.util.UUID;
 
 public class PlayerManager {
 
-    private final HashSet<Player> playerJoinedCache = new HashSet<>();
+    private final HashSet<UUID> playerJoinedCache = new HashSet<>();
 
-    public HashSet<Player> getPlayerJoinedCache() {
+    public HashSet<UUID> getPlayerJoinedCache() {
         return playerJoinedCache;
     }
 }
