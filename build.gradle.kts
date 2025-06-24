@@ -9,7 +9,7 @@ version = "1.0.0"
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
 
     maven("https://mvn.lumine.io/repository/maven-public/")
 
@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
 
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.0.1")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.0")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.4")
 
