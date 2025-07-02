@@ -77,7 +77,7 @@ public class GeyserModelEngine extends JavaPlugin {
     }
 
     private void loadRunnables() {
-        Bukkit.getAsyncScheduler().runAtFixedRate(this, new UpdateTaskRunnable(this), 10, configManager.getConfig().getLong("entity-position-update-period"), TimeUnit.MILLISECONDS);
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, new UpdateTaskRunnable(this), 10, configManager.getConfig().getLong("entity-position-update-period", 35), TimeUnit.MILLISECONDS);
         Bukkit.getAsyncScheduler().runAtFixedRate(this, new BedrockMountControlRunnable(this), 1, 1, TimeUnit.MILLISECONDS);
     }
 
