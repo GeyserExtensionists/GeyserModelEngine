@@ -21,10 +21,7 @@ public class GeyserModelEngineReloadCommand implements SubCommands {
         return new CommandAPICommand("reload")
                 .withPermission("geysermodelengine.commands.reload")
                 .executes((sender, args) -> {
-                    Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                        plugin.getConfigManager().load();
-                    });
-
+                    Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> plugin.getConfigManager().load());
                     sender.sendMessage(colourUtils.miniFormat(plugin.getConfigManager().getLang().getString("commands.reload.successfully-reloaded")));
                 });
     }

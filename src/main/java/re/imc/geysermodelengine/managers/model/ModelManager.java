@@ -61,7 +61,7 @@ public class ModelManager {
         return entitiesCache;
     }
 
-    public Map<Integer, ModelEntityData> getModelEntitiesCache() {
+    public ConcurrentHashMap<Integer, ModelEntityData> getModelEntitiesCache() {
         return modelEntitiesCache;
     }
 
