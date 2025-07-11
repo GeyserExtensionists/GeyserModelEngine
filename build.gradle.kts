@@ -29,7 +29,7 @@ dependencies {
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.9.0-SNAPSHOT")
+    implementation("com.github.retrooper:packetevents-spigot:2.9.1")
 
     implementation("org.reflections:reflections:0.10.2")
 }
@@ -40,6 +40,10 @@ java {
 
 tasks.compileJava {
     options.encoding = "UTF-8"
+}
+
+tasks.jar {
+    enabled = false
 }
 
 tasks.shadowJar {
