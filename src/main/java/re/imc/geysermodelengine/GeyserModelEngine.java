@@ -30,6 +30,8 @@ public class GeyserModelEngine extends JavaPlugin {
     private ModelManager modelManager;
     private EntityTaskManager entityTaskManager;
 
+    private ScheduledExecutorService schedulerPool;
+
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -77,6 +79,8 @@ public class GeyserModelEngine extends JavaPlugin {
     }
 
     private void loadRunnables() {
+        this.schedulerPool = Executors.newScheduledThreadPool(configManager.getConfig().getInt("thread-pool-size", 4));
+
         Bukkit.getAsyncScheduler().runAtFixedRate(this, new UpdateTaskRunnable(this), 10, configManager.getConfig().getLong("entity-position-update-period", 35), TimeUnit.MILLISECONDS);
         Bukkit.getAsyncScheduler().runAtFixedRate(this, new BedrockMountControlRunnable(this), 1, 1, TimeUnit.MILLISECONDS);
     }
@@ -95,5 +99,9 @@ public class GeyserModelEngine extends JavaPlugin {
 
     public EntityTaskManager getEntityTaskManager() {
         return entityTaskManager;
+    }
+
+    public ScheduledExecutorService getSchedulerPool() {
+        return schedulerPool;
     }
 }

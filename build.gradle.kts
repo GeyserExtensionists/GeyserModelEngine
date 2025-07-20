@@ -21,15 +21,15 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
-
     implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.1")
 
-    compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.4")
+    compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.9")
 
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.9.1")
+
+    implementation("com.github.retrooper:packetevents-spigot:2.9.3")
 
     implementation("org.reflections:reflections:0.10.2")
 }
@@ -42,10 +42,6 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 
-tasks.jar {
-    enabled = false
-}
-
 tasks.shadowJar {
     relocate("dev.jorel.commandapi", "re.imc.geysermodelengine.libs.commandapi")
 
@@ -56,5 +52,6 @@ tasks.shadowJar {
 }
 
 tasks.jar {
+    enabled = false
     dependsOn(tasks.shadowJar)
 }

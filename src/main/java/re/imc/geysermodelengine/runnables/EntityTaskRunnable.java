@@ -8,9 +8,7 @@ import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
@@ -21,10 +19,10 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
-public class EntityTaskRunnable implements Consumer<ScheduledTask> {
+public class EntityTaskRunnable {
 
     private final GeyserModelEngine plugin;
 
@@ -43,16 +41,27 @@ public class EntityTaskRunnable implements Consumer<ScheduledTask> {
 
     private final BooleanPacker booleanPacker = new BooleanPacker();
 
+    private ScheduledFuture scheduledFuture;
+
     public EntityTaskRunnable(GeyserModelEngine plugin, ModelEntityData model) {
         this.plugin = plugin;
 
         this.model = model;
-
-        plugin.getEntityTaskManager().sendHitBoxToAll(model);
     }
 
-    @Override
-    public void accept(ScheduledTask scheduledTask) {
+    public void run() {
+        plugin.getEntityTaskManager().sendHitBoxToAll(model);
+
+        Runnable asyncTask = () -> {
+            try {
+                runAsync();
+            } catch (Throwable ignored) {}
+        };
+
+        scheduledFuture = plugin.getSchedulerPool().scheduleAtFixedRate(asyncTask, 0, 20, TimeUnit.MILLISECONDS);
+    }
+
+    public void runAsync() {
         plugin.getEntityTaskManager().checkViewers(model, model.getViewers());
 
         PacketEntity entity = model.getEntity();
@@ -70,7 +79,7 @@ public class EntityTaskRunnable implements Consumer<ScheduledTask> {
 
             plugin.getModelManager().getEntitiesCache().remove(modeledEntity.getBase().getEntityId());
             plugin.getModelManager().getModelEntitiesCache().remove(entity.getEntityId());
-            scheduledTask.cancel();
+            cancel();
             return;
         }
 
@@ -96,20 +105,25 @@ public class EntityTaskRunnable implements Consumer<ScheduledTask> {
         plugin.getEntityTaskManager().sendColor(model, viewers, lastColor, false);
     }
 
+    public void cancel() {
+        scheduledFuture.cancel(true);
+    }
+
     public void sendEntityData(ModelEntityData model, Player player, int delay) {
+        //TODO with ModelEngine, you can define the namespace inside the config, make an option to change it here as well? if i'm right about this
         EntityUtils.setCustomEntity(player, model.getEntity().getEntityId(), "modelengine:" + model.getActiveModel().getBlueprint().getName().toLowerCase());
 
-        Bukkit.getAsyncScheduler().runDelayed(plugin, scheduledTask -> {
+        plugin.getSchedulerPool().schedule(() -> {
             model.getEntity().sendSpawnPacket(Collections.singletonList(player));
 
-            Bukkit.getAsyncScheduler().runDelayed(plugin, scheduledTask1 -> {
+            plugin.getSchedulerPool().schedule(() -> {
                 plugin.getEntityTaskManager().sendHitBox(model, player);
                 plugin.getEntityTaskManager().sendScale(model, Collections.singleton(player), lastScale, true);
                 plugin.getEntityTaskManager().sendColor(model, Collections.singleton(player), lastColor, true);
 
                 updateEntityProperties(model, Collections.singleton(player), true);
-            }, 500, TimeUnit.MILLISECONDS);
-        }, delay * 50L, TimeUnit.MILLISECONDS);
+            }, delay * 50L, TimeUnit.MILLISECONDS);
+        }, 500, TimeUnit.MILLISECONDS);
     }
 
     public void updateEntityProperties(ModelEntityData model, Collection<Player> players, boolean firstSend, String... forceAnims) {
@@ -254,5 +268,9 @@ public class EntityTaskRunnable implements Consumer<ScheduledTask> {
 
     public Cache<String, Boolean> getLastPlayedAnim() {
         return lastPlayedAnim;
+    }
+
+    public ScheduledFuture getScheduledFuture() {
+        return scheduledFuture;
     }
 }
