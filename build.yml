@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,19 +20,10 @@ jobs:
           java-version: 17
           distribution: 'zulu'
           
-      - name: Restore Maven cache
-        uses: skjolber/maven-cache-github-action@v1
-        with:
-          step: restore
-          
       # Build
-      - name: Build with Maven
-        run: mvn package
-        
-      - name: Save Maven cache
-        uses: skjolber/maven-cache-github-action@v1
-        with:
-          step: save
+      - name: Build with Gradle
+        run: gradle build
+
       - name: Auto release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -40,4 +31,4 @@ jobs:
           automatic_release_tag: latest
           prerelease: false
           files: |
-            target/GeyserModelEngine*.jar
+            build/libs/GeyserModelEngine*.jar
