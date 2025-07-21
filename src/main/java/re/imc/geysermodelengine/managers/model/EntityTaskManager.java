@@ -60,9 +60,7 @@ public class EntityTaskManager {
             for (Player player : players) {
                 EntityUtils.sendCustomScale(player, model.getEntity().getEntityId(), average);
             }
-        } catch (Throwable t) {
-            // ignore
-        }
+        } catch (Throwable ignored) {}
     }
 
     public void sendColor(ModelEntityData model, Collection<Player> players, Color lastColor, boolean firstSend) {
@@ -82,24 +80,23 @@ public class EntityTaskManager {
 
     public void checkViewers(ModelEntityData model, Set<Player> viewers) {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) {
+            if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) continue;
 
-                if (canSee(onlinePlayer, model.getEntity())) {
-
-                    if (!viewers.contains(onlinePlayer)) {
-                        sendSpawnPacket(model, onlinePlayer);
-                        viewers.add(onlinePlayer);
-                    }
-                } else {
-                    if (viewers.contains(onlinePlayer)) {
-                        model.getEntity().sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
-                        viewers.remove(onlinePlayer);
-                    }
+            if (canSee(onlinePlayer, model.getEntity())) {
+                if (!viewers.contains(onlinePlayer)) {
+                    sendSpawnPacket(model, onlinePlayer);
+                    viewers.add(onlinePlayer);
+                }
+            } else {
+                if (viewers.contains(onlinePlayer)) {
+                    model.getEntity().sendEntityDestroyPacket(Collections.singletonList(onlinePlayer));
+                    viewers.remove(onlinePlayer);
                 }
             }
         }
     }
 
+    // Issue here - start: See ModelListener.class and look at function onPlayerJoin
     private void sendSpawnPacket(ModelEntityData model, Player onlinePlayer) {
         EntityTaskRunnable task = model.getEntityTask();
         boolean firstJoined = !plugin.getModelManager().getPlayerJoinedCache().contains(onlinePlayer.getUniqueId());
@@ -125,6 +122,7 @@ public class EntityTaskManager {
 
         return true;
     }
+    // Issue here - end
 
     public void sendHitBoxToAll(ModelEntityData model) {
         for (Player viewer : model.getViewers()) {

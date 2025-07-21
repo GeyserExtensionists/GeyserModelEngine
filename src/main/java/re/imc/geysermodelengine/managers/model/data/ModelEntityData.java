@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.google.common.collect.Sets;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
@@ -12,7 +11,6 @@ import re.imc.geysermodelengine.packet.entity.PacketEntity;
 import re.imc.geysermodelengine.runnables.EntityTaskRunnable;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class ModelEntityData {
 
@@ -50,7 +48,6 @@ public class ModelEntityData {
 
     public void runEntityTask() {
         entityTask = new EntityTaskRunnable(plugin, this);
-        Bukkit.getAsyncScheduler().runAtFixedRate(plugin, entityTask, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public PacketEntity getEntity() {
