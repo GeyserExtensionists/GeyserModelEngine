@@ -51,6 +51,11 @@ tasks.shadowJar {
     relocate("org.reflections", "re.imc.geysermodelengine.libs.reflections")
 }
 
+
 tasks.jar {
-    dependsOn(tasks.shadowJar)
+    enabled = false
+}
+
+tasks.build {
+    dependsOn("shadowJar")
 }
