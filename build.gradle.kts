@@ -52,9 +52,5 @@ tasks.shadowJar {
 }
 
 tasks.jar {
-    enabled = false
-}
-
-tasks.build {
-    dependsOn("shadowJar")
+    dependsOn(tasks.shadowJar)
 }
