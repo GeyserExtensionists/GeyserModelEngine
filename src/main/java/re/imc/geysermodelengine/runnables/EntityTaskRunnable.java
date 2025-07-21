@@ -41,24 +41,16 @@ public class EntityTaskRunnable {
 
     private final BooleanPacker booleanPacker = new BooleanPacker();
 
-    private ScheduledFuture scheduledFuture;
+    private final ScheduledFuture scheduledFuture;
 
     public EntityTaskRunnable(GeyserModelEngine plugin, ModelEntityData model) {
         this.plugin = plugin;
 
         this.model = model;
-    }
 
-    public void run() {
         plugin.getEntityTaskManager().sendHitBoxToAll(model);
 
-        Runnable asyncTask = () -> {
-            try {
-                runAsync();
-            } catch (Throwable ignored) {}
-        };
-
-        scheduledFuture = plugin.getSchedulerPool().scheduleAtFixedRate(asyncTask, 0, 20, TimeUnit.MILLISECONDS);
+        scheduledFuture = plugin.getSchedulerPool().scheduleAtFixedRate(this::runAsync, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public void runAsync() {

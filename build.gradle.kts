@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.1")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.2")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.9")
 
@@ -51,7 +51,6 @@ tasks.shadowJar {
     relocate("org.reflections", "re.imc.geysermodelengine.libs.reflections")
 }
 
-tasks.jar {
-    enabled = false
-    dependsOn(tasks.shadowJar)
+tasks.build {
+    dependsOn("shadowJar")
 }

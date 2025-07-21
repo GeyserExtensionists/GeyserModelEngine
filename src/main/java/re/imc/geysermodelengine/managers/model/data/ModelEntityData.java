@@ -48,7 +48,6 @@ public class ModelEntityData {
 
     public void runEntityTask() {
         entityTask = new EntityTaskRunnable(plugin, this);
-        entityTask.run();
     }
 
     public PacketEntity getEntity() {

@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff2e9770-ec88-4715-adeb-b9dbda130e1a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/managers/model/data/ModelEntityData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/managers/model/data/ModelEntityData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/runnables/EntityTaskRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/runnables/EntityTaskRunnable.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
