@@ -96,7 +96,6 @@ public class EntityTaskManager {
         }
     }
 
-    // Issue here - start: See ModelListener.class and look at function onPlayerJoin
     private void sendSpawnPacket(ModelEntityData model, Player onlinePlayer) {
         EntityTaskRunnable task = model.getEntityTask();
         boolean firstJoined = !plugin.getModelManager().getPlayerJoinedCache().contains(onlinePlayer.getUniqueId());
@@ -122,7 +121,6 @@ public class EntityTaskManager {
 
         return true;
     }
-    // Issue here - end
 
     public void sendHitBoxToAll(ModelEntityData model) {
         for (Player viewer : model.getViewers()) {

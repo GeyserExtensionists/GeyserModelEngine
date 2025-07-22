@@ -114,8 +114,8 @@ public class EntityTaskRunnable {
                 plugin.getEntityTaskManager().sendColor(model, Collections.singleton(player), lastColor, true);
 
                 updateEntityProperties(model, Collections.singleton(player), true);
-            }, delay * 50L, TimeUnit.MILLISECONDS);
-        }, 500, TimeUnit.MILLISECONDS);
+            }, 500, TimeUnit.MILLISECONDS);
+        }, delay * 50L, TimeUnit.MILLISECONDS);
     }
 
     public void updateEntityProperties(ModelEntityData model, Collection<Player> players, boolean firstSend, String... forceAnims) {
