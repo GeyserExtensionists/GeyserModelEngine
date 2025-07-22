@@ -43,6 +43,8 @@ tasks.compileJava {
 }
 
 tasks.shadowJar {
+    archiveFileName.set("${rootProject.name}-${version}.jar")
+
     relocate("dev.jorel.commandapi", "re.imc.geysermodelengine.libs.commandapi")
 
     relocate("com.github.retrooper", "re.imc.geysermodelengine.libs.com.github.retrooper.packetevents")
