@@ -29,7 +29,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
 
-    implementation("com.github.retrooper:packetevents-spigot:2.9.3")
+    implementation("com.github.retrooper:packetevents-spigot:2.9.4")
 
     implementation("org.reflections:reflections:0.10.2")
 }
