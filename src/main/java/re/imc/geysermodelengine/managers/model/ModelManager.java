@@ -52,6 +52,12 @@ public class ModelManager {
         model.ifPresent(m -> create(modeledEntity, m));
     }
 
+    public void removeEntities() {
+        for (Map<ActiveModel, ModelEntityData> entities : entitiesCache.values()) {
+            entities.forEach((model, modelEntity) -> modelEntity.getEntity().remove());
+        }
+    }
+
     public HashSet<UUID> getPlayerJoinedCache() {
         return playerJoinedCache;
     }

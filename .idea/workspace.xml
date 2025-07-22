@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff2e9770-ec88-4715-adeb-b9dbda130e1a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/managers/model/data/ModelEntityData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/managers/model/data/ModelEntityData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/runnables/EntityTaskRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/runnables/EntityTaskRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/listener/ModelListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/re/imc/geysermodelengine/listener/ModelListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +79,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Gradle.GeyserModelEngine [build].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.GeyserModelEngine [jar].executor&quot;: &quot;Run&quot;,
     &quot;Maven.GeyserModelEngine [install...].executor&quot;: &quot;Run&quot;,
     &quot;Maven.GeyserModelEngine [install].executor&quot;: &quot;Run&quot;,
@@ -101,7 +102,29 @@
       <recent name="D:\Coding\Forks\Minecraft\GeyserModelEngine\libs" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Gradle.GeyserModelEngine [jar]">
+    <configuration name="GeyserModelEngine [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="GeyserModelEngine [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -127,6 +150,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.GeyserModelEngine [jar]" />
+        <item itemvalue="Gradle.GeyserModelEngine [build]" />
       </list>
     </recent_temporary>
   </component>

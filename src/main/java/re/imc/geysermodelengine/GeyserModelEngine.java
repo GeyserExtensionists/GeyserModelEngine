@@ -2,7 +2,6 @@ package re.imc.geysermodelengine;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -14,11 +13,9 @@ import re.imc.geysermodelengine.managers.ConfigManager;
 import re.imc.geysermodelengine.managers.commands.CommandManager;
 import re.imc.geysermodelengine.managers.model.EntityTaskManager;
 import re.imc.geysermodelengine.managers.model.ModelManager;
-import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.runnables.BedrockMountControlRunnable;
 import re.imc.geysermodelengine.runnables.UpdateTaskRunnable;
 
-import java.util.*;
 import java.util.concurrent.*;
 
 public class GeyserModelEngine extends JavaPlugin {
@@ -55,11 +52,7 @@ public class GeyserModelEngine extends JavaPlugin {
     public void onDisable() {
         PacketEvents.getAPI().terminate();
 
-        for (Map<ActiveModel, ModelEntityData> entities : modelManager.getEntitiesCache().values()) {
-            entities.forEach((model, modelEntity) -> {
-                modelEntity.getEntity().remove();
-            });
-        }
+        this.modelManager.removeEntities();
 
         CommandAPI.onDisable();
     }
