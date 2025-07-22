@@ -65,7 +65,7 @@ public class ModelListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;
-        // Temp fix bc like why? - the issue is when a player logs out and the mob is there, the player logs back in sometimes it can display as a pig only
+        // Temp fix till a better solution is found - the issue is when a player logs out and the mob is there, the player logs back in sometimes it can display as a pig only
         Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getModelManager().getPlayerJoinedCache().add(player.getUniqueId()), 10);
     }
 
