@@ -19,7 +19,6 @@ import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class ModelListener implements Listener {
 
@@ -61,11 +60,21 @@ public class ModelListener implements Listener {
         world.getEntities().forEach(entity -> plugin.getModelManager().processEntities(entity));
     }
 
+    /*
+     / Temp fix till a better solution is found -
+     / the issue is when a player logs out and the mob is there,
+     / the player logs back in sometimes it can display as a pig only
+     / this issues mainly comes from the functions from EntityTaskManager
+     / sendSpawnPacket() and canSee()
+     /
+     / TheLividaProject - conclusion:
+     / I'm assuming when a player joins the server the packet for mob spawning is instant so the client resyncs itself
+     / hence why the pig is shown instead of going invisible and not displaying the texture of the modeled mob
+    */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;
-        // Temp fix till a better solution is found - the issue is when a player logs out and the mob is there, the player logs back in sometimes it can display as a pig only
         Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getModelManager().getPlayerJoinedCache().add(player.getUniqueId()), 10);
     }
 
