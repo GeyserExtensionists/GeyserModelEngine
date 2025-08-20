@@ -29,6 +29,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
     implementation("com.github.retrooper:packetevents-spigot:2.9.4")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
 
     implementation("org.reflections:reflections:0.10.2")
 }
@@ -48,6 +49,8 @@ tasks.shadowJar {
 
     relocate("com.github.retrooper", "re.imc.geysermodelengine.libs.com.github.retrooper.packetevents")
     relocate("io.github.retrooper", "re.imc.geysermodelengine.libs.io.github.retrooper.packetevents")
+
+    relocate("org.bstats", "re.imc.geysermodelengine.libs.bstats")
 
     relocate("org.reflections", "re.imc.geysermodelengine.libs.reflections")
 }
