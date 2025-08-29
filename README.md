@@ -20,7 +20,7 @@ Download the following plugins according to what server software you use.
 - Put `GeyserModelEngine` in the plugins folder (only Spigot or forks of Spigot supported)
 - Put either `geyserutils-spigot` in your plugins folder aswell (`geyserutils-velocity`/`geyserutils-bungeecord` in your Velocity/Bungeecord plugins folder if you use it)
 - Put `GeyserModelEnginePackGenerator` and `geyserutils-geyser` into `plugins/[Geyser-Folder]/extensions`
-- Inside `floodgate` set `send-floodgate-data` to true in your Velocity/Bungeecord folder and copy over the key.pem into your backend `floodgate` folders
+- Inside `floodgate` set `send-floodgate-data` to `true` in your Velocity/Bungeecord folder and copy over the key.pem into your backend `floodgate` folders
 
 Start the server to generate the relevant configuration files, and then shut down the server to convert any models.
 
