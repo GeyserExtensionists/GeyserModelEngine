@@ -66,7 +66,7 @@ public class GeyserModelEngine extends JavaPlugin {
     }
 
     private void loadBStats() {
-        new Metrics(this, 26981);
+        if (configManager.getConfig().getBoolean("bstats", true)) new Metrics(this, 26981);
     }
 
     private void loadManagers() {

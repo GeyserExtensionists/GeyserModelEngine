@@ -1,3 +1,5 @@
+bstats: true
+
 data-send-delay: 5
 entity-view-distance: 50
 join-send-delay: 20
