@@ -6,7 +6,6 @@ api-version: '1.21'
 authors:
   - zimzaza4
   - willem.dev
-  - TheLividaProject
 
 load: STARTUP
 

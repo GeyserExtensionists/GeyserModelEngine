@@ -33,6 +33,6 @@ public class MountPacketListener implements PacketListener {
         if (seat == null) return;
         if (action.getAction() != WrapperPlayClientEntityAction.Action.START_SNEAKING) return;
 
-        ModelEngineAPI.getMountPairManager().tryDismount(event.getPlayer());
+        ModelEngineAPI.getMountPairManager().tryDismount(player);
     }
 }

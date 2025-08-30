@@ -1,8 +1,6 @@
 package re.imc.geysermodelengine.listener;
 
-import com.ticxo.modelengine.api.events.AddModelEvent;
-import com.ticxo.modelengine.api.events.ModelDismountEvent;
-import com.ticxo.modelengine.api.events.ModelMountEvent;
+import com.ticxo.modelengine.api.events.*;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
@@ -31,7 +29,6 @@ public class ModelListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAddModel(AddModelEvent event) {
         if (event.isCancelled()) return;
-
         plugin.getModelManager().create(event.getTarget(), event.getModel());
     }
 
@@ -54,6 +51,10 @@ public class ModelListener implements Listener {
         }
     }
 
+    /*
+     / xSquishyLiam:
+     / I'm wondering if we could move this to more of a player loading chunks instead of checking all worlds via PlayerChunkLoadEvent?
+    */
     @EventHandler
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
@@ -61,13 +62,7 @@ public class ModelListener implements Listener {
     }
 
     /*
-     / Temp fix till a better solution is found -
-     / the issue is when a player logs out and the mob is there,
-     / the player logs back in sometimes it can display as a pig only
-     / this issues mainly comes from the functions from EntityTaskManager
-     / sendSpawnPacket() and canSee()
-     /
-     / TheLividaProject - conclusion:
+     / xSquishyLiam - conclusion:
      / I'm assuming when a player joins the server the packet for mob spawning is instant so the client resyncs itself
      / hence why the pig is shown instead of going invisible and not displaying the texture of the modeled mob
     */

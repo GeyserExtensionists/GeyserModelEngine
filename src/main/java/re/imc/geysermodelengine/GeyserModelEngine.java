@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import re.imc.geysermodelengine.listener.ModelListener;
@@ -43,6 +44,8 @@ public class GeyserModelEngine extends JavaPlugin {
         loadManagers();
         loadRunnables();
 
+        loadBStats();
+
         PacketEvents.getAPI().getEventManager().registerListener(new MountPacketListener(this), PacketListenerPriority.NORMAL);
 
         Bukkit.getPluginManager().registerEvents(new ModelListener(this), this);
@@ -60,6 +63,10 @@ public class GeyserModelEngine extends JavaPlugin {
     private void loadHooks() {
         PacketEvents.getAPI().init();
         CommandAPI.onEnable();
+    }
+
+    private void loadBStats() {
+        if (configManager.getConfig().getBoolean("bstats", true)) new Metrics(this, 26981);
     }
 
     private void loadManagers() {
