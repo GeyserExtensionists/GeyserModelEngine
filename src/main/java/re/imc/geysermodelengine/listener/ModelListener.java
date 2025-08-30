@@ -2,7 +2,6 @@ package re.imc.geysermodelengine.listener;
 
 import com.ticxo.modelengine.api.events.*;
 import com.ticxo.modelengine.api.model.ActiveModel;
-import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
