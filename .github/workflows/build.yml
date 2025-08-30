@@ -22,7 +22,7 @@ jobs:
           
       # Build
       - name: Build with Gradle
-        run: gradle build
+        run: ./gradlew build
 
       - name: Auto release
         uses: "marvinpinto/action-automatic-releases@latest"
