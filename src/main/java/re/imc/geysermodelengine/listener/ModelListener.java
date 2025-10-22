@@ -51,10 +51,6 @@ public class ModelListener implements Listener {
         }
     }
 
-    /*
-     / xSquishyLiam:
-     / I'm wondering if we could move this to more of a player loading chunks instead of checking all worlds via PlayerChunkLoadEvent?
-    */
     @EventHandler
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
@@ -62,9 +58,8 @@ public class ModelListener implements Listener {
     }
 
     /*
-     / xSquishyLiam - conclusion:
-     / I'm assuming when a player joins the server the packet for mob spawning is instant so the client resyncs itself
-     / hence why the pig is shown instead of going invisible and not displaying the texture of the modeled mob
+     / xSquishyLiam:
+     / Delay is required due to when a player joins the server the packet for mob spawning is instant so the client resyncs itself
     */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
