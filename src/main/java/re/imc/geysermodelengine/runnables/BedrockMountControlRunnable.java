@@ -9,8 +9,8 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.util.BedrockUtils;
 
 import java.util.function.Consumer;
 
@@ -25,7 +25,7 @@ public class BedrockMountControlRunnable implements Consumer<ScheduledTask> {
     @Override
     public void accept(ScheduledTask scheduledTask) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) continue;
+            if (!BedrockUtils.isBedrockPlayer(player)) continue;
 
             float pitch = player.getLocation().getPitch();
             Pair<ActiveModel, Mount> seat = plugin.getModelManager().getDriversCache().get(player.getUniqueId());

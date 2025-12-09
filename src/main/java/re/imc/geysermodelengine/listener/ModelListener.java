@@ -12,9 +12,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldInitEvent;
-import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
+import re.imc.geysermodelengine.util.BedrockUtils;
 
 import java.util.Map;
 
@@ -69,14 +69,14 @@ public class ModelListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;
+        if (!BedrockUtils.isBedrockPlayer(player)) return;
         Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> plugin.getModelManager().getPlayerJoinedCache().add(player.getUniqueId()), 10);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;
+        if (!BedrockUtils.isBedrockPlayer(player)) return;
         plugin.getModelManager().getPlayerJoinedCache().remove(player.getUniqueId());
     }
 }

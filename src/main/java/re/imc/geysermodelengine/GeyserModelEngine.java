@@ -8,6 +8,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.managers.ConfigManager;
@@ -16,6 +17,7 @@ import re.imc.geysermodelengine.managers.model.EntityTaskManager;
 import re.imc.geysermodelengine.managers.model.ModelManager;
 import re.imc.geysermodelengine.runnables.BedrockMountControlRunnable;
 import re.imc.geysermodelengine.runnables.UpdateTaskRunnable;
+import re.imc.geysermodelengine.util.BedrockUtils;
 
 import java.util.concurrent.*;
 
@@ -43,7 +45,6 @@ public class GeyserModelEngine extends JavaPlugin {
         loadHooks();
         loadManagers();
         loadRunnables();
-
         loadBStats();
 
         PacketEvents.getAPI().getEventManager().registerListener(new MountPacketListener(this), PacketListenerPriority.NORMAL);
@@ -61,6 +62,9 @@ public class GeyserModelEngine extends JavaPlugin {
     }
 
     private void loadHooks() {
+        if (Bukkit.getPluginManager().getPlugin("floodgate") != null) {
+            BedrockUtils.FLOODGATE_API = FloodgateApi.getInstance();
+        }
         PacketEvents.getAPI().init();
         CommandAPI.onEnable();
     }

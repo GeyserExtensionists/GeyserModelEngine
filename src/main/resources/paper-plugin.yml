@@ -18,4 +18,4 @@ dependencies:
     ModelEngine:
       required: true
     floodgate:
-      required: true
+      required: false

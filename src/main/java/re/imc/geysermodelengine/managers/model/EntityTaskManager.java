@@ -8,12 +8,12 @@ import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 import org.joml.Vector3fc;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.data.ModelEntityData;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
 import re.imc.geysermodelengine.runnables.EntityTaskRunnable;
+import re.imc.geysermodelengine.util.BedrockUtils;
 
 import java.awt.*;
 import java.lang.reflect.Method;
@@ -80,7 +80,7 @@ public class EntityTaskManager {
 
     public void checkViewers(ModelEntityData model, Set<Player> viewers) {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (!FloodgateApi.getInstance().isFloodgatePlayer(onlinePlayer.getUniqueId())) continue;
+            if (!BedrockUtils.isBedrockPlayer(onlinePlayer)) continue;
 
             if (canSee(onlinePlayer, model.getEntity())) {
                 if (!viewers.contains(onlinePlayer)) {
