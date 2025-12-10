@@ -50,7 +50,7 @@ public class PacketEntity {
     }
 
     public boolean teleport(@NotNull Location location) {
-        boolean sent = this.location.getWorld() != location.getWorld() || this.location.distanceSquared(location) > 0.000001;
+        boolean sent = this.location.getWorld() != location.getWorld() || this.location.distanceSquared(location) > 0.000001 || this.location.getYaw() != location.getYaw() || this.location.getPitch() != location.getPitch();
         this.location = location.clone();
 
         if (sent) sendLocationPacket(viewers);
