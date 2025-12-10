@@ -1,0 +1,24 @@
+main: re.imc.geysermodelengine.GeyserModelEngine
+name: GeyserModelEngine
+version: '1.0.0'
+api-version: '1.21'
+
+authors:
+  - zimzaza4
+  - willem.dev
+  - xSquishyLiam
+
+load: STARTUP
+
+dependencies:
+  server:
+    GeyserUtils:
+      required: true
+    packetevents:
+      required: true
+    floodgate:
+      required: false
+    ModelEngine:
+      required: false
+    BetterModel:
+      required: false

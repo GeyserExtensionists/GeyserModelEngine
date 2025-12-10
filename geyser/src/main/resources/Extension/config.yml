@@ -1,0 +1,6 @@
+models:
+  namespace: "modelengine"
+
+options:
+  resource-pack:
+    auto-load: true

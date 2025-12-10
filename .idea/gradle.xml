@@ -8,6 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/geyser" />
+            <option value="$PROJECT_DIR$/paper" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,0 +1,13 @@
+metrics:
+  bstats: true
+
+models:
+  namespace: "modelengine"
+  data-send-delay: 5
+  entity-view-distance: 50
+  join-send-delay: 20
+  entity-position-update-period: 35
+  thread-pool-size: 4
+
+options:
+  debug: false

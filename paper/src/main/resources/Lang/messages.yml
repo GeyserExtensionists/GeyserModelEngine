@@ -1,0 +1,4 @@
+
+commands:
+  reload:
+    successfully-reloaded: "<#55FF55>GeyserModelEngine configuration reloaded!"

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - bettermodel-support-dev
 
 jobs:
   build:
@@ -30,8 +31,9 @@ jobs:
       - name: Auto release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: "${{secrets.GITHUB_TOKEN}}"
           automatic_release_tag: latest
           prerelease: false
           files: |
-            build/libs/GeyserModelEngine*.jar
+            paper/build/libs/GeyserModelEngine*.jar
+            geyser/build/libs/GeyserModelEngine*.jar

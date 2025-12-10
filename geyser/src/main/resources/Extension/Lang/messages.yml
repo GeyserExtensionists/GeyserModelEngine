@@ -1,0 +1,4 @@
+commands:
+  geysermodelenginepackgenerator:
+    reload:
+      successfully-reloaded: "GeyserModelEnginePackGenerator reloaded!"
