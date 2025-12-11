@@ -41,7 +41,7 @@ public class EntityTaskManager {
 
     public void checkViewers(EntityData model, Set<Player> viewers) {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (!BedrockUtils.isBedrockPlayer(onlinePlayer)) return;
+            if (!BedrockUtils.isBedrockPlayer(onlinePlayer)) continue;
 
             if (canSee(onlinePlayer, model.getEntity())) {
                 if (!viewers.contains(onlinePlayer)) {
