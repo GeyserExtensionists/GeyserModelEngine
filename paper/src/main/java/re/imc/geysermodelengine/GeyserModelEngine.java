@@ -6,6 +6,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import re.imc.geysermodelengine.hooks.FloodgateAPIHook;
 import re.imc.geysermodelengine.listener.ModelListener;
 import re.imc.geysermodelengine.listener.MountPacketListener;
 import re.imc.geysermodelengine.managers.ConfigManager;
@@ -59,11 +60,12 @@ public class GeyserModelEngine extends JavaPlugin {
 
     private void loadHooks() {
         PacketEvents.getAPI().init();
+        FloodgateAPIHook.loadHook(this);
 //        CommandAPI.onEnable();
     }
 
     private void loadBStats() {
-        if (configManager.getConfig().getBoolean("metrics.bstats", true)) new Metrics(this, 26981);
+        if (this.configManager.getConfig().getBoolean("metrics.bstats", true)) new Metrics(this, 26981);
     }
 
     private void loadManagers() {
@@ -77,9 +79,8 @@ public class GeyserModelEngine extends JavaPlugin {
 
     private void loadRunnables() {
         this.schedulerPool = Executors.newScheduledThreadPool(configManager.getConfig().getInt("models.thread-pool-size", 4));
-
-        schedulerPool.scheduleAtFixedRate(new UpdateTaskRunnable(this), 10, configManager.getConfig().getLong("models.entity-position-update-period", 35), TimeUnit.MILLISECONDS);
-        schedulerPool.scheduleAtFixedRate(new BedrockMountControlRunnable(this), 1, 1, TimeUnit.MILLISECONDS);
+        this.schedulerPool.scheduleAtFixedRate(new UpdateTaskRunnable(this), 10, configManager.getConfig().getLong("models.entity-position-update-period", 35), TimeUnit.MILLISECONDS);
+        this.schedulerPool.scheduleAtFixedRate(new BedrockMountControlRunnable(this), 1, 1, TimeUnit.MILLISECONDS);
     }
 
     public ConfigManager getConfigManager() {
