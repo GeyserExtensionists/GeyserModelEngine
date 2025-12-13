@@ -1,6 +1,6 @@
 main: re.imc.geysermodelengine.GeyserModelEngine
 name: GeyserModelEngine
-version: '1.0.0'
+version: '${version}'
 api-version: '1.21'
 
 authors:

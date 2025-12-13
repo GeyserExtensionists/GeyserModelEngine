@@ -35,6 +35,7 @@ public class GeyserModelEngine extends JavaPlugin {
         PacketEvents.getAPI().load();
 
 //        CommandAPI.onLoad(new CommandAPIPaperConfig(this));
+        preLoadManagers();
     }
 
     @Override
@@ -68,9 +69,11 @@ public class GeyserModelEngine extends JavaPlugin {
         if (this.configManager.getConfig().getBoolean("metrics.bstats", true)) new Metrics(this, 26981);
     }
 
-    private void loadManagers() {
+    private void preLoadManagers() {
         this.configManager = new ConfigManager(this);
+    }
 
+    private void loadManagers() {
         this.commandManager = new CommandManager(this);
 
         this.modelManager = new ModelManager(this);

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "re.imc"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -58,4 +58,13 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn("shadowJar")
+}
+
+tasks.processResources {
+    val props = mapOf("version" to version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("paper-plugin.yml") {
+        expand(props)
+    }
 }

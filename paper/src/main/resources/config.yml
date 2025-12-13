@@ -11,3 +11,5 @@ models:
 
 options:
   debug: false
+  hooks:
+    floodgate: true # Recommended method

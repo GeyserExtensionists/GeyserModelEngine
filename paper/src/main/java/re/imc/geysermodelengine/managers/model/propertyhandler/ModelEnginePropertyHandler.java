@@ -95,6 +95,8 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
                 if (anim.isOverride() && anim.getLoopMode() == BlueprintAnimation.LoopMode.ONCE) {
                     break;
                 }
+
+                plugin.getLogger().info(animId);
             }
         }
 
@@ -121,8 +123,8 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
         if (boneUpdates.isEmpty() && animUpdates.isEmpty()) return;
 
         Map<String, Integer> intUpdates = new HashMap<>();
-        int i = 0;
 
+        int i = 0;
         for (Integer integer : BooleanPacker.mapBooleansToInts(boneUpdates)) {
             intUpdates.put(plugin.getConfigManager().getConfig().getString("models.namespace") + ":bone" + i, integer);
             i++;

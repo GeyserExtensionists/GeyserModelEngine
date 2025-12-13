@@ -9,15 +9,13 @@ public class FloodgateAPIHook {
     private static FloodgateApi floodgateAPI;
 
     public static void loadHook(GeyserModelEngine plugin) {
-        if (Bukkit.getPluginManager().getPlugin("floodgate") == null) {
-            plugin.getLogger().info("floodgate hook not enabled!");
+        if (Bukkit.getPluginManager().getPlugin("floodgate") == null || !plugin.getConfigManager().getConfig().getBoolean("options.hooks.floodgate", true)) {
+            plugin.getLogger().info("Floodgate hook disabled!");
             return;
         }
 
         floodgateAPI = FloodgateApi.getInstance();
-
-        plugin.getLogger().info("Hooking into floodgate!");
-
+        plugin.getLogger().info("Floodgate hook enabled!");
     }
 
     public static FloodgateApi getAPI() {
