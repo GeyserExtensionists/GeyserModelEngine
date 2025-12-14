@@ -95,8 +95,6 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
                 if (anim.isOverride() && anim.getLoopMode() == BlueprintAnimation.LoopMode.ONCE) {
                     break;
                 }
-
-                plugin.getLogger().info(animId);
             }
         }
 
