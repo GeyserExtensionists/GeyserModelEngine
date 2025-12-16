@@ -1,5 +1,6 @@
 package re.imc.geysermodelengine.managers.commands.managers.geysermodelengine;
 
+import dev.jorel.commandapi.CommandAPICommand;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.commands.geysermodelenginecommands.GeyserModelEngineReloadCommand;
 import re.imc.geysermodelengine.managers.commands.CommandManagers;
@@ -18,11 +19,11 @@ public class GeyserModelEngineCommandManager implements CommandManagers {
     }
 
     private void registerCommand() {
-//        CommandAPICommand geyserModelEngineCommand = new CommandAPICommand(getName());
-//
-//        commands.forEach(subCommands -> geyserModelEngineCommand.withSubcommand(subCommands.onCommand()));
-//
-//        geyserModelEngineCommand.register();
+        CommandAPICommand geyserModelEngineCommand = new CommandAPICommand(getName());
+
+        commands.forEach(subCommands -> geyserModelEngineCommand.withSubcommand(subCommands.onCommand()));
+
+        geyserModelEngineCommand.register();
     }
 
     @Override
