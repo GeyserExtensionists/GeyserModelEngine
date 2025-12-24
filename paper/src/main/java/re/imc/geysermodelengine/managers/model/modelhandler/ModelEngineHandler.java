@@ -49,6 +49,8 @@ public class ModelEngineHandler implements ModelHandler {
 
         plugin.getModelManager().getModelEntitiesCache().put(entityID, model);
         entityDataCache.put(model, entityData);
+
+        if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info("Creating model for " + model.getName());
     }
 
     @Override
