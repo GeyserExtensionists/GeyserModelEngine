@@ -9,7 +9,7 @@ public class BedrockUtils {
     private static final FloodgateApi floodgateAPIHook = FloodgateAPIHook.getAPI();
 
     public static boolean isBedrockPlayer(Player player) {
-        if (floodgateAPIHook != null) return floodgateAPIHook.isFloodgateId(player.getUniqueId());
+        if (floodgateAPIHook != null) return floodgateAPIHook.isFloodgatePlayer(player.getUniqueId());
         String clientBrand = player.getClientBrandName();
         if (clientBrand == null) return false;
         return clientBrand.contains("Geyser");
