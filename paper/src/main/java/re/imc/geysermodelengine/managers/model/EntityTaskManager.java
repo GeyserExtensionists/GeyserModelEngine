@@ -63,10 +63,10 @@ public class EntityTaskManager {
 
         if (firstJoined) {
             task.sendEntityData(model, onlinePlayer, plugin.getConfigManager().getConfig().getInt("models.join-send-delay") / 50);
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info("Sending spawn Packet on first join entity ID: " + model.getEntity().getEntityId());
+            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Sending spawn Packet on first join entity ID: " + model.getEntity().getEntityId());
         } else {
             task.sendEntityData(model, onlinePlayer, 5);
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info("Sending spawn Packet on spawn entity ID: " + model.getEntity().getEntityId());
+            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Sending spawn Packet on spawn entity ID: " + model.getEntity().getEntityId());
         }
     }
 

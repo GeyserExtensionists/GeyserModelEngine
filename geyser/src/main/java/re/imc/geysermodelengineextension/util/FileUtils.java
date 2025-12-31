@@ -1,14 +1,16 @@
 package re.imc.geysermodelengineextension.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static me.zimzaza4.geyserutils.geyser.form.NpcDialogueForm.GSON;
 
 public class FileUtils {
 
@@ -46,6 +48,14 @@ public class FileUtils {
                 throw new RuntimeException(err);
             }
         } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
+    }
+
+    public static JsonObject getJsonObject(File file) {
+        try (FileReader reader = new FileReader(file)) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (Exception err) {
             throw new RuntimeException(err);
         }
     }

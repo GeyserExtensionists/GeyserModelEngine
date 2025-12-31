@@ -2,6 +2,7 @@ package re.imc.geysermodelengineextension.managers.resourcepack;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.*;
@@ -39,13 +40,12 @@ public class ResourcePackManager {
         this.inputFolder = extension.dataFolder().resolve("input").toFile();
         this.inputFolder.mkdirs();
 
-        this.generatedPack = extension.dataFolder().resolve("generated_pack").toFile();
+        this.generatedPack = extension.dataFolder().resolve("ResourcePack/generated_pack").toFile();
     }
 
     public void loadPack() {
         generateResourcePack(inputFolder, generatedPack);
-
-        generatedPackZipPath = extension.dataFolder().resolve("generated_pack.zip");
+        generatedPackZipPath = extension.dataFolder().resolve("ResourcePack/generated_pack.zip");
 
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(generatedPackZipPath))) {
             ZipUtil.compressFolder(generatedPack, null, zipOutputStream);
@@ -74,7 +74,13 @@ public class ResourcePackManager {
         output.mkdirs();
         if (!manifestFile.exists()) {
             try {
-                Files.writeString(manifestFile.toPath(), PackManifest.generate(), StandardCharsets.UTF_8);
+                JsonObject packManifestObject = extension.getConfigManager().getResourcePackTemplatesCache().get("packmanifest");
+
+                String packManifestString = GSON.toJson(packManifestObject)
+                        .replace("%uuid-1%", UUID.randomUUID().toString())
+                        .replace("%uuid-2%", UUID.randomUUID().toString());
+
+                Files.writeString(manifestFile.toPath(), packManifestString, StandardCharsets.UTF_8);
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }

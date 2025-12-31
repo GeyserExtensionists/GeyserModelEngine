@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "me.zimzaza4"
-version = "1.0-SNAPSHOT"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -27,9 +27,18 @@ dependencies {
 tasks.shadowJar {
     archiveFileName.set("${rootProject.name}Extension-${version}.jar")
 
-    relocate("org.spongepowered.configurate", "me.zimzaza4.geysermodelenginepackgenerator.libs.configurate")
+    relocate("org.spongepowered.configurate", "me.zimzaza4.geysermodelengineextension.libs.configurate")
 }
 
 tasks.build {
     dependsOn("shadowJar")
+}
+
+tasks.processResources {
+    val props = mapOf("version" to version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("extension.yml") {
+        expand(props)
+    }
 }

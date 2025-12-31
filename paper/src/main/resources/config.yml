@@ -10,6 +10,10 @@ models:
   thread-pool-size: 4
 
 options:
-  debug: false
+  debug:
+    spawn: false
+    animations: false
+    send-data: false
+    death: false
   hooks:
     floodgate: true # Recommended method

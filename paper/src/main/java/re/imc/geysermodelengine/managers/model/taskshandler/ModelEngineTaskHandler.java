@@ -67,7 +67,7 @@ public class ModelEngineTaskHandler implements TaskHandler {
             plugin.getModelManager().getEntitiesCache().remove(modeledEntity.getBase().getEntityId());
             plugin.getModelManager().getModelEntitiesCache().remove(modeledEntity.getBase().getEntityId());
 
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info(activeModel.getBlueprint().getName() + " has died, removing runAsync!");
+            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.death")) plugin.getLogger().info(activeModel.getBlueprint().getName() + " has died, removing runAsync!");
 
             cancel();
             return;
@@ -96,7 +96,7 @@ public class ModelEngineTaskHandler implements TaskHandler {
         ModelEngineEntityData modelEngineEntityData = (ModelEngineEntityData) entityData;
 
         EntityUtils.setCustomEntity(player, modelEngineEntityData.getEntity().getEntityId(), plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + modelEngineEntityData.getActiveModel().getBlueprint().getName().toLowerCase());
-        if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info("Setting custom entity data for " + modelEngineEntityData.getActiveModel().getBlueprint().getName());
+        if (plugin.getConfigManager().getConfig().getBoolean("options.debug.send-data")) plugin.getLogger().info("Setting custom entity data for " + modelEngineEntityData.getActiveModel().getBlueprint().getName());
 
         plugin.getSchedulerPool().schedule(() -> {
             entityData.getEntity().sendSpawnPacket(Collections.singletonList(player));

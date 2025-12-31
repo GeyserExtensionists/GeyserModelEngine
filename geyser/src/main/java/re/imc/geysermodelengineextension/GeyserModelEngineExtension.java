@@ -35,11 +35,11 @@ public class GeyserModelEngineExtension implements Extension {
                 .name("reload")
                 .source(CommandSource.class)
                 .playerOnly(false)
-                .description("GeyserModelPackGenerator Reload Command")
-                .permission("geysermodelenginepackgenerator.commands.reload")
+                .description("GeyserModelExtension Reload Command")
+                .permission("geysermodelengineextension.commands.reload")
                 .executor((source, command, args) -> {
                     resourcePackManager.loadPack();
-                    source.sendMessage(configManager.getLang().getString("commands.geysermodelenginepackgenerator.reload.successfully-reloaded"));
+                    source.sendMessage(configManager.getLang().getString("commands.geysermodelengineextension.reload.successfully-reloaded"));
                 })
                 .build());
     }
@@ -53,7 +53,7 @@ public class GeyserModelEngineExtension implements Extension {
     }
 
     private void loadManagers() {
-        this.configManager = new ConfigManager();
+        this.configManager = new ConfigManager(this);
         this.resourcePackManager = new ResourcePackManager(this);
     }
 

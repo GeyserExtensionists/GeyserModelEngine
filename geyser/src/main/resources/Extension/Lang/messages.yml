@@ -1,4 +1,4 @@
 commands:
-  geysermodelenginepackgenerator:
+  geysermodelengineextension:
     reload:
-      successfully-reloaded: "GeyserModelEnginePackGenerator reloaded!"
+      successfully-reloaded: "GeyserModelEngineExtension reloaded!"

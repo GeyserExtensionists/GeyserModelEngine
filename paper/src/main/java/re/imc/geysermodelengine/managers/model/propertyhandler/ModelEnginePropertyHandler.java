@@ -143,7 +143,7 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
             }
         }
 
-        if (plugin.getConfigManager().getConfig().getBoolean("options.debug")) plugin.getLogger().info(animUpdates.toString());
+        if (plugin.getConfigManager().getConfig().getBoolean("options.debug.animations")) plugin.getLogger().info(animUpdates.toString());
 
         players.forEach(player -> EntityUtils.sendIntProperties(player, entity, intUpdates));
     }

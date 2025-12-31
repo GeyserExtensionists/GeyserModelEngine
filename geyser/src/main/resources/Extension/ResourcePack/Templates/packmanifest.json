@@ -1,0 +1,18 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "GeyserModelEngine",
+    "description": "GeyserModelEngine For Geyser",
+    "uuid": "%uuid-1%",
+    "version": [0, 0, 1],
+    "min_engine_version": [1, 21, 100]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "description": "GeyserModelEngine",
+      "uuid": "%uuid-2%",
+      "version": [0, 0, 1]
+    }
+  ]
+}
