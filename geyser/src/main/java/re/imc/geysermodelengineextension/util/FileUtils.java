@@ -10,8 +10,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.zimzaza4.geyserutils.geyser.form.NpcDialogueForm.GSON;
-
 public class FileUtils {
 
     public static List<File> getAllFiles(File folder, String fileType) {
