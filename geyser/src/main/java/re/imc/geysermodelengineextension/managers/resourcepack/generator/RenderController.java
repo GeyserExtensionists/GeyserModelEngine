@@ -50,14 +50,15 @@ public class RenderController {
 
             JsonObject controller = new JsonObject();
 
-            renderControllers.add("controller.render." + modelId + "_" + key, controller);
+            String controllerName = key.equals(modelId) ? "controller.render.meg_" + modelId : "controller.render.meg_" + modelId + "_" + key;
+            renderControllers.add(controllerName, controller);
 
             if (!entity.getModelConfig().getPerTextureUvSize().isEmpty()) {
                 Integer[] size = entity.getModelConfig().getPerTextureUvSize().getOrDefault(key, new Integer[]{16, 16});
-                String suffix = "t_" + size[0] + "_" + size[1];
-                controller.addProperty("geometry", "Geometry." + suffix);
+                String suffix = size[0] + "_" + size[1];
+                controller.addProperty("geometry", "Geometry." + modelId + "_" + suffix);
             } else {
-                controller.addProperty("geometry", "Geometry.default");
+                controller.addProperty("geometry", "Geometry." + modelId);
             }
 
             JsonArray materials = new JsonArray();
@@ -72,7 +73,9 @@ public class RenderController {
                 controller.add("uv_anim", uvAnim);
                 JsonArray offset = new JsonArray();
                 offset.add(0.0);
-                offset.add("math.mod(math.floor(q.life_time * " + anim.fps + ")," + anim.frames + ") / " + anim.frames);
+                // Cap fps at reasonable value (7.0 is standard for Bedrock animations)
+                double animFps = anim.fps > 60 ? 7.0 : anim.fps;
+                offset.add("math.mod(math.floor(q.life_time * " + animFps + ")," + anim.frames + ") / " + anim.frames);
                 uvAnim.add("offset", offset);
                 JsonArray scale = new JsonArray();
                 scale.add(1.0);

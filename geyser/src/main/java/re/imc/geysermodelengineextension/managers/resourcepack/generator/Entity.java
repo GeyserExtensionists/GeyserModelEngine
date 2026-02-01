@@ -60,7 +60,7 @@ public class Entity {
         this.json = JsonParser.parseString(TEMPLATE.replace("%namespace%", namespace)
                 .replace("%entity_id%", modelId)
                 .replace("%geometry%", "geometry.meg_" + modelId)
-                .replace("%texture%", "textures/entity/" + path + modelId)
+                .replace("%texture%", "textures/entity/" + modelId)
                 .replace("%look_at_target%", modelConfig.isEnableHeadRotation() ? "animation." + modelId + ".look_at_target" : "animation.none")
                 .replace("%material%", modelConfig.getMaterial())).getAsJsonObject();
 
@@ -76,8 +76,8 @@ public class Entity {
         materials.forEach(jsonMaterials::addProperty);
 
         if (modelConfig.getPerTextureUvSize().isEmpty()) {
-            jsonGeometry.addProperty("default", "geometry.meg_" + modelId);
-            jsonTextures.addProperty("default", "textures/entity/" + path + modelId + "/" + textureMap.keySet().stream().findFirst().orElse("def"));
+            jsonGeometry.addProperty(modelId, "geometry.meg_" + modelId);
+            jsonTextures.addProperty("default", "textures/entity/" + modelId);
         }
 
         for (String name : textureMap.keySet()) {
@@ -87,12 +87,13 @@ public class Entity {
                 Integer[] size = modelConfig.getPerTextureUvSize().getOrDefault(name, new Integer[]{16, 16});
                 String suffix = size[0] + "_" + size[1];
 
-                jsonGeometry.addProperty("t_" + suffix, "geometry.meg_" + modelId + "_" + suffix);
-                jsonTextures.addProperty(name, "textures/entity/" + path + modelId + "/" + name);
+                jsonGeometry.addProperty(modelId + "_" + suffix, "geometry.meg_" + modelId + "_" + suffix);
+                jsonTextures.addProperty(name, "textures/entity/" + name);
 
             }
 
-            jsonRenderControllers.add("controller.render." + modelId + "_" + name);
+            String controllerName = name.equals(modelId) ? "controller.render.meg_" + modelId : "controller.render.meg_" + modelId + "_" + name;
+            jsonRenderControllers.add(controllerName);
         }
 
         JsonArray animate = description.get("scripts").getAsJsonObject().get("animate").getAsJsonArray();

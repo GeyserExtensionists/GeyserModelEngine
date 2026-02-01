@@ -110,8 +110,8 @@ public class ResourcePackManager {
 
             if (geo != null) entry.getValue().addHeadBind(geo);
 
-            Path path = animationsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".animation.json");
-            Path pathController = animationControllersFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".animation_controllers.json");
+            Path path = animationsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".json");
+            Path pathController = animationControllersFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".json");
 
             pathController.toFile().getParentFile().mkdirs();
             path.toFile().getParentFile().mkdirs();
@@ -131,7 +131,7 @@ public class ResourcePackManager {
 
         for (Map.Entry<String, Geometry> entry : geometryCache.entrySet()) {
             entry.getValue().modify();
-            Path path = modelsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".geo.json");
+            Path path = modelsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".json");
             path.toFile().getParentFile().mkdirs();
             String id = entry.getValue().getGeometryId();
 
@@ -146,7 +146,7 @@ public class ResourcePackManager {
                         String suffix = size[0] + "_" + size[1];
                         entry.getValue().setTextureWidth(size[0]);
                         entry.getValue().setTextureHeight(size[1]);
-                        path = modelsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + "_" + suffix + ".geo.json");
+                        path = modelsFolder.toPath().resolve(entry.getKey() + "_" + suffix + ".json");
 
                         entry.getValue().setId(id + "_" + suffix);
 
@@ -172,7 +172,7 @@ public class ResourcePackManager {
 
         for (Map.Entry<String, Map<String, TextureData>> textures : textureCache.entrySet()) {
             for (Map.Entry<String, TextureData> entry : textures.getValue().entrySet()) {
-                Path path = texturesFolder.toPath().resolve(entry.getValue().getPath() + textures.getKey() + "/" + entry.getKey() + ".png");
+                Path path = texturesFolder.toPath().resolve(entry.getKey() + ".png");
                 path.toFile().getParentFile().mkdirs();
 
                 if (path.toFile().exists()) continue;
@@ -189,7 +189,7 @@ public class ResourcePackManager {
             Entity entity = entry.getValue();
             entity.modify(extension.getConfigManager().getConfig().getString("models.namespace"));
 
-            Path entityPath = entityFolder.toPath().resolve(entity.getPath() + entry.getKey() + ".entity.json");
+            Path entityPath = entityFolder.toPath().resolve(entity.getPath() + entry.getKey() + ".json");
             entityPath.toFile().getParentFile().mkdirs();
 
             if (entityPath.toFile().exists()) continue;
@@ -206,7 +206,7 @@ public class ResourcePackManager {
             if (!geometryCache.containsKey(id)) continue;
             RenderController controller = new RenderController(id, geometryCache.get(id).getBones(), entity);
             entity.setRenderController(controller);
-            Path renderPath = new File(renderControllersFolder, "controller.render." + id + ".json").toPath();
+            Path renderPath = new File(renderControllersFolder, id + ".json").toPath();
             if (renderPath.toFile().exists()) continue;
 
             try {
