@@ -3,6 +3,7 @@ package re.imc.geysermodelengine.managers.model.taskshandler;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import kr.toxicity.model.api.entity.BaseEntity;
+import kr.toxicity.model.api.tracker.EntityTracker;
 import kr.toxicity.model.api.tracker.Tracker;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import org.bukkit.entity.Entity;
@@ -55,11 +56,11 @@ public class BetterModelTaskHandler implements TaskHandler {
 
         Set<Player> viewers = entityData.getViewers();
         BaseEntity entitySource = entityData.getEntitySource();
-        Tracker tracker = entityData.getTracker();
+        EntityTracker entityTracker = entityData.getEntityTracker();
 
         entityData.teleportToModel();
 
-        if (entitySource.dead() || tracker.forRemoval()) {
+        if (entitySource.dead() || entityTracker.forRemoval()) {
             removed = true;
             entity.remove();
 
@@ -96,7 +97,7 @@ public class BetterModelTaskHandler implements TaskHandler {
     public void sendEntityData(EntityData entityData, Player player, int delay) {
         BetterModelEntityData betterModelEntityData = (BetterModelEntityData) entityData;
 
-        EntityUtils.setCustomEntity(player, betterModelEntityData.getEntity().getEntityId(), plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + betterModelEntityData.getTracker().name().toLowerCase());
+        EntityUtils.setCustomEntity(player, betterModelEntityData.getEntity().getEntityId(), plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + betterModelEntityData.getEntityTracker().name().toLowerCase());
 
         plugin.getSchedulerPool().schedule(() -> {
             entityData.getEntity().sendSpawnPacket(Collections.singletonList(player));

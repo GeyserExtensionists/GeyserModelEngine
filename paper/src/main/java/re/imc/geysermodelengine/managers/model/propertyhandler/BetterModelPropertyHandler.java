@@ -29,6 +29,8 @@ public class BetterModelPropertyHandler implements PropertyHandler {
     @Override
     public void sendScale(EntityData entityData, Collection<Player> players, float lastScale, boolean firstSend) {
         BetterModelEntityData betterModelEntityData = (BetterModelEntityData) entityData;
+
+
     }
 
     @Override
@@ -71,13 +73,13 @@ public class BetterModelPropertyHandler implements PropertyHandler {
         Map<String, Boolean> animUpdates = new HashMap<>();
         Set<String> anims = new HashSet<>();
 
-        model.getTracker().bones().forEach(bone -> processBone(model, bone, boneUpdates));
+        model.getEntityTracker().bones().forEach(bone -> processBone(model, bone, boneUpdates));
 
-        RenderPipeline handler = model.getTracker().getPipeline();
+        RenderPipeline handler = model.getEntityTracker().getPipeline();
 
         for (RenderedBone renderedBone : handler.bones()) {
-            if (model.getTracker().bone(renderedBone.name()).runningAnimation() != null) {
-                BlueprintAnimation anim = model.getTracker().renderer().animations().get(renderedBone.runningAnimation().name());
+            if (model.getEntityTracker().bone(renderedBone.name()).runningAnimation() != null) {
+                BlueprintAnimation anim = model.getEntityTracker().renderer().animations().get(renderedBone.runningAnimation().name());
 
                 anims.add(renderedBone.runningAnimation().name());
                 if (anim.override() && anim.loop() == AnimationIterator.Type.PLAY_ONCE) {
@@ -156,7 +158,7 @@ public class BetterModelPropertyHandler implements PropertyHandler {
             processBone(entityData, renderedBone, map);
         }
 
-        RenderedBone activeBone = entityData.getTracker().bone(bone.name());
+        RenderedBone activeBone = entityData.getEntityTracker().bone(bone.name());
 
         ModelDisplay modelDisplay = activeBone.getDisplay();
         if (modelDisplay == null) return;

@@ -24,24 +24,22 @@ public class BetterModelHandler implements ModelHandler {
         this.plugin = plugin;
     }
 
-    //TODO fix dupe issue - dupe happens when server restart
     @Override
     public void createModel(Object... objects) {
-        BaseEntity entitySource = (BaseEntity) objects[0];
-        Tracker tracker = (Tracker) objects[1];
-        EntityTracker entityTracker = (EntityTracker) objects[2];
+        EntityTracker entityTracker = (EntityTracker) objects[0];
+        BaseEntity entitySource = entityTracker.sourceEntity();
 
         int entityID = entitySource.id();
 
         PropertyHandler propertyHandler = plugin.getEntityTaskManager().getPropertyHandler();
-        EntityData entityData = new BetterModelEntityData(plugin, entitySource, tracker, entityTracker);
+        EntityData entityData = new BetterModelEntityData(plugin, entitySource, entityTracker);
 
-        Model model = new BetterModelModel(tracker, this, entityData, propertyHandler);
+        Model model = new BetterModelModel(entityTracker, this, entityData, propertyHandler);
 
         Map<Model, EntityData> entityDataCache = plugin.getModelManager().getEntitiesCache().computeIfAbsent(entityID, k -> new HashMap<>());
 
         for (Map.Entry<Model, EntityData> entry : entityDataCache.entrySet()) {
-            if (entry.getKey() != model && entry.getKey().getName().equals(tracker.name())) {
+            if (entry.getKey() != model && entry.getKey().getName().equals(entityTracker.name())) {
                 return;
             }
         }
