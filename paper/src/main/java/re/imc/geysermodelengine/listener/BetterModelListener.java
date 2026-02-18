@@ -27,7 +27,6 @@ public class BetterModelListener implements Listener {
 
     public void onModelSpawn() {
         BetterModelBukkit.platform().eventBus().subscribe(plugin, CreateEntityTrackerEvent.class, event -> {
-            plugin.getLogger().warning(event.tracker().sourceEntity().location().world().toString());
             plugin.getModelManager().getModelHandler().createModel(event.tracker());
         });
     }
