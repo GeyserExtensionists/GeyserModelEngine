@@ -62,7 +62,7 @@ public class ResourcePackManager {
     private void generateResourcePack(File inputFolder, File output) {
         generateFromFolder("", inputFolder, true);
 
-        boolean hashEnabled = extension.getConfigManager().getConfig().getBoolean("options.resource-pack.hash-models-textures");
+        boolean hashEnabled = extension.getConfigManager().getConfig().getBoolean("options.resource-pack.hash-models-textures", true);
 
         File animationsFolder = new File(output, "animations");
         File entityFolder = new File(output, "entity");
