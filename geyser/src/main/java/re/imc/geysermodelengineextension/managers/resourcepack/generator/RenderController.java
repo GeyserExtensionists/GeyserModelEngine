@@ -3,6 +3,7 @@ package re.imc.geysermodelengineextension.managers.resourcepack.generator;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.BoneData;
+import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
 import java.util.*;
 
@@ -21,7 +22,7 @@ public class RenderController {
     }
 
     // look, I'm fine with your other code and stuff, but I ain't using templates for JSON lmao
-    public String generate(String namespace) {
+    public String generate(String namespace, boolean hashEnabled) {
         List<String> se = new ArrayList<>(bones.keySet());
         Collections.sort(se);
         JsonObject root = new JsonObject();
@@ -56,9 +57,17 @@ public class RenderController {
             if (!entity.getModelConfig().getPerTextureUvSize().isEmpty()) {
                 Integer[] size = entity.getModelConfig().getPerTextureUvSize().getOrDefault(key, new Integer[]{16, 16});
                 String suffix = size[0] + "_" + size[1];
-                controller.addProperty("geometry", "Geometry." + modelId + "_" + suffix);
+                if (hashEnabled) {
+                    controller.addProperty("geometry", "Geometry." + ShortHashUtil.hashModelId(modelId + "_" + suffix));
+                } else {
+                    controller.addProperty("geometry", "Geometry." + modelId + "_" + suffix);
+                }
             } else {
-                controller.addProperty("geometry", "Geometry." + modelId);
+                if (hashEnabled) {
+                    controller.addProperty("geometry", "Geometry." + ShortHashUtil.hashModelId(modelId));
+                } else {
+                    controller.addProperty("geometry", "Geometry." + modelId);
+                }
             }
 
             JsonArray materials = new JsonArray();
@@ -91,7 +100,7 @@ public class RenderController {
             if (singleTexture) {
                 textures.add("Texture.default");
             } else {
-                textures.add("Texture." + key);
+                textures.add("Texture." + (hashEnabled ? ShortHashUtil.hashTextureName(modelId, key) : key));
             }
 
             controller.add("textures", textures);

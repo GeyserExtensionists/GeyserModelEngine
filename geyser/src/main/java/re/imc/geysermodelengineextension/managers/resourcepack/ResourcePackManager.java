@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.*;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
+import re.imc.geysermodelengineextension.util.ShortHashUtil;
 import re.imc.geysermodelengineextension.util.ZipUtil;
 
 import java.io.*;
@@ -60,6 +61,8 @@ public class ResourcePackManager {
 
     private void generateResourcePack(File inputFolder, File output) {
         generateFromFolder("", inputFolder, true);
+
+        boolean hashEnabled = extension.getConfigManager().getConfig().getBoolean("options.resource-pack.hash-models-textures");
 
         File animationsFolder = new File(output, "animations");
         File entityFolder = new File(output, "entity");
@@ -130,10 +133,9 @@ public class ResourcePackManager {
         }
 
         for (Map.Entry<String, Geometry> entry : geometryCache.entrySet()) {
-            entry.getValue().modify();
-            Path path = modelsFolder.toPath().resolve(entry.getValue().getPath() + entry.getKey() + ".json");
+            entry.getValue().modify(hashEnabled);
+            Path path = modelsFolder.toPath().resolve(entry.getValue().getPath() + (hashEnabled ? ShortHashUtil.hashModelId(entry.getKey()) : entry.getKey()) + ".json");
             path.toFile().getParentFile().mkdirs();
-            String id = entry.getValue().getGeometryId();
 
             Entity entity = entityCache.get(entry.getKey());
             if (entity != null) {
@@ -146,9 +148,13 @@ public class ResourcePackManager {
                         String suffix = size[0] + "_" + size[1];
                         entry.getValue().setTextureWidth(size[0]);
                         entry.getValue().setTextureHeight(size[1]);
-                        path = modelsFolder.toPath().resolve(entry.getKey() + "_" + suffix + ".json");
-
-                        entry.getValue().setId(id + "_" + suffix);
+                        if (hashEnabled) {
+                            path = modelsFolder.toPath().resolve(ShortHashUtil.hashModelId(entry.getKey() + "_" + suffix) + ".json");
+                            entry.getValue().setId("geometry." + ShortHashUtil.hashModelId(entry.getKey() + "_" + suffix));
+                        } else {
+                            path = modelsFolder.toPath().resolve(entry.getKey() + "_" + suffix + ".json");
+                            entry.getValue().setId("geometry.meg_" + entry.getKey() + "_" + suffix);
+                        }
 
                         if (path.toFile().exists()) continue;
 
@@ -171,8 +177,10 @@ public class ResourcePackManager {
         }
 
         for (Map.Entry<String, Map<String, TextureData>> textures : textureCache.entrySet()) {
+            String modelId = textures.getKey();
             for (Map.Entry<String, TextureData> entry : textures.getValue().entrySet()) {
-                Path path = texturesFolder.toPath().resolve(entry.getKey() + ".png");
+                String textureFileName = hashEnabled ? ShortHashUtil.hashTextureName(modelId, entry.getKey()) : entry.getKey();
+                Path path = texturesFolder.toPath().resolve(textureFileName + ".png");
                 path.toFile().getParentFile().mkdirs();
 
                 if (path.toFile().exists()) continue;
@@ -187,7 +195,7 @@ public class ResourcePackManager {
 
         for (Map.Entry<String, Entity> entry : entityCache.entrySet()) {
             Entity entity = entry.getValue();
-            entity.modify(extension.getConfigManager().getConfig().getString("models.namespace"));
+            entity.modify(extension.getConfigManager().getConfig().getString("models.namespace"), hashEnabled);
 
             Path entityPath = entityFolder.toPath().resolve(entity.getPath() + entry.getKey() + ".json");
             entityPath.toFile().getParentFile().mkdirs();
@@ -210,7 +218,7 @@ public class ResourcePackManager {
             if (renderPath.toFile().exists()) continue;
 
             try {
-                Files.writeString(renderPath, controller.generate(extension.getConfigManager().getConfig().getString("models.namespace")), StandardCharsets.UTF_8);
+                Files.writeString(renderPath, controller.generate(extension.getConfigManager().getConfig().getString("models.namespace"), hashEnabled), StandardCharsets.UTF_8);
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }
