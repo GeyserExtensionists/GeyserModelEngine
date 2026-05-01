@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.2.2"
+    id("com.gradleup.shadow") version "9.4.0"
 }
 
 group = "re.imc"
-version = "1.0.6"
+version = "1.0.7"
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    implementation("dev.jorel:commandapi-paper-shade:11.1.0")
+    implementation("dev.jorel:commandapi-paper-shade:11.2.0")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.1.0")
     compileOnly("io.github.toxicity188:bettermodel-api:2.2.0")
@@ -30,7 +30,7 @@ dependencies {
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.11.2")
+    implementation("com.github.retrooper:packetevents-spigot:2.12.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     implementation("org.reflections:reflections:0.10.2")
