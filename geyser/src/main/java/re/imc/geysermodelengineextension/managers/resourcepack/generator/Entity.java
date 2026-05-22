@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.zimzaza4.geyserutils.geyser.GeyserUtils;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
+import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
 import java.util.*;
 
@@ -56,11 +57,15 @@ public class Entity {
         this.modelId = modelId;
     }
 
-    public void modify(String namespace) {
+    public void modify(String namespace, boolean hashEnabled) {
+        String modelShortName = hashEnabled ? ShortHashUtil.hashModelId(modelId) : modelId;
+        String geometryId = hashEnabled ? "geometry." + modelShortName : "geometry.meg_" + modelShortName;
+        String defaultTexturePath = hashEnabled ? "textures/entity/" + ShortHashUtil.hashTextureName(modelId, modelId) : "textures/entity/" + modelId;
+
         this.json = JsonParser.parseString(TEMPLATE.replace("%namespace%", namespace)
                 .replace("%entity_id%", modelId)
-                .replace("%geometry%", "geometry.meg_" + modelId)
-                .replace("%texture%", "textures/entity/" + modelId)
+                .replace("%geometry%", geometryId)
+                .replace("%texture%", defaultTexturePath)
                 .replace("%look_at_target%", modelConfig.isEnableHeadRotation() ? "animation." + modelId + ".look_at_target" : "animation.none")
                 .replace("%material%", modelConfig.getMaterial())).getAsJsonObject();
 
@@ -76,8 +81,8 @@ public class Entity {
         materials.forEach(jsonMaterials::addProperty);
 
         if (modelConfig.getPerTextureUvSize().isEmpty()) {
-            jsonGeometry.addProperty(modelId, "geometry.meg_" + modelId);
-            jsonTextures.addProperty("default", "textures/entity/" + modelId);
+            jsonGeometry.addProperty(modelShortName, geometryId);
+            jsonTextures.addProperty("default", defaultTexturePath);
         }
 
         for (String name : textureMap.keySet()) {
@@ -87,8 +92,15 @@ public class Entity {
                 Integer[] size = modelConfig.getPerTextureUvSize().getOrDefault(name, new Integer[]{16, 16});
                 String suffix = size[0] + "_" + size[1];
 
-                jsonGeometry.addProperty(modelId + "_" + suffix, "geometry.meg_" + modelId + "_" + suffix);
-                jsonTextures.addProperty(name, "textures/entity/" + name);
+                if (hashEnabled) {
+                    String hashedGeoName = ShortHashUtil.hashModelId(modelId + "_" + suffix);
+                    jsonGeometry.addProperty(hashedGeoName, "geometry." + hashedGeoName);
+                    jsonTextures.addProperty(ShortHashUtil.hashTextureName(modelId, name), "textures/entity/" + ShortHashUtil.hashTextureName(modelId, name));
+                } else {
+                    String geoName = modelShortName + "_" + suffix;
+                    jsonGeometry.addProperty(geoName, "geometry.meg_" + modelId + "_" + suffix);
+                    jsonTextures.addProperty(name, "textures/entity/" + name);
+                }
 
             }
 

@@ -115,6 +115,12 @@ public class FileConfiguration {
         return node.getBoolean();
     }
 
+    public boolean getBoolean(String path, boolean def) {
+        CommentedConfigurationNode node = getInternal(path);
+        if (node == null) return def;
+        return node.getBoolean();
+    }
+
     public boolean isBoolean(String path) {
         CommentedConfigurationNode node = getInternal(path);
         return node != null && node.raw() instanceof Boolean;

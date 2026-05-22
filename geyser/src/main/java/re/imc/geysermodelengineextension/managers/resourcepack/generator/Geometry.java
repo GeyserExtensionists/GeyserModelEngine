@@ -3,6 +3,7 @@ package re.imc.geysermodelengineextension.managers.resourcepack.generator;
 import com.google.gson.*;
 import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.BoneData;
+import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class Geometry {
         return json.get("minecraft:geometry").getAsJsonArray().get(0).getAsJsonObject();
     }
 
-    public void modify() {
+    public void modify(boolean hashEnabled) {
         JsonArray array = getInternal().get("bones").getAsJsonArray();
         Iterator<JsonElement> iterator = array.iterator();
         while(iterator.hasNext()) {
@@ -65,7 +66,11 @@ public class Geometry {
             }
         }
 
-        setId("geometry.meg_" + modelId);
+        if (hashEnabled) {
+            setId("geometry." + ShortHashUtil.hashModelId(modelId));
+        } else {
+            setId("geometry.meg_" + modelId);
+        }
     }
 
     private void addAllChildren(BoneData p, BoneData c) {
