@@ -80,8 +80,11 @@ public class Entity {
             jsonTextures.addProperty("default", "textures/entity/" + modelId);
         }
 
+        boolean singleTexture = textureMap.size() == 1 && modelConfig.getPerTextureUvSize().isEmpty();
+
         for (String name : textureMap.keySet()) {
             if (name.endsWith("_e")) continue;
+            if (modelConfig.getBingingBones().get(name) == null && !singleTexture) continue;
 
             if (modelConfig.getPerTextureUvSize().containsKey(name)) {
                 Integer[] size = modelConfig.getPerTextureUvSize().getOrDefault(name, new Integer[]{16, 16});
