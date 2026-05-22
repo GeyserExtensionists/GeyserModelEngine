@@ -66,7 +66,7 @@ public class Entity {
                 .replace("%entity_id%", modelId)
                 .replace("%geometry%", geometryId)
                 .replace("%texture%", defaultTexturePath)
-                .replace("%look_at_target%", modelConfig.isEnableHeadRotation() ? "animation." + modelId + ".look_at_target" : "animation.none")
+                .replace("%look_at_target%", (modelConfig.isEnableHeadRotation() && hasHeadAnimation) ? "animation." + modelId + ".look_at_target" : "animation.common.look_at_target")
                 .replace("%material%", modelConfig.getMaterial())).getAsJsonObject();
 
         JsonObject description = json.get("minecraft:client_entity").getAsJsonObject().get("description").getAsJsonObject();
