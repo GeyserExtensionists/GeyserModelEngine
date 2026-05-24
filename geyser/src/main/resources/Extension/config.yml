@@ -7,3 +7,4 @@ options:
   resource-pack:
     auto-load: true
     hash-models-textures: true
+    bake-catmullrom-to-linear: false
