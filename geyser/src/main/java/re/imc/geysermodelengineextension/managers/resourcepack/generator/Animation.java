@@ -36,6 +36,9 @@ public class Animation {
 
         boolean bakeCatmullrom = GeyserModelEngineExtension.getExtension().getConfigManager()
                 .getConfig().getBoolean("options.resource-pack.bake-catmullrom-to-linear", false);
+        double sampleStep = GeyserModelEngineExtension.getExtension().getConfigManager()
+                .getConfig().getDouble("options.resource-pack.catmullrom-sample-step");
+        if (sampleStep <= 0) sampleStep = 0.05;
 
         for (Map.Entry<String, JsonElement> element : json.get("animations").getAsJsonObject().entrySet()) {
             animationIds.add(element.getKey());
@@ -87,7 +90,7 @@ public class Animation {
             }
 
             if (bakeCatmullrom) {
-                bakeCatmullromToLinear(animation);
+                bakeCatmullromToLinear(animation, sampleStep);
             }
 
             newAnimations.add("animation." + modelId + "." + element.getKey().replace(" ", "_"), element.getValue());
@@ -96,7 +99,7 @@ public class Animation {
         json.add("animations", newAnimations);
     }
 
-    private void bakeCatmullromToLinear(JsonObject animation) {
+    private void bakeCatmullromToLinear(JsonObject animation, double step) {
         if (!animation.has("bones")) return;
 
         boolean isLooping = false;
@@ -139,7 +142,7 @@ public class Animation {
                 }
                 if (channelMaxTime <= 0) continue;
 
-                bone.add(channelName, bakeChannel(keyframes, channelMaxTime, isLooping));
+                bone.add(channelName, bakeChannel(keyframes, channelMaxTime, isLooping, step));
             }
         }
     }
@@ -231,9 +234,7 @@ public class Animation {
         return result;
     }
 
-    private JsonObject bakeChannel(List<double[]> keyframes, double maxTime, boolean isLooping) {
-        double step = 0.05;
-
+    private JsonObject bakeChannel(List<double[]> keyframes, double maxTime, boolean isLooping, double step) {
         double firstTime = keyframes.get(0)[0];
         double lastTime = keyframes.get(keyframes.size() - 1)[0];
 
