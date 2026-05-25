@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.events.GeyserModelEngineEntitySpawnEvent;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.managers.model.propertyhandler.BetterModelPropertyHandler;
 import re.imc.geysermodelengine.managers.model.propertyhandler.ModelEnginePropertyHandler;
@@ -63,11 +64,13 @@ public class EntityTaskManager {
 
         if (firstJoined) {
             task.sendEntityData(model, onlinePlayer, plugin.getConfigManager().getConfig().getInt("models.join-send-delay", 20));
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Sending spawn Packet on first join entity ID: " + model.getEntity().getEntityId());
         } else {
             task.sendEntityData(model, onlinePlayer, plugin.getConfigManager().getConfig().getInt("models.spawn-send-delay", 1));
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Sending spawn Packet on spawn entity ID: " + model.getEntity().getEntityId());
         }
+
+        Bukkit.getPluginManager().callEvent(new GeyserModelEngineEntitySpawnEvent(model, firstJoined));
+
+        if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Sending spawn Packet on spawn entity ID: " + model.getEntity().getEntityId());
     }
 
     public boolean canSee(Player player, PacketEntity entity, Object model) {

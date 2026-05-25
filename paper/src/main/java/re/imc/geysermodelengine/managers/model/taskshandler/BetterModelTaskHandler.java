@@ -5,8 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import kr.toxicity.model.api.entity.BaseEntity;
 import kr.toxicity.model.api.tracker.EntityTracker;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.events.GeyserModelEngineEntityDeathEvent;
 import re.imc.geysermodelengine.managers.model.entity.BetterModelEntityData;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
@@ -72,6 +74,8 @@ public class BetterModelTaskHandler implements TaskHandler {
             plugin.getModelManager().getModelEntitiesCache().remove(entitySource.id());
 
             cancel();
+
+            Bukkit.getPluginManager().callEvent(new GeyserModelEngineEntityDeathEvent(entityData));
             return;
         }
 

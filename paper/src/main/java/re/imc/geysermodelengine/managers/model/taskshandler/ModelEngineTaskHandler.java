@@ -5,8 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.events.GeyserModelEngineEntityDeathEvent;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.managers.model.entity.ModelEngineEntityData;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
@@ -35,7 +37,7 @@ public class ModelEngineTaskHandler implements TaskHandler {
     private final ConcurrentHashMap<String, Integer> lastIntSet = new ConcurrentHashMap<>();
     private final Cache<String, Boolean> lastPlayedAnim = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.MILLISECONDS).build();
 
-    private ScheduledFuture scheduledFuture;
+    private final ScheduledFuture scheduledFuture;
 
     public ModelEngineTaskHandler(GeyserModelEngine plugin, ModelEngineEntityData entityData) {
         this.plugin = plugin;
@@ -73,10 +75,11 @@ public class ModelEngineTaskHandler implements TaskHandler {
             plugin.getModelManager().getEntitiesCache().remove(modeledEntity.getBase().getEntityId());
             plugin.getModelManager().getModelEntitiesCache().remove(modeledEntity.getBase().getEntityId());
 
-            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.death"))
-                plugin.getLogger().info(activeModel.getBlueprint().getName() + " has died, removing runAsync!");
+            if (plugin.getConfigManager().getConfig().getBoolean("options.debug.death")) plugin.getLogger().info(activeModel.getBlueprint().getName() + " has died, removing runAsync!");
 
             cancel();
+
+            Bukkit.getPluginManager().callEvent(new GeyserModelEngineEntityDeathEvent(entityData));
             return;
         }
 

@@ -8,8 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldInitEvent;
-import org.geysermc.floodgate.api.FloodgateApi;
 import re.imc.geysermodelengine.GeyserModelEngine;
+import re.imc.geysermodelengine.events.GeyserModelEngineEntitySpawnEvent;
 import re.imc.geysermodelengine.util.BedrockUtils;
 
 public class ModelListener implements Listener {
