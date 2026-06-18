@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -325,7 +326,7 @@ public class Animation {
 
         JsonObject result = new JsonObject();
         for (double[] s : reduced) {
-            String timeKey = String.format("%.4f", s[0]).replaceAll("0+$", "").replaceAll("\\.$", "");
+            String timeKey = String.format(Locale.ROOT, "%.4f", s[0]).replaceAll("0+$", "").replaceAll("\\.$", "");
             JsonArray values = new JsonArray();
             values.add(s[1]);
             values.add(s[2]);
