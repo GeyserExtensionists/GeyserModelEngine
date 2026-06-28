@@ -119,14 +119,22 @@ public class ResourcePackManager {
             pathController.toFile().getParentFile().mkdirs();
             path.toFile().getParentFile().mkdirs();
 
-            if (path.toFile().exists()) continue;
-
             AnimationController controller = new AnimationController();
             controller.load(extension, entry.getValue(), entity);
 
+            JsonObject animationsJson = entry.getValue().getJson();
+            boolean hasAnimations = animationsJson.has("animations")
+                    && !animationsJson.getAsJsonObject("animations").entrySet().isEmpty();
+            boolean hasControllers = controller.getJson().has("animation_controllers")
+                    && !controller.getJson().getAsJsonObject("animation_controllers").entrySet().isEmpty();
+
             try {
-                Files.writeString(path, GSON.toJson(entry.getValue().getJson()), StandardCharsets.UTF_8);
-                Files.writeString(pathController, controller.getJson().toString(), StandardCharsets.UTF_8);
+                if (hasAnimations && !path.toFile().exists()) {
+                    Files.writeString(path, GSON.toJson(animationsJson), StandardCharsets.UTF_8);
+                }
+                if (hasControllers && !pathController.toFile().exists()) {
+                    Files.writeString(pathController, controller.getJson().toString(), StandardCharsets.UTF_8);
+                }
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }
