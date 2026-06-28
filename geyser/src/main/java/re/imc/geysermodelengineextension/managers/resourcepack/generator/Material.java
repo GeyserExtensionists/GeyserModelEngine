@@ -31,6 +31,19 @@ public class Material {
                                 "+defines":[
                                     "USE_UV_ANIM"
                                 ]
+                            },
+                            "entity_alphablend_change_color_one_sided:entity_alphablend": {
+                                "+defines": [
+                                    "USE_OVERLAY",
+                                    "USE_COLOR_MASK"
+                                ],
+                                "+samplerStates": [
+                                    {
+                                      "samplerIndex": 1,
+                                      "textureWrap": "Repeat"
+                                    }
+                                ],
+                                "msaaSupport": "Both"
                             }
                         }
                     }

@@ -2,9 +2,15 @@ package re.imc.geysermodelengineextension.managers.resourcepack.generator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.BoneData;
+import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
 import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class RenderController {
@@ -23,6 +29,12 @@ public class RenderController {
 
     // look, I'm fine with your other code and stuff, but I ain't using templates for JSON lmao
     public String generate(String namespace, boolean hashEnabled) {
+        boolean translucency = GeyserModelEngineExtension.getExtension().getConfigManager()
+                .getConfig().getBoolean("options.resource-pack.translucent-materials", true);
+        double translucentThreshold = GeyserModelEngineExtension.getExtension().getConfigManager()
+                .getConfig().getDouble("options.resource-pack.translucent-threshold");
+        if (translucentThreshold <= 0) translucentThreshold = 0.15;
+
         List<String> se = new ArrayList<>(bones.keySet());
         Collections.sort(se);
         JsonObject root = new JsonObject();
@@ -90,6 +102,8 @@ public class RenderController {
                 scale.add(1.0);
                 scale.add("1 / " + anim.frames);
                 uvAnim.add("scale", scale);
+            } else if (translucency && isTranslucent(entity.getTextureMap().get(key), translucentThreshold)) {
+                materialItem.addProperty("*", "Material.blend");
             } else {
                 materialItem.addProperty("*", "Material.default");
             }
@@ -185,6 +199,27 @@ public class RenderController {
         }
 
         return root.toString();
+    }
+
+    private boolean isTranslucent(TextureData texture, double threshold) {
+        if (texture == null || texture.getImage() == null) return false;
+        try {
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(texture.getImage()));
+            if (img == null || !img.getColorModel().hasAlpha()) return false;
+            int w = img.getWidth(), h = img.getHeight();
+            if (w <= 0 || h <= 0) return false;
+
+            long semi = 0;
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    int a = (img.getRGB(x, y) >>> 24) & 0xFF;
+                    if (a > 0 && a < 255) semi++;
+                }
+            }
+            return (double) semi / ((long) w * h) >= threshold;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
 }

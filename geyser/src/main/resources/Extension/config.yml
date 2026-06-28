@@ -9,3 +9,5 @@ options:
     hash-models-textures: true
     bake-catmullrom-to-linear: false
     catmullrom-sample-step: 0.05
+    translucent-materials: true
+    translucent-threshold: 0.15

@@ -31,7 +31,8 @@ public class Entity {
                   "identifier": "%namespace%:%entity_id%",
                   "materials": {
                     "default": "%material%",
-                    "anim": "entity_alphatest_anim_change_color_one_sided"
+                    "anim": "entity_alphatest_anim_change_color_one_sided",
+                    "blend": "entity_alphablend_change_color_one_sided"
                   },
                   "textures": {
                   },
