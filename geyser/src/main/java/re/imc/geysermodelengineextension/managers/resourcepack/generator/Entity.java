@@ -22,6 +22,7 @@ public class Entity {
     private String path;
     private Map<String, TextureData> textureMap = new HashMap<>();
     private ModelConfig modelConfig;
+    private final Map<String, List<String[]>> translucentSplits = new HashMap<>();
 
     public static final String TEMPLATE = """
             {
@@ -220,5 +221,13 @@ public class Entity {
 
     public ModelConfig getModelConfig() {
         return modelConfig;
+    }
+
+    public void addTranslucentSplit(String texture, String tBone, String cloneFrom) {
+        translucentSplits.computeIfAbsent(texture, k -> new ArrayList<>()).add(new String[]{tBone, cloneFrom});
+    }
+
+    public Map<String, List<String[]>> getTranslucentSplits() {
+        return translucentSplits;
     }
 }

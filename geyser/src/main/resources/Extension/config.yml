@@ -10,4 +10,4 @@ options:
     bake-catmullrom-to-linear: false
     catmullrom-sample-step: 0.05
     translucent-materials: true
-    translucent-threshold: 0.15
+    translucent-threshold: 0.5
