@@ -1,10 +1,17 @@
 package re.imc.geysermodelengineextension.managers.resourcepack.generator;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import re.imc.geysermodelengineextension.GeyserModelEngineExtension;
 import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.BoneData;
+import re.imc.geysermodelengineextension.managers.resourcepack.generator.data.TextureData;
 import re.imc.geysermodelengineextension.util.ShortHashUtil;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class RenderController {
@@ -14,15 +21,24 @@ public class RenderController {
     private final String modelId;
     private final Map<String, BoneData> bones;
     private final Entity entity;
+    private final Geometry geometry;
+    private final Map<String, BufferedImage> imageCache = new HashMap<>();
 
-    public RenderController(String modelId, Map<String, BoneData> bones, Entity entity) {
+    public RenderController(String modelId, Geometry geometry, Entity entity) {
         this.modelId = modelId;
-        this.bones = bones;
+        this.geometry = geometry;
+        this.bones = geometry.getBones();
         this.entity = entity;
     }
 
     // look, I'm fine with your other code and stuff, but I ain't using templates for JSON lmao
     public String generate(String namespace, boolean hashEnabled) {
+        boolean translucency = GeyserModelEngineExtension.getExtension().getConfigManager()
+                .getConfig().getBoolean("options.resource-pack.translucent-materials", true);
+        double translucentThreshold = GeyserModelEngineExtension.getExtension().getConfigManager()
+                .getConfig().getDouble("options.resource-pack.translucent-threshold");
+        if (translucentThreshold <= 0) translucentThreshold = 0.5;
+
         List<String> se = new ArrayList<>(bones.keySet());
         Collections.sort(se);
         JsonObject root = new JsonObject();
@@ -74,6 +90,7 @@ public class RenderController {
             String material = entity.getModelConfig().getTextureMaterials().get(key);
 
             JsonObject materialItem = new JsonObject();
+            boolean defaultMaterial = false;
             if (material != null) {
                 materialItem.addProperty("*", "Material." + material);
             } else if (anim != null) {
@@ -90,10 +107,25 @@ public class RenderController {
                 scale.add(1.0);
                 scale.add("1 / " + anim.frames);
                 uvAnim.add("scale", scale);
+            } else if (translucency && semiFraction(key) >= 0.999) {
+                materialItem.addProperty("*", "Material.blend");
             } else {
                 materialItem.addProperty("*", "Material.default");
+                defaultMaterial = true;
             }
             materials.add(materialItem);
+            if (translucency && defaultMaterial) {
+                for (String tBone : translucentBones(key, uvBonesId, translucentThreshold)) {
+                    JsonObject boneMaterial = new JsonObject();
+                    boneMaterial.addProperty(tBone, "Material.blend");
+                    materials.add(boneMaterial);
+                }
+                for (String[] split : entity.getTranslucentSplits().getOrDefault(key, Collections.emptyList())) {
+                    JsonObject boneMaterial = new JsonObject();
+                    boneMaterial.addProperty(split[0], "Material.blend");
+                    materials.add(boneMaterial);
+                }
+            }
             controller.add("materials", materials);
 
             JsonArray textures = new JsonArray();
@@ -111,6 +143,7 @@ public class RenderController {
             visibilityDefault.addProperty("*", false);
             partVisibility.add(visibilityDefault);
             int i = 0;
+            Map<String, JsonElement> capturedVisibility = new HashMap<>();
             List<String> sorted = new ArrayList<>(bones.keySet());
             Map<String, String> originalId = new HashMap<>();
             ListIterator<String> iterator = sorted.listIterator();
@@ -172,6 +205,7 @@ public class RenderController {
                         visibilityItem.addProperty(boneName, "math.mod(math.floor(query.property('" + namespace + ":bone" + index / 24 + "') / " + n + "), 2) == 1");
                     }
                     partVisibility.add(visibilityItem);
+                    capturedVisibility.put(boneName, visibilityItem.get(boneName));
                     if (!uvBonesId.contains("*")) {
                         processedBones.add(bone);
                     }
@@ -180,11 +214,82 @@ public class RenderController {
                     i++;
                 }
             }
+            for (String[] split : entity.getTranslucentSplits().getOrDefault(key, Collections.emptyList())) {
+                JsonElement vis = capturedVisibility.get(split[1]);
+                if (vis != null) {
+                    JsonObject splitVisibility = new JsonObject();
+                    splitVisibility.add(split[0], vis.deepCopy());
+                    partVisibility.add(splitVisibility);
+                }
+            }
             controller.add("part_visibility", partVisibility);
             //}
         }
 
         return root.toString();
+    }
+
+    private BufferedImage image(String key) {
+        if (imageCache.containsKey(key)) return imageCache.get(key);
+        BufferedImage img = null;
+        TextureData texture = entity.getTextureMap().get(key);
+        if (texture != null && texture.getImage() != null) {
+            try {
+                img = ImageIO.read(new ByteArrayInputStream(texture.getImage()));
+                if (img != null && !img.getColorModel().hasAlpha()) img = null;
+            } catch (IOException ignored) {
+            }
+        }
+        imageCache.put(key, img);
+        return img;
+    }
+
+    private double semiFraction(String key) {
+        BufferedImage img = image(key);
+        if (img == null) return 0;
+        int w = img.getWidth(), h = img.getHeight();
+        long semi = 0, visible = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int a = (img.getRGB(x, y) >>> 24) & 0xFF;
+                if (a == 0) continue;
+                visible++;
+                if (a < 255) semi++;
+            }
+        }
+        return visible == 0 ? 0 : (double) semi / visible;
+    }
+
+    private Set<String> translucentBones(String key, Set<String> uvBonesId, double threshold) {
+        BufferedImage img = image(key);
+        if (img == null) return Collections.emptySet();
+
+        JsonObject description = geometry.getInternal().get("description").getAsJsonObject();
+        Integer[] uvSize = entity.getModelConfig().getPerTextureUvSize().get(key);
+        double[] sc = TranslucencySplitter.scale(description, uvSize, img);
+        double sx = sc[0], sy = sc[1];
+
+        boolean allBones = uvBonesId.contains("*");
+        Set<String> bound = new HashSet<>();
+        for (String b : uvBonesId) bound.add(b.toLowerCase());
+
+        Set<String> result = new LinkedHashSet<>();
+        for (JsonElement element : geometry.getInternal().get("bones").getAsJsonArray()) {
+            JsonObject bone = element.getAsJsonObject();
+            String name = bone.get("name").getAsString();
+            if (name.endsWith("_t")) continue;
+            if (!allBones && !bound.contains(name.toLowerCase())) continue;
+            if (!bone.has("cubes")) continue;
+
+            boolean anyGlass = false, anyOpaque = false;
+            for (JsonElement cube : bone.get("cubes").getAsJsonArray()) {
+                int type = TranslucencySplitter.cubeClass(cube.getAsJsonObject(), img, sx, sy, threshold);
+                if (type == TranslucencySplitter.GLASS) anyGlass = true;
+                else if (type == TranslucencySplitter.OPAQUE) anyOpaque = true;
+            }
+            if (anyGlass && !anyOpaque) result.add(name);
+        }
+        return result;
     }
 
 }

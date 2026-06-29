@@ -147,6 +147,11 @@ public class ResourcePackManager {
 
             Entity entity = entityCache.get(entry.getKey());
             if (entity != null) {
+                if (extension.getConfigManager().getConfig().getBoolean("options.resource-pack.translucent-materials", true)) {
+                    double translucentThreshold = extension.getConfigManager().getConfig().getDouble("options.resource-pack.translucent-threshold");
+                    if (translucentThreshold <= 0) translucentThreshold = 0.5;
+                    TranslucencySplitter.split(entry.getValue(), entity, translucentThreshold);
+                }
                 ModelConfig modelConfig = entity.getModelConfig();
                 if (!modelConfig.getPerTextureUvSize().isEmpty()) {
                     for (Map.Entry<String, TextureData> textureEntry : entity.getTextureMap().entrySet()) {
@@ -220,7 +225,7 @@ public class ResourcePackManager {
 
             String id = entity.getModelId();
             if (!geometryCache.containsKey(id)) continue;
-            RenderController controller = new RenderController(id, geometryCache.get(id).getBones(), entity);
+            RenderController controller = new RenderController(id, geometryCache.get(id), entity);
             entity.setRenderController(controller);
             Path renderPath = new File(renderControllersFolder, id + ".json").toPath();
             if (renderPath.toFile().exists()) continue;
