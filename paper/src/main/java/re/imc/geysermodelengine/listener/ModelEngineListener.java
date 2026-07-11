@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import re.imc.geysermodelengine.GeyserModelEngine;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.managers.model.model.Model;
+import re.imc.geysermodelengine.managers.model.model.ModelEngineModel;
 
 import java.util.Map;
 

@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="ff2e9770-ec88-4715-adeb-b9dbda130e1a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/paper/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/events/GeyserModelEngineEntitySpawnEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/events/GeyserModelEngineEntitySpawnEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/listener/ModelEngineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/listener/ModelEngineListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/EntityTaskManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/EntityTaskManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/taskshandler/ModelEngineTaskHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/taskshandler/ModelEngineTaskHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/modelhandler/ModelEngineHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/modelhandler/ModelEngineHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,7 +18,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="DarkyenusTimeTracker">
-    <option name="totalTimeSeconds" value="69900" />
+    <option name="totalTimeSeconds" value="73946" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -261,6 +264,14 @@
         <item itemvalue="Gradle.GeyserModelEngine [clean]" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.26222.65" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.26222.65" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
