@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import kr.toxicity.model.api.entity.BaseEntity;
 import kr.toxicity.model.api.tracker.EntityTracker;
-import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
@@ -12,6 +11,7 @@ import re.imc.geysermodelengine.events.GeyserModelEngineEntityDeathEvent;
 import re.imc.geysermodelengine.managers.model.entity.BetterModelEntityData;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
+import re.imc.geysermodelengine.util.CustomEntitySpawnSynchronizer;
 
 import java.awt.*;
 import java.util.Collections;
@@ -99,11 +99,11 @@ public class BetterModelTaskHandler implements TaskHandler {
     public void sendEntityData(EntityData entityData, Player player, int delay) {
         BetterModelEntityData betterModelEntityData = (BetterModelEntityData) entityData;
         long propertiesSendDelay = plugin.getConfigManager().getConfig().getInt("models.properties-send-delay", 1);
+        String customIdentifier = plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + betterModelEntityData.getEntityTracker().name().toLowerCase();
 
-        EntityUtils.setCustomEntity(player, betterModelEntityData.getEntity().getEntityId(), plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + betterModelEntityData.getEntityTracker().name().toLowerCase());
         if (plugin.getConfigManager().getConfig().getBoolean("options.debug.send-data")) plugin.getLogger().info("Setting custom entity data for " + betterModelEntityData.getEntityTracker().name());
 
-        plugin.getSchedulerPool().schedule(() -> {
+        CustomEntitySpawnSynchronizer.sendAndSpawn(plugin, player, entityData.getEntity().getEntityId(), customIdentifier, delay, () -> {
             entityData.getEntity().sendSpawnPacket(Collections.singletonList(player));
 
             plugin.getSchedulerPool().schedule(() -> {
@@ -114,7 +114,7 @@ public class BetterModelTaskHandler implements TaskHandler {
 
                 plugin.getEntityTaskManager().getPropertyHandler().updateEntityProperties(entityData, Collections.singleton(player), true);
             }, propertiesSendDelay, TimeUnit.MILLISECONDS);
-        }, delay, TimeUnit.MILLISECONDS);
+        });
     }
 
     @Override
