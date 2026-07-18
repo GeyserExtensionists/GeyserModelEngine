@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import me.zimzaza4.geyserutils.spigot.api.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import re.imc.geysermodelengine.GeyserModelEngine;
@@ -12,6 +11,7 @@ import re.imc.geysermodelengine.events.GeyserModelEngineEntityDeathEvent;
 import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.managers.model.entity.ModelEngineEntityData;
 import re.imc.geysermodelengine.packet.entity.PacketEntity;
+import re.imc.geysermodelengine.util.CustomEntitySpawnSynchronizer;
 
 import java.awt.*;
 import java.util.Collections;
@@ -103,11 +103,11 @@ public class ModelEngineTaskHandler implements TaskHandler {
     public void sendEntityData(EntityData entityData, Player player, int delay) {
         ModelEngineEntityData modelEngineEntityData = (ModelEngineEntityData) entityData;
         long propertiesSendDelay = plugin.getConfigManager().getConfig().getInt("models.properties-send-delay", 1);
+        String customIdentifier = plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + modelEngineEntityData.getActiveModel().getBlueprint().getName().toLowerCase();
 
-        EntityUtils.setCustomEntity(player, modelEngineEntityData.getEntity().getEntityId(), plugin.getConfigManager().getConfig().getString("models.namespace") + ":" + modelEngineEntityData.getActiveModel().getBlueprint().getName().toLowerCase());
         if (plugin.getConfigManager().getConfig().getBoolean("options.debug.send-data")) plugin.getLogger().info("Setting custom entity data for " + modelEngineEntityData.getActiveModel().getBlueprint().getName());
 
-        plugin.getSchedulerPool().schedule(() -> {
+        CustomEntitySpawnSynchronizer.sendAndSpawn(plugin, player, entityData.getEntity().getEntityId(), customIdentifier, delay, () -> {
             entityData.getEntity().sendSpawnPacket(Collections.singletonList(player));
 
             plugin.getSchedulerPool().schedule(() -> {
@@ -118,7 +118,7 @@ public class ModelEngineTaskHandler implements TaskHandler {
 
                 plugin.getEntityTaskManager().getPropertyHandler().updateEntityProperties(entityData, Collections.singleton(player), true);
             }, propertiesSendDelay, TimeUnit.MILLISECONDS);
-        }, delay, TimeUnit.MILLISECONDS);
+        });
     }
 
     @Override
