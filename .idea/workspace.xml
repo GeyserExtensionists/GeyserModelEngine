@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff2e9770-ec88-4715-adeb-b9dbda130e1a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/paper/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/events/GeyserModelEngineEntitySpawnEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/events/GeyserModelEngineEntitySpawnEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/listener/ModelEngineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/listener/ModelEngineListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/EntityTaskManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/EntityTaskManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/modelhandler/ModelEngineHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/paper/src/main/java/re/imc/geysermodelengine/managers/model/modelhandler/ModelEngineHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +14,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="DarkyenusTimeTracker">
-    <option name="totalTimeSeconds" value="73946" />
+    <option name="totalTimeSeconds" value="74179" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -37,17 +33,6 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="GeyserModelEngine" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="GeyserModelEngine" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="GeyserModelEngine" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
