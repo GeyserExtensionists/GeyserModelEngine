@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.geysermc.geyser:api:2.9.0-SNAPSHOT")
+    compileOnly("org.geysermc.geyser:api:2.11.0-SNAPSHOT")
 
     compileOnly(files("libs/geyserutils-geyser-1.0-SNAPSHOT.jar"))
 
