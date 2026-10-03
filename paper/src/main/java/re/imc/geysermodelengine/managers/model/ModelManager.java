@@ -20,7 +20,7 @@ public class ModelManager {
 
     private ModelHandler modelHandler;
 
-    private final HashSet<UUID> playerJoinedCache = new HashSet<>();
+    private final Set<UUID> playerJoinedCache = ConcurrentHashMap.newKeySet();
 
     private final ConcurrentHashMap<Integer, Model> modelEntitiesCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Integer, Map<Model, EntityData>> entitiesCache = new ConcurrentHashMap<>();
@@ -56,7 +56,7 @@ public class ModelManager {
         return modelHandler;
     }
 
-    public HashSet<UUID> getPlayerJoinedCache() {
+    public Set<UUID> getPlayerJoinedCache() {
         return playerJoinedCache;
     }
 

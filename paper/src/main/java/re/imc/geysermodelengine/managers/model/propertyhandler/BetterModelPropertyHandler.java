@@ -30,11 +30,18 @@ public class BetterModelPropertyHandler implements PropertyHandler {
 
     @Override
     public void sendScale(EntityData entityData, Collection<Player> players, float lastScale, boolean firstSend) {
+        if (players.isEmpty()) return;
+
         BetterModelEntityData betterModelEntityData = (BetterModelEntityData) entityData;
         Tracker tracker = (Tracker) betterModelEntityData.getModelInstance();
         ModelScaler scaler = tracker.scaler();
         var scale = scaler.scale(tracker);
+
+        if (!firstSend && scale == lastScale) return;
+
         players.forEach(player -> EntityUtils.sendCustomScale(player, betterModelEntityData.getEntity().getEntityId(), scale));
+
+        betterModelEntityData.getEntityTask().setLastScale(scale);
     }
 
     @Override
@@ -44,17 +51,18 @@ public class BetterModelPropertyHandler implements PropertyHandler {
         BetterModelEntityData betterModelEntityData = (BetterModelEntityData) entityData;
 
         Color color = new Color(0xFFFFFF);
-        if (betterModelEntityData.isHurt()) color = new Color(betterModelEntityData.getEntityTracker().damageTintValue());
-
-        if (firstSend) {
-            if (color.equals(lastColor)) return;
+        if (betterModelEntityData.isHurt()) {
+            color = new Color(betterModelEntityData.getEntityTracker().damageTintValue());
+            betterModelEntityData.setHurt(false);
         }
+
+        if (!firstSend && color.equals(lastColor)) return;
 
         for (Player player : players) {
             EntityUtils.sendCustomColor(player, betterModelEntityData.getEntity().getEntityId(), color);
         }
 
-        betterModelEntityData.setHurt(false);
+        betterModelEntityData.getEntityTask().setLastColor(color);
     }
 
     @Override

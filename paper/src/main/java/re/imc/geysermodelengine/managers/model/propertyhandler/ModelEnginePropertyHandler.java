@@ -40,6 +40,8 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
             }
 
             players.forEach(player -> EntityUtils.sendCustomScale(player, modelEngineEntityData.getEntity().getEntityId(), average));
+
+            modelEngineEntityData.getEntityTask().setLastScale(average);
         } catch (Exception err) {
             throw new RuntimeException(err);
         }
@@ -55,6 +57,8 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
         if (!firstSend && color.equals(lastColor)) return;
 
         players.forEach(player -> EntityUtils.sendCustomColor(player, data.getEntity().getEntityId(), color));
+
+        data.getEntityTask().setLastColor(color);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class BetterModelTaskHandler implements TaskHandler {
             } catch (Throwable err) {
                 err.printStackTrace();
             }
-        }, 0, 20, TimeUnit.MILLISECONDS);
+        }, 0, plugin.getConfigManager().getConfig().getLong("models.entity-update-period", 20), TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -84,6 +84,12 @@ public class BetterModelTaskHandler implements TaskHandler {
         }
 
         tick++;
+
+        // The first scale/color send after spawn is fired once, and the Geyser side silently drops it
+        // if the custom entity is not registered yet. Force a resend every ~2s so a model that missed
+        // that window recovers instead of staying at default scale / no tint forever.
+        boolean forceSync = tick % 100 == 0;
+
         if (tick > 400) {
             tick = 0;
             plugin.getEntityTaskManager().sendHitBoxToAll(entityData);
@@ -91,8 +97,8 @@ public class BetterModelTaskHandler implements TaskHandler {
 
         if (viewers.isEmpty()) return;
 
-        plugin.getEntityTaskManager().getPropertyHandler().sendScale(entityData, viewers, lastScale, false);
-        plugin.getEntityTaskManager().getPropertyHandler().sendColor(entityData, viewers, lastColor, false);
+        plugin.getEntityTaskManager().getPropertyHandler().sendScale(entityData, viewers, lastScale, forceSync);
+        plugin.getEntityTaskManager().getPropertyHandler().sendColor(entityData, viewers, lastColor, forceSync);
     }
 
     @Override
