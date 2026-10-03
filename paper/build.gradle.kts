@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    implementation("dev.jorel:commandapi-paper-shade:12.0.0")
+    implementation("dev.jorel:commandapi-paper-shade:12.1.0")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.1.0")
     compileOnly("io.github.toxicity188:bettermodel-api:2.2.0")
@@ -49,7 +49,7 @@ dependencies {
     compileOnly(files("libs/geyserutils-spigot-1.0-SNAPSHOT.jar"))
     compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
 
-    implementation("com.github.retrooper:packetevents-spigot:2.13.0")
+    implementation("com.github.retrooper:packetevents-spigot:2.14.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     implementation("org.reflections:reflections:0.10.2")
