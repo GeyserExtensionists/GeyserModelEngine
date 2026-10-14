@@ -15,7 +15,6 @@ import re.imc.geysermodelengine.managers.model.model.Model;
 import re.imc.geysermodelengine.managers.model.model.ModelEngineModel;
 import re.imc.geysermodelengine.managers.model.propertyhandler.PropertyHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,22 +36,32 @@ public class ModelEngineHandler implements ModelHandler {
         ActiveModel megActiveModel = (ActiveModel) objects[1];
 
         int entityID = megEntity.getBase().getEntityId();
+        String name = megActiveModel.getBlueprint().getName();
+
+        // Checked before creating the entity data: creating it starts its task, which would spawn an untracked entity.
+        // A removed model with the same name doesn't count, so a model can be added again right after it was removed.
+        Map<Model, EntityData> entityDataCache = plugin.getModelManager().getEntitiesCache().get(entityID);
+        if (entityDataCache != null) {
+            for (Model existing : entityDataCache.keySet()) {
+                if (!existing.getName().equals(name)) continue;
+                if (!(existing.getEntityData() instanceof ModelEngineEntityData existingData)) continue;
+
+                ActiveModel existingModel = existingData.getActiveModel();
+                if (!existingModel.isDestroyed() && !existingModel.isRemoved()) return;
+            }
+        }
 
         PropertyHandler propertyHandler = plugin.getEntityTaskManager().getPropertyHandler();
         EntityData entityData = new ModelEngineEntityData(plugin, megEntity, megActiveModel);
 
         Model model = new ModelEngineModel(megActiveModel, this, entityData, propertyHandler);
 
-        Map<Model, EntityData> entityDataCache = plugin.getModelManager().getEntitiesCache().computeIfAbsent(entityID, k -> new HashMap<>());
-
-        for (Map.Entry<Model, EntityData> entry : entityDataCache.entrySet()) {
-            if (entry.getKey() != model && entry.getKey().getName().equals(megActiveModel.getBlueprint().getName())) {
-                return;
-            }
-        }
-
         plugin.getModelManager().getModelEntitiesCache().put(entityID, model);
-        entityDataCache.put(model, entityData);
+        plugin.getModelManager().getEntitiesCache().compute(entityID, (id, models) -> {
+            Map<Model, EntityData> map = models != null ? models : new ConcurrentHashMap<>();
+            map.put(model, entityData);
+            return map;
+        });
 
         if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Creating model for " + model.getName());
     }
