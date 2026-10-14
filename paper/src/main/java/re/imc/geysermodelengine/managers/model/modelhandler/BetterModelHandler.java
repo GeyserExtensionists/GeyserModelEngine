@@ -15,8 +15,8 @@ import re.imc.geysermodelengine.managers.model.entity.EntityData;
 import re.imc.geysermodelengine.managers.model.model.BetterModelModel;
 import re.imc.geysermodelengine.managers.model.model.Model;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BetterModelHandler implements ModelHandler {
 
@@ -33,21 +33,29 @@ public class BetterModelHandler implements ModelHandler {
 
         int entityID = entitySource.id();
 
+        // Checked before creating the entity data: creating it starts its task, which would spawn an untracked entity.
+        // A tracker being removed doesn't count, so a model can be added again right after it was removed.
+        Map<Model, EntityData> entityDataCache = plugin.getModelManager().getEntitiesCache().get(entityID);
+        if (entityDataCache != null) {
+            for (Model existing : entityDataCache.keySet()) {
+                if (!existing.getName().equals(entityTracker.name())) continue;
+                if (!(existing.getEntityData() instanceof BetterModelEntityData existingData)) continue;
+
+                if (!existingData.getEntitySource().dead() && !existingData.getEntityTracker().forRemoval()) return;
+            }
+        }
+
         PropertyHandler propertyHandler = plugin.getEntityTaskManager().getPropertyHandler();
         EntityData entityData = new BetterModelEntityData(plugin, entitySource, entityTracker);
 
         Model model = new BetterModelModel(entityTracker, this, entityData, propertyHandler);
 
-        Map<Model, EntityData> entityDataCache = plugin.getModelManager().getEntitiesCache().computeIfAbsent(entityID, k -> new HashMap<>());
-
-        for (Map.Entry<Model, EntityData> entry : entityDataCache.entrySet()) {
-            if (entry.getKey() != model && entry.getKey().getName().equals(entityTracker.name())) {
-                return;
-            }
-        }
-
         plugin.getModelManager().getModelEntitiesCache().put(entityID, model);
-        entityDataCache.put(model, entityData);
+        plugin.getModelManager().getEntitiesCache().compute(entityID, (id, models) -> {
+            Map<Model, EntityData> map = models != null ? models : new ConcurrentHashMap<>();
+            map.put(model, entityData);
+            return map;
+        });
 
         if (plugin.getConfigManager().getConfig().getBoolean("options.debug.spawn")) plugin.getLogger().info("Creating model for " + model.getName());
     }

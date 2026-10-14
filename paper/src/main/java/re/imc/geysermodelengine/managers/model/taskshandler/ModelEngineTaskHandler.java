@@ -72,8 +72,7 @@ public class ModelEngineTaskHandler implements TaskHandler {
             removed = true;
             entity.remove();
 
-            plugin.getModelManager().getEntitiesCache().remove(modeledEntity.getBase().getEntityId());
-            plugin.getModelManager().getModelEntitiesCache().remove(modeledEntity.getBase().getEntityId());
+            plugin.getModelManager().removeModel(modeledEntity.getBase().getEntityId(), entityData);
 
             if (plugin.getConfigManager().getConfig().getBoolean("options.debug.death")) plugin.getLogger().info(activeModel.getBlueprint().getName() + " has died, removing runAsync!");
 
