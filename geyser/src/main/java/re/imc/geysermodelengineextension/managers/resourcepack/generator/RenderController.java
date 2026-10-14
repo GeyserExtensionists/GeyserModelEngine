@@ -142,8 +142,12 @@ public class RenderController {
             JsonObject visibilityDefault = new JsonObject();
             visibilityDefault.addProperty("*", false);
             partVisibility.add(visibilityDefault);
+            JsonArray tintVisibility = new JsonArray();
+            tintVisibility.add(visibilityDefault.deepCopy());
+            List<String> tintOrder = entity.hasTints() ? tintBoneOrder() : Collections.emptyList();
             int i = 0;
             Map<String, JsonElement> capturedVisibility = new HashMap<>();
+            Map<String, JsonElement> capturedTintVisibility = new HashMap<>();
             List<String> sorted = new ArrayList<>(bones.keySet());
             Map<String, String> originalId = new HashMap<>();
             ListIterator<String> iterator = sorted.listIterator();
@@ -199,10 +203,25 @@ public class RenderController {
                     }
 
                     int n = (int) Math.pow(2, (index % 24));
-                    if (entity.getModelConfig().isDisablePartVisibility()) {
+                    String visible = "math.mod(math.floor(query.property('" + namespace + ":bone" + index / 24 + "') / " + n + "), 2) == 1";
+                    int tintIndex = tintOrder.indexOf(boneName.startsWith("uv_") ? bone.getParent() : boneName);
+                    if (tintIndex != -1) {
+                        // Tinted bones move from this controller to its "_tint" twin
+                        String tinted = "math.mod(math.floor(query.property('" + namespace + ":tintmask" + tintIndex / 24 + "') / " + (int) Math.pow(2, tintIndex % 24) + "), 2) == 1";
+                        JsonObject tintItem = new JsonObject();
+                        if (entity.getModelConfig().isDisablePartVisibility()) {
+                            visibilityItem.addProperty(boneName, "!(" + tinted + ")");
+                            tintItem.addProperty(boneName, tinted);
+                        } else {
+                            visibilityItem.addProperty(boneName, "(" + visible + ") && !(" + tinted + ")");
+                            tintItem.addProperty(boneName, "(" + visible + ") && (" + tinted + ")");
+                        }
+                        tintVisibility.add(tintItem);
+                        capturedTintVisibility.put(boneName, tintItem.get(boneName));
+                    } else if (entity.getModelConfig().isDisablePartVisibility()) {
                         visibilityItem.addProperty(boneName, true);
                     } else {
-                        visibilityItem.addProperty(boneName, "math.mod(math.floor(query.property('" + namespace + ":bone" + index / 24 + "') / " + n + "), 2) == 1");
+                        visibilityItem.addProperty(boneName, visible);
                     }
                     partVisibility.add(visibilityItem);
                     capturedVisibility.put(boneName, visibilityItem.get(boneName));
@@ -221,12 +240,91 @@ public class RenderController {
                     splitVisibility.add(split[0], vis.deepCopy());
                     partVisibility.add(splitVisibility);
                 }
+                JsonElement tintVis = capturedTintVisibility.get(split[1]);
+                if (tintVis != null) {
+                    JsonObject splitVisibility = new JsonObject();
+                    splitVisibility.add(split[0], tintVis.deepCopy());
+                    tintVisibility.add(splitVisibility);
+                }
             }
             controller.add("part_visibility", partVisibility);
             //}
+
+            if (entity.hasTints()) {
+                // Bedrock ignores a render controller's "color" (MCPE-183985) and can't multiply colours, so a tint
+                // is built from two layers: "_tint" draws the tinted bones black, then "_tintblend" blends the tint
+                // colour over them with each pixel's brightness as alpha. That gives colour * brightness, like a
+                // Java tint. "_tintblend" uses slightly inflated geometry so it isn't hidden behind the black layer.
+                JsonObject tintController = controller.deepCopy();
+                tintController.add("part_visibility", tintVisibility);
+                tintController.add("overlay_color", tintColor(namespace, false));
+                renderControllers.add(controllerName + "_tint", tintController);
+
+                JsonObject blendController = controller.deepCopy();
+                blendController.add("part_visibility", tintVisibility.deepCopy());
+                blendController.add("overlay_color", tintColor(namespace, true));
+                blendController.addProperty("geometry", controller.get("geometry").getAsString() + Geometry.TINT_SUFFIX);
+
+                JsonArray blendTextures = new JsonArray();
+                blendTextures.add(textures.get(0).getAsString() + TextureData.TINT_SUFFIX);
+                blendController.add("textures", blendTextures);
+
+                JsonArray blendMaterials = new JsonArray();
+                JsonObject blendMaterial = new JsonObject();
+                blendMaterial.addProperty("*", "Material.tintblend");
+                blendMaterials.add(blendMaterial);
+                blendController.add("materials", blendMaterials);
+
+                renderControllers.add(controllerName + "_tintblend", blendController);
+            }
         }
 
         return root.toString();
+    }
+
+    /**
+     * Bit order of the tintmask properties. It has to match the plugin, which sends every bone except the ones
+     * below (and their children), by full name, sorted. uv_ bones aren't ModelEngine bones and follow their parent.
+     */
+    private List<String> tintBoneOrder() {
+        List<String> order = new ArrayList<>();
+        for (String name : bones.keySet()) {
+            if (name.startsWith("uv_")) continue;
+
+            boolean skipped = false;
+            Set<String> visited = new HashSet<>();
+            for (String b = name; b != null && visited.add(b); b = bones.containsKey(b) ? bones.get(b).getParent() : null) {
+                if (b.equals("hitbox") || b.equals("shadow") || b.equals("mount") || b.startsWith("p_") || b.startsWith("b_") || b.startsWith("ob_")) {
+                    skipped = true;
+                    break;
+                }
+            }
+
+            if (!skipped) order.add(name);
+        }
+        Collections.sort(order);
+        return order;
+    }
+
+    /**
+     * Overlay colour for the tint layers: black for "_tint", or the tint colour the plugin sends (6 bits per
+     * channel) for "_tintblend".
+     */
+    private JsonObject tintColor(String namespace, boolean colored) {
+        String property = "query.property('" + namespace + ":tintcolor')";
+
+        JsonObject overlay = new JsonObject();
+        if (colored) {
+            overlay.addProperty("r", "math.floor(" + property + " / 4096) / 63");
+            overlay.addProperty("g", "math.mod(math.floor(" + property + " / 64), 64) / 63");
+            overlay.addProperty("b", "math.mod(" + property + ", 64) / 63");
+        } else {
+            overlay.addProperty("r", 0.0);
+            overlay.addProperty("g", 0.0);
+            overlay.addProperty("b", 0.0);
+        }
+        overlay.addProperty("a", 1.0);
+        return overlay;
     }
 
     private BufferedImage image(String key) {
