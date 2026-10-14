@@ -19,5 +19,6 @@ options:
     send-data: false
     location: false
     death: false
+    tints: false
   hooks:
     floodgate: true # Recommended method
