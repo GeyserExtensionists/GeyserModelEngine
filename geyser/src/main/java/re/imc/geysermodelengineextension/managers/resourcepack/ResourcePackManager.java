@@ -234,6 +234,12 @@ public class ResourcePackManager {
 
             try {
                 Files.writeString(entityPath, entity.getJson().toString(), StandardCharsets.UTF_8);
+
+                if (entity.hasManualAnimator()) {
+                    Path manualPath = animationsFolder.toPath().resolve(entity.getPath() + entry.getKey() + "_manual.json");
+                    manualPath.toFile().getParentFile().mkdirs();
+                    Files.writeString(manualPath, ManualAnimator.generate(extension.getConfigManager().getConfig().getString("models.namespace"), entity.getModelId()).toString(), StandardCharsets.UTF_8);
+                }
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }

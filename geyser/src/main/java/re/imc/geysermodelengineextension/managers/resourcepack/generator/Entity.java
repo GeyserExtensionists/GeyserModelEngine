@@ -138,6 +138,14 @@ public class Entity {
                 jsonAnimations.addProperty(animation + "_control", controller);
             }
         }
+
+        if (hasManualAnimator()) {
+            // Last, so it replaces what the other animations did to the root bone
+            jsonAnimations.addProperty(ManualAnimator.ANIMATION, ManualAnimator.animationId(modelId));
+            JsonObject manual = new JsonObject();
+            manual.addProperty(ManualAnimator.ANIMATION, ManualAnimator.active(namespace));
+            animate.add(manual);
+        }
     }
 
     public void register(String namespace) {
@@ -171,6 +179,12 @@ public class Entity {
             GeyserModelEngineExtension.getExtension().logger().warning("Bone tints disabled for " + modelId + ": it would need more than " + MAX_PROPERTIES + " entity properties.");
         }
 
+        if (hasManualAnimator()) {
+            for (String property : ManualAnimator.PROPERTIES) {
+                GeyserUtils.addProperty(id, namespace + ":" + property, Integer.class);
+            }
+        }
+
         GeyserUtils.registerProperties(id);
     }
 
@@ -195,9 +209,25 @@ public class Entity {
 
         if (!modelConfig.isDisablePartVisibility()) count += boneProperties;
         if (animation != null) count += (int) Math.ceil(animation.getAnimationIds().size() / 24f);
+        if (hasManualAnimator()) count += ManualAnimator.PROPERTIES.size();
         if (withTints) count += boneProperties + 1;
 
         return count;
+    }
+
+    /**
+     * Whether the model gets the animation that applies a ModelEngine manual animator on its root bone
+     * (see {@link ManualAnimator}). Needs a root bone and room for the properties (Bedrock allows 32 per entity).
+     */
+    public boolean hasManualAnimator() {
+        if (geometry == null || !geometry.getBones().containsKey(ManualAnimator.BONE)) return false;
+        if (!GeyserModelEngineExtension.getExtension().getConfigManager().getConfig().getBoolean("options.resource-pack.manual-animator", true)) return false;
+
+        int count = ManualAnimator.PROPERTIES.size();
+        if (!modelConfig.isDisablePartVisibility()) count += (int) Math.ceil(geometry.getBones().size() / 24f);
+        if (animation != null) count += (int) Math.ceil(animation.getAnimationIds().size() / 24f);
+
+        return count <= MAX_PROPERTIES;
     }
 
     public void setModelId(String modelId) {
