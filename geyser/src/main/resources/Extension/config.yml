@@ -11,3 +11,5 @@ options:
     catmullrom-sample-step: 0.05
     translucent-materials: true
     translucent-threshold: 0.5
+    bone-tints: true # Show ModelEngine bone tints on Bedrock (one tint colour per model)
+    manual-animator: true # Apply ModelEngine manual animators on the root bone (e.g. MythicMobs animatemodel)

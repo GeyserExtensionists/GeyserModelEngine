@@ -9,6 +9,8 @@ import java.util.*;
 
 public class Geometry {
 
+    public static final String TINT_SUFFIX = "_tint";
+
     private String modelId;
     private String geometryId;
     private JsonObject json;
@@ -35,6 +37,31 @@ public class Geometry {
 
     public JsonObject getInternal() {
         return json.get("minecraft:geometry").getAsJsonArray().get(0).getAsJsonObject();
+    }
+
+    /**
+     * Copy of this geometry for the "_tintblend" render controller, with every cube inflated a tiny bit so its colour
+     * layer sits just in front of the black "_tint" layer instead of fighting it for the same depth.
+     */
+    public JsonObject tintCopy() {
+        JsonObject copy = json.deepCopy();
+        JsonObject internal = copy.get("minecraft:geometry").getAsJsonArray().get(0).getAsJsonObject();
+        JsonObject description = internal.get("description").getAsJsonObject();
+        description.addProperty("identifier", description.get("identifier").getAsString() + TINT_SUFFIX);
+
+        if (!internal.has("bones")) return copy;
+
+        for (JsonElement bone : internal.get("bones").getAsJsonArray()) {
+            if (!bone.getAsJsonObject().has("cubes")) continue;
+
+            for (JsonElement cube : bone.getAsJsonObject().get("cubes").getAsJsonArray()) {
+                JsonObject cubeObject = cube.getAsJsonObject();
+                double inflate = cubeObject.has("inflate") ? cubeObject.get("inflate").getAsDouble() : 0;
+                cubeObject.addProperty("inflate", inflate + 0.1);
+            }
+        }
+
+        return copy;
     }
 
     public void modify(boolean hashEnabled) {

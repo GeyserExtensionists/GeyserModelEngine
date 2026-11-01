@@ -59,6 +59,13 @@ public class ResourcePackManager {
         }
     }
 
+    private void writeTintGeometry(Path geometryPath, Geometry geometry, Entity entity) throws IOException {
+        if (entity == null || !entity.hasTints()) return;
+
+        String name = geometryPath.getFileName().toString().replace(".json", Geometry.TINT_SUFFIX + ".json");
+        Files.writeString(geometryPath.resolveSibling(name), GSON.toJson(geometry.tintCopy()), StandardCharsets.UTF_8);
+    }
+
     private void generateResourcePack(File inputFolder, File output) {
         generateFromFolder("", inputFolder, true);
 
@@ -173,6 +180,7 @@ public class ResourcePackManager {
 
                         try {
                             Files.writeString(path, GSON.toJson(entry.getValue().getJson()), StandardCharsets.UTF_8);
+                            writeTintGeometry(path, entry.getValue(), entity);
                         } catch (IOException err) {
                             throw new RuntimeException(err);
                         }
@@ -184,6 +192,7 @@ public class ResourcePackManager {
 
             try {
                 Files.writeString(path, GSON.toJson(entry.getValue().getJson()), StandardCharsets.UTF_8);
+                writeTintGeometry(path, entry.getValue(), entity);
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }
@@ -199,7 +208,15 @@ public class ResourcePackManager {
                 if (path.toFile().exists()) continue;
 
                 try {
-                    if (entry.getValue().getImage() != null) Files.write(path, entry.getValue().getImage());
+                    if (entry.getValue().getImage() != null) {
+                        Files.write(path, entry.getValue().getImage());
+
+                        Entity entity = entityCache.get(modelId);
+                        if (entity != null && entity.hasTints() && !entry.getKey().endsWith("_e")) {
+                            byte[] tintImage = TextureData.tintLuminance(entry.getValue().getImage());
+                            if (tintImage != null) Files.write(path.resolveSibling(textureFileName + TextureData.TINT_SUFFIX + ".png"), tintImage);
+                        }
+                    }
                 } catch (IOException err) {
                     throw new RuntimeException(err);
                 }
@@ -217,6 +234,12 @@ public class ResourcePackManager {
 
             try {
                 Files.writeString(entityPath, entity.getJson().toString(), StandardCharsets.UTF_8);
+
+                if (entity.hasManualAnimator()) {
+                    Path manualPath = animationsFolder.toPath().resolve(entity.getPath() + entry.getKey() + "_manual.json");
+                    manualPath.toFile().getParentFile().mkdirs();
+                    Files.writeString(manualPath, ManualAnimator.generate(extension.getConfigManager().getConfig().getString("models.namespace"), entity.getModelId()).toString(), StandardCharsets.UTF_8);
+                }
             } catch (IOException err) {
                 throw new RuntimeException(err);
             }

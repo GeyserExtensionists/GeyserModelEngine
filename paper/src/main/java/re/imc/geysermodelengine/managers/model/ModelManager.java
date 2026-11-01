@@ -46,6 +46,24 @@ public class ModelManager {
         modelHandler.loadListeners();
     }
 
+    /**
+     * Forgets one model of an entity. The entity can carry other models (for example one added later with
+     * addModel), and those stay tracked: the entity itself is only forgotten once its last model is gone.
+     */
+    public void removeModel(int entityId, EntityData entityData) {
+        entitiesCache.computeIfPresent(entityId, (id, models) -> {
+            models.values().removeIf(data -> data == entityData);
+            return models.isEmpty() ? null : models;
+        });
+
+        modelEntitiesCache.computeIfPresent(entityId, (id, model) -> {
+            if (model.getEntityData() != entityData) return model;
+
+            Map<Model, EntityData> remaining = entitiesCache.get(entityId);
+            return remaining == null ? null : remaining.keySet().stream().findFirst().orElse(null);
+        });
+    }
+
     public void removeEntities() {
         for (Map<Model, EntityData> entities : entitiesCache.values()) {
             entities.forEach((model, modelEntity) -> modelEntity.getEntity().remove());

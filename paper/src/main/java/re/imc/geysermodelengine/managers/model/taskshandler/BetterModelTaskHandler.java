@@ -70,8 +70,7 @@ public class BetterModelTaskHandler implements TaskHandler {
             removed = true;
             entity.remove();
 
-            plugin.getModelManager().getEntitiesCache().remove(entitySource.id());
-            plugin.getModelManager().getModelEntitiesCache().remove(entitySource.id());
+            plugin.getModelManager().removeModel(entitySource.id(), entityData);
 
             cancel();
 
