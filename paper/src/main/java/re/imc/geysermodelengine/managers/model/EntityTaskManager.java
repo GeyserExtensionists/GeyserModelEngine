@@ -25,6 +25,8 @@ public class EntityTaskManager {
 
     private PropertyHandler propertyHandler;
 
+    private volatile List<Player> bedrockPlayers = Collections.emptyList();
+
     public EntityTaskManager(GeyserModelEngine plugin) {
         this.plugin = plugin;
 
@@ -40,10 +42,22 @@ public class EntityTaskManager {
         }
     }
 
-    public void checkViewers(EntityData model, Set<Player> viewers) {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (!BedrockUtils.isBedrockPlayer(onlinePlayer)) continue;
+    /**
+     * Refreshes the cached list of Bedrock players. Called once per global update cycle instead of
+     * scanning the online player list from every per-entity task.
+     */
+    public void refreshBedrockPlayers() {
+        List<Player> players = new ArrayList<>();
 
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (BedrockUtils.isBedrockPlayer(onlinePlayer)) players.add(onlinePlayer);
+        }
+
+        bedrockPlayers = players;
+    }
+
+    public void checkViewers(EntityData model, Set<Player> viewers) {
+        for (Player onlinePlayer : bedrockPlayers) {
             if (canSee(onlinePlayer, model.getEntity(), model.getModelInstance())) {
                 if (!viewers.contains(onlinePlayer)) {
                     viewers.add(onlinePlayer);

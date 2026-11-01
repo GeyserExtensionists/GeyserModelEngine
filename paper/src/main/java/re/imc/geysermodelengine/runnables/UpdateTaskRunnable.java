@@ -17,6 +17,8 @@ public class UpdateTaskRunnable implements Runnable {
 
     @Override
     public void run() {
+        plugin.getEntityTaskManager().refreshBedrockPlayers();
+
         ConcurrentHashMap<Integer, Map<Model, EntityData>> entitiesCache = plugin.getModelManager().getEntitiesCache();
         if (entitiesCache.isEmpty()) return;
 
