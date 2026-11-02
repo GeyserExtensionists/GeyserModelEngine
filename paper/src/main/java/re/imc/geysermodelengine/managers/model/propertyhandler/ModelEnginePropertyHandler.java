@@ -1,8 +1,12 @@
 package re.imc.geysermodelengine.managers.model.propertyhandler;
 
-import com.ticxo.modelengine.api.animation.BlueprintAnimation;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
+import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler;
+import com.ticxo.modelengine.api.animation.keyframe.KeyframeType;
+import com.ticxo.modelengine.api.animation.keyframe.KeyframeTypes;
+import com.ticxo.modelengine.api.animation.property.IAnimationProperty;
 import com.ticxo.modelengine.api.generator.blueprint.BlueprintBone;
+import com.ticxo.modelengine.api.generator.blueprint.ModelBlueprint;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
 import com.ticxo.modelengine.api.model.bone.SimpleManualAnimator;
 import com.ticxo.modelengine.api.model.render.DisplayRenderer;
@@ -17,11 +21,13 @@ import re.imc.geysermodelengine.util.BooleanPacker;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class ModelEnginePropertyHandler implements PropertyHandler {
 
     private static final int UNTINTED = 0xFFFFFF;
     private static final String MANUAL_ANIMATOR_BONE = "root";
+    private static final List<KeyframeType<?, ?>> BONE_CHANNELS = List.of(KeyframeTypes.POSITION, KeyframeTypes.ROTATION, KeyframeTypes.SCALE);
 
     private final GeyserModelEngine plugin;
 
@@ -90,29 +96,14 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
         Map<String, Boolean> boneUpdates = new LinkedHashMap<>();
         Map<String, Integer> boneTints = new HashMap<>();
         Map<String, Boolean> animUpdates = new HashMap<>();
-        Set<String> anims = new HashSet<>();
 
         model.getActiveModel().getBlueprint().getBones().forEach((s, bone) -> processBone(model, bone, boneUpdates, boneTints));
 
-        AnimationHandler handler = model.getActiveModel().getAnimationHandler();
-        Set<String> priority = model.getActiveModel().getBlueprint().getAnimationDescendingPriority();
-        for (String animId : priority) {
-            if (handler.isPlayingAnimation(animId)) {
-                BlueprintAnimation anim = model.getActiveModel().getBlueprint().getAnimations().get(animId);
+        ModelBlueprint blueprint = model.getActiveModel().getBlueprint();
+        Set<String> anims = shownAnimations(blueprint, model.getActiveModel().getAnimationHandler());
 
-                anims.add(animId);
-                if (anim.isOverride() && anim.getLoopMode() == BlueprintAnimation.LoopMode.ONCE) {
-                    break;
-                }
-            }
-        }
-
-        for (String id : priority) {
-            if (anims.contains(id)) {
-                animUpdates.put(id, true);
-            } else {
-                animUpdates.put(id, false);
-            }
+        for (String id : blueprint.getAnimationDescendingPriority()) {
+            animUpdates.put(id, anims.contains(id));
         }
 
         Set<String> lastPlayed = new HashSet<>(model.getEntityTask().getLastPlayedAnim().asMap().keySet());
@@ -158,6 +149,71 @@ public class ModelEnginePropertyHandler implements PropertyHandler {
         if (plugin.getConfigManager().getConfig().getBoolean("options.debug.animations")) plugin.getLogger().info(animUpdates.toString());
 
         players.forEach(player -> EntityUtils.sendIntProperties(player, entity, intUpdates));
+    }
+
+    /**
+     * The playing animations ModelEngine draws. An animation in override (from the blueprint or forced at runtime)
+     * in its play phase hides every weaker animation on the bones and channels it keys. ModelEngine does that per
+     * bone and channel while Bedrock only toggles whole animations and stacks those it plays, so an animation is left
+     * out once anything it keys is hidden, and kept when it shares nothing with the overriding ones.
+     */
+    private Set<String> shownAnimations(ModelBlueprint blueprint, AnimationHandler handler) {
+        List<IAnimationProperty> playing = strongestFirst(blueprint, handler);
+        Set<String> shown = new HashSet<>();
+        if (playing.stream().noneMatch(IAnimationProperty::isOverride)) {
+            playing.forEach(property -> shown.add(property.getName()));
+            return shown;
+        }
+
+        Map<UUID, Set<KeyframeType<?, ?>>> hidden = new HashMap<>();
+        for (IAnimationProperty property : playing) {
+            Map<UUID, Set<KeyframeType<?, ?>>> keyed = keyedChannels(property);
+            if (keyed.entrySet().stream().allMatch(entry -> Collections.disjoint(hidden.getOrDefault(entry.getKey(), Set.of()), entry.getValue()))) {
+                shown.add(property.getName());
+            }
+            if (property.isOverride() && property.getPhase() == IAnimationProperty.Phase.PLAY) {
+                keyed.forEach((bone, channels) -> hidden.computeIfAbsent(bone, uuid -> new HashSet<>()).addAll(channels));
+            }
+        }
+        return shown;
+    }
+
+    /**
+     * The playing animations, strongest first. With the state machine handler a higher layer is drawn over a lower
+     * one, one animation per layer, and getAnimations() keys them "layer:name"; the priority handler follows the
+     * blueprint's animation order.
+     */
+    private List<IAnimationProperty> strongestFirst(ModelBlueprint blueprint, AnimationHandler handler) {
+        if (handler instanceof IStateMachineHandler) {
+            TreeMap<Integer, IAnimationProperty> layers = new TreeMap<>(Comparator.reverseOrder());
+            for (Map.Entry<String, IAnimationProperty> entry : handler.getAnimations().entrySet()) {
+                String key = entry.getKey();
+                int colon = key.indexOf(':');
+                if (colon <= 0 || !key.substring(0, colon).chars().allMatch(Character::isDigit)) {
+                    layers = null;
+                    break;
+                }
+                layers.put(Integer.parseInt(key.substring(0, colon)), entry.getValue());
+            }
+            if (layers != null) return new ArrayList<>(layers.values());
+        }
+
+        List<IAnimationProperty> playing = new ArrayList<>();
+        for (String id : blueprint.getAnimationDescendingPriority()) {
+            IAnimationProperty property = handler.isPlayingAnimation(id) ? handler.getAnimation(id) : null;
+            if (property != null) playing.add(property);
+        }
+        return playing;
+    }
+
+    private Map<UUID, Set<KeyframeType<?, ?>>> keyedChannels(IAnimationProperty property) {
+        Map<UUID, Set<KeyframeType<?, ?>>> keyed = new HashMap<>();
+        for (UUID bone : property.getBlueprintAnimation().getTimelines().keySet()) {
+            for (KeyframeType<?, ?> channel : BONE_CHANNELS) {
+                if (property.containsKeyframe(channel, bone)) keyed.computeIfAbsent(bone, uuid -> new HashSet<>()).add(channel);
+            }
+        }
+        return keyed;
     }
 
     private void processBone(ModelEngineEntityData model, BlueprintBone bone, Map<String, Boolean> map, Map<String, Integer> tintMap) {
